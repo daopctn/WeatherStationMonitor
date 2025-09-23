@@ -18,6 +18,7 @@ ui_*.h
 # API keys and sensitive config
 .env
 resources/config/.env
+resources/config/api_config.json
 *.key
 *.pem
 
