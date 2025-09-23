@@ -1,0 +1,49 @@
+# Build directories
+build/
+debug/
+release/
+
+# Qt specific
+*.pro.user
+*.pro.user.*
+*.qm
+*.prl
+*.qmake.stash
+moc_*.cpp
+moc_*.h
+qrc_*.cpp
+ui_*.h
+*.autosave
+
+# API keys and sensitive config
+.env
+resources/config/.env
+*.key
+*.pem
+
+# IDE files
+.vscode/
+.vs/
+.idea/
+
+# OS specific
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+
+# Executables
+*.exe
+*.app
+WeatherStationMonitor
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+
+# Logs
+*.log
