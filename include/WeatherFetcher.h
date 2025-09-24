@@ -7,6 +7,7 @@
 #include <QNetworkReply>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include "PythonBridge.h"
 
 class WeatherFetcher : public QObject
 {
@@ -14,6 +15,7 @@ class WeatherFetcher : public QObject
 
 public:
     explicit WeatherFetcher(QObject *parent = nullptr);
+    ~WeatherFetcher();
     void fetchWeather();
 
 signals:
@@ -26,6 +28,7 @@ private slots:
 private:
     QNetworkAccessManager *m_networkManager;
     QString m_apiUrl;
+    PythonBridge *m_pythonBridge;
 };
 
 #endif // WEATHERFETCHER_H

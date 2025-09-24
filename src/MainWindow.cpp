@@ -23,10 +23,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::onTemperatureReceived(double temperature)
 {
-    ui->label_4->setText(QString::number(temperature, 'f', 1) + "°C");
+    // Temperature is now already converted from Kelvin to Celsius by Python processor
+    ui->label_4->setText(QString::number(temperature, 'f', 1) + "°C (Processed by Python)");
     m_lastFetchTime = QTime::currentTime();
     // debug
-    qDebug() << "Temperature received:" << temperature << "at" << m_lastFetchTime.toString("HH:mm:ss");
+    qDebug() << "Temperature received (Celsius):" << temperature << "at" << m_lastFetchTime.toString("HH:mm:ss");
     ui->label_5->setText("Last updated at: " + m_lastFetchTime.toString("HH:mm:ss"));
 }
 
