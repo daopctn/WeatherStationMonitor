@@ -163,12 +163,12 @@ s
 
 ### **Day 7: MySQL Connection**
 
-**Morning (2 hours):**
-1. Add Qt SQL module to CMakeLists.txt
-2. Create DatabaseManager class
-3. Implement connection to MySQL
-4. Test connection
-5. Handle connection errors
+**Morning (2 hours):**✅
+1. Add Qt SQL module to CMakeLists.txt✅
+2. Create DatabaseManager class✅
+3. Implement connection to MySQL✅
+4. Test connection✅
+5. Handle connection errors✅
 
 **Afternoon (2 hours):**
 1. Implement insert weather data

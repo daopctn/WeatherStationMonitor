@@ -7,7 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Sql)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 set(CMAKE_AUTOMOC ON)
@@ -21,12 +21,14 @@ set(SOURCES
     src/MainWindow.cpp
     src/WeatherFetcher.cpp
     src/PythonBridge.cpp
+    src/DatabaseManager.cpp
 )
 
 set(HEADERS
     include/MainWindow.h
     include/WeatherFetcher.h
     include/PythonBridge.h
+    include/DatabaseManager.h
 )
 
 set(UI_FILES
@@ -48,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Core
     Qt5::Widgets
     Qt5::Network
+    Qt5::Sql
     Python3::Python
 )
 
