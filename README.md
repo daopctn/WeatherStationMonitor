@@ -122,24 +122,24 @@ s
 
 ### **Day 5: API Connection**
 
-**Morning (2 hours):**
-1. Sign up for OpenWeatherMap account
-2. Get free API key
-3. Test API in browser
-4. Create resources/config/ folder
-5. Save API key in config file (git ignored)
+**Morning (2 hours):**✅
+1. Sign up for OpenWeatherMap account ✅
+2. Get free API key ✅
+3. Test API in browser ✅
+4. Create resources/config/ folder ✅
+5. Save API key in config file (git ignored) ✅
 
-**Afternoon (3 hours):**
-1. Research Qt Network module
-2. Create weatherfetcher class files
-3. Implement basic HTTP GET request
-4. Parse JSON response
-5. Display raw temperature in QLabel
+**Afternoon (3 hours):** ✅
+1. Research Qt Network module ✅
+2. Create weatherfetcher class files ✅
+3. Implement basic HTTP GET request ✅
+4. Parse JSON response ✅
+5. Display raw temperature in QLabel ✅
 
 **Evening:**
-1. Test with real API
-2. Handle errors (no internet, wrong API key)
-3. Commit: "API connection working"
+1. Test with real API✅
+2. Handle errors (no internet, wrong API key) ✅
+3. Commit: "API connection working" ✅
 
 ### **Day 6: Python Integration**
 
