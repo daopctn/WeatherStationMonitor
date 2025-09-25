@@ -52,6 +52,44 @@
 
 ---
 
+## Security Improvements Added:
+
+### Environment Configuration Setup:
+- ✅ Created .env file for sensitive configuration
+- ✅ Removed hardcoded database password from MainWindow.cpp
+- ✅ Removed hardcoded API key from WeatherFetcher.cpp
+- ✅ Updated api_config.json to use placeholder values
+- ✅ Implemented qgetenv() for environment variable loading
+
+### Security Features:
+- ✅ Database credentials now loaded from environment variables
+- ✅ Weather API key loaded from WEATHER_API_KEY environment variable
+- ✅ .env file already properly git-ignored
+- ✅ No sensitive data in source code anymore
+
+### Environment Variables Required:
+```bash
+# Database Configuration
+DB_HOST=localhost
+DB_NAME=weather_db
+DB_USER=daopctn
+DB_PASSWORD=your_db_password
+DB_PORT=3306
+
+# Weather API Configuration
+WEATHER_API_KEY=your_openweathermap_api_key
+WEATHER_API_BASE_URL=https://api.openweathermap.org/data/2.5
+```
+
+### Usage Instructions:
+1. Copy the provided .env file to your project root
+2. Update the credentials in .env with your actual values
+3. Load environment variables before running:
+   - Linux/macOS: `source .env && export $(grep -v '^#' .env | xargs)`
+   - Windows: Set variables manually or use batch script
+
+---
+
 ## Next Sprint Goals:
 - OpenWeatherMap API integration
 - Qt Network module implementation

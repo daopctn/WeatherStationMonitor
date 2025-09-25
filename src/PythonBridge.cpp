@@ -94,3 +94,64 @@ double PythonBridge::convertKelvinToCelsius(double kelvinTemp)
 
     return result;
 }
+double PythonBridge::calculateAverageTemperature(const QString &host,
+                                       const QString &database,
+                                       const QString &username,
+                                       const QString &password)
+{
+    if (!m_initialized) {
+        std::cerr << "Python not initialized!" << std::endl;
+        return 0.0;
+    }
+
+    // Setup Python path
+    PyRun_SimpleString("import sys");
+    PyRun_SimpleString("import os");
+    PyRun_SimpleString("parent_dir = os.path.dirname(os.getcwd())");
+    PyRun_SimpleString("python_path = os.path.join(parent_dir, 'python')");
+    PyRun_SimpleString("sys.path.insert(0, python_path)");
+
+    // Import processor module
+    PyObject* pModule = PyImport_ImportModule("processor");
+    if (pModule == nullptr) {
+        PyErr_Print();
+        std::cerr << "Failed to import processor module!" << std::endl;
+        return 0.0;
+    }
+
+    // Get calculate_average_from_db function
+    PyObject* pFunc = PyObject_GetAttrString(pModule, "calculate_average_from_db");
+    if (pFunc == nullptr || !PyCallable_Check(pFunc)) {
+        PyErr_Print();
+        std::cerr << "Cannot find calculate_average_from_db function!" << std::endl;
+        Py_DECREF(pModule);
+        return 0.0;
+    }
+
+    // Create arguments tuple with database credentials
+    PyObject* pArgs = PyTuple_New(4);
+    PyTuple_SetItem(pArgs, 0, PyUnicode_FromString(host.toUtf8().constData()));
+    PyTuple_SetItem(pArgs, 1, PyUnicode_FromString(database.toUtf8().constData()));
+    PyTuple_SetItem(pArgs, 2, PyUnicode_FromString(username.toUtf8().constData()));
+    PyTuple_SetItem(pArgs, 3, PyUnicode_FromString(password.toUtf8().constData()));
+
+    // Call Python function
+    PyObject* pValue = PyObject_CallObject(pFunc, pArgs);
+
+    double result = 0.0;
+    if (pValue != nullptr && PyFloat_Check(pValue)) {
+        result = PyFloat_AsDouble(pValue);
+        std::cout << "Python calculated average temperature: " << result << "°C" << std::endl;
+    } else {
+        PyErr_Print();
+        std::cerr << "Python function call failed!" << std::endl;
+    }
+
+    // Cleanup
+    Py_XDECREF(pValue);
+    Py_DECREF(pArgs);
+    Py_DECREF(pFunc);
+    Py_DECREF(pModule);
+
+    return result;
+}

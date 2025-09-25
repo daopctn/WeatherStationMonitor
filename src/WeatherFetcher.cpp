@@ -2,24 +2,38 @@
 #include <QJsonParseError>
 #include <QDebug>
 
-WeatherFetcher::WeatherFetcher(QObject *parent)
+WeatherFetcher::WeatherFetcher(QObject *parent, DatabaseManager *databaseManager, PythonBridge *pythonBridge)
     : QObject(parent)
     , m_networkManager(new QNetworkAccessManager(this))
-    , m_apiUrl("https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=a37d50cf573ace59c09175f7f0e7f164")
-    , m_pythonBridge(new PythonBridge())
+    , m_databaseManager(databaseManager)
+    , m_pythonBridge(pythonBridge)
 {
     connect(m_networkManager, &QNetworkAccessManager::finished,
             this, &WeatherFetcher::onRequestFinished);
 }
 
-WeatherFetcher::~WeatherFetcher()
-{
-    delete m_pythonBridge;
-}
+// WeatherFetcher::~WeatherFetcher()
+// {
+//     delete m_pythonBridge;
+// }
 
 void WeatherFetcher::fetchWeather()
 {
-    QNetworkRequest request(m_apiUrl);
+    QString apiKey = qgetenv("WEATHER_API_KEY");
+    QString baseUrl = qgetenv("WEATHER_API_BASE_URL");
+
+    if (baseUrl.isEmpty()) {
+        baseUrl = "https://api.openweathermap.org/data/2.5";
+    }
+
+    if (apiKey.isEmpty()) {
+        emit errorOccurred("Weather API key not configured. Please set WEATHER_API_KEY environment variable.");
+        return;
+    }
+
+    QString apiUrl = QString("%1/weather?lat=44.34&lon=10.99&appid=%2").arg(baseUrl, apiKey);
+
+    QNetworkRequest request(apiUrl);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 
     m_networkManager->get(request);
@@ -51,9 +65,24 @@ void WeatherFetcher::onRequestFinished(QNetworkReply *reply)
 
         // Process temperature through Python (convert from Kelvin to Celsius)
         double celsiusTemperature = m_pythonBridge->convertKelvinToCelsius(kelvinTemperature);
-
-        emit temperatureReceived(celsiusTemperature);
+        insertData(celsiusTemperature);        
+        emit insertDataDone();
     } else {
         emit errorOccurred("Temperature data not found in response");
+    }
+}
+
+void WeatherFetcher::insertData( double temperature)
+{
+    if (m_databaseManager && m_databaseManager->isConnected()) {
+        qDebug() << "Inserting temperature:" << temperature;
+        QString queryStr = QString("INSERT INTO test_location (value, time) VALUES (%1, NOW())")
+                               .arg(temperature);
+        if (!m_databaseManager->executeQuery(queryStr)) {
+            emit errorOccurred("Failed to insert data: " + m_databaseManager->getLastError());
+        }
+    } else {
+        qDebug() << "Database not connected";
+        emit errorOccurred("Database not connected");
     }
 }

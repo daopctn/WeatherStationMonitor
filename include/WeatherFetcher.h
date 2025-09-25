@@ -8,27 +8,30 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include "PythonBridge.h"
+#include "DatabaseManager.h"
 
 class WeatherFetcher : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit WeatherFetcher(QObject *parent = nullptr);
-    ~WeatherFetcher();
+    explicit WeatherFetcher(QObject *parent = nullptr, DatabaseManager *databaseManager = nullptr, PythonBridge *pythonBridge = nullptr);
+    // ~WeatherFetcher();
     void fetchWeather();
 
 signals:
-    void temperatureReceived(double temperature);
+    void insertDataDone();
     void errorOccurred(const QString &error);
 
 private slots:
     void onRequestFinished(QNetworkReply *reply);
+    void insertData(double temperature);
 
 private:
     QNetworkAccessManager *m_networkManager;
-    QString m_apiUrl;
     PythonBridge *m_pythonBridge;
+    DatabaseManager *m_databaseManager;
+
 };
 
 #endif // WEATHERFETCHER_H

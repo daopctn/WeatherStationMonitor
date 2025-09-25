@@ -4,9 +4,11 @@
 #include <QMainWindow>
 #include <QPushButton>
 #include <QTime>
+#include <QTimer>
 #include "ui/ui_MainWindow.h"
 #include "WeatherFetcher.h"
 #include "DatabaseManager.h"
+#include "PythonBridge.h"
 
 class MainWindow : public QMainWindow
 {
@@ -17,15 +19,18 @@ public:
     ~MainWindow();
 
 private slots:
-    void onTemperatureReceived(double temperature);
+    void onInsertDataDone();
     void onErrorOccurred(const QString &error);
-    void testDatabaseConnection();
+    // void testDatabaseConnection();
+    void onButtonClicked();
 
 private:
     Ui::MainWindow *ui;
-    WeatherFetcher *weatherFetcher;
     DatabaseManager *databaseManager;
+    WeatherFetcher *weatherFetcher;
+    PythonBridge *pythonBridge;
     QTime m_lastFetchTime;
+    QTimer *m_fetchTimer;
 };
 
 #endif // MAINWINDOW_H
