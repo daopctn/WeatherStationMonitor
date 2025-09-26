@@ -107,7 +107,7 @@ void MainWindow::onInsertDataDone()
 
 void MainWindow::onErrorOccurred(const QString &error)
 {
-    ui->label_4->setText("Error: " + error);
+    // ui->label_4->setText("Error: " + error);
 }
 
 void MainWindow::onButtonClicked()
@@ -147,8 +147,8 @@ void MainWindow::onButtonClicked()
     }
     else
     {
-        ui->label_4->setText("DB not connected");
-        ui->label_5->setText("");
-        ui->label_6->setText("");
+        // ui->label_4->setText("DB not connected");
+        // ui->label_5->setText("");
+        // ui->label_6->setText("");
     }
 }
