@@ -5,6 +5,11 @@
 #include <QPushButton>
 #include <QTime>
 #include <QTimer>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
+#include <QStandardPaths>
+#include <QDir>
 #include "ui/ui_MainWindow.h"
 #include "WeatherFetcher.h"
 #include "DatabaseManager.h"
@@ -23,6 +28,7 @@ private slots:
     void onErrorOccurred(const QString &error);
     // void testDatabaseConnection();
     void onButtonClicked();
+    void fetchWeatherForAllLocations();
 
 private:
     Ui::MainWindow *ui;
@@ -31,6 +37,16 @@ private:
     PythonBridge *pythonBridge;
     QTime m_lastFetchTime;
     QTimer *m_fetchTimer;
+    double m_avgTemperature;
+    double m_avgHumidity;
+    // const QString &host,
+    //                                              const QString &database,
+    //                                              const QString &username,
+    //                                              const QString &password,
+    QString m_hostname;
+    QString m_databaseName;
+    QString m_username;
+    QString m_password;
 };
 
 #endif // MAINWINDOW_H

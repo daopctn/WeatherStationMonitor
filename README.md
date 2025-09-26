@@ -207,17 +207,17 @@ s
 ### **Day 11: UI Redesign**
 
 **Morning:**
-1. Open Qt Designer
-2. Replace single label with QTableWidget
-3. Design table columns (City, Temp, Humidity)
-4. Add status bar
-5. Save and rebuild
+1. Open Qt Designer✅
+2. Replace single label with QTableWidget✅
+3. Design table columns (City, Temp, Humidity)✅
+4. Add status bar✅
+5. Save and rebuild✅
 
 **Afternoon:**
-1. Populate table with dummy data
-2. Style table headers
-3. Add row colors
-4. Test UI responsiveness
+1. Populate table with dummy data✅
+2. Style table headers✅
+3. Add row colors✅
+4. Test UI responsiveness✅
 
 ### **Day 12: Multi-threading**
 
