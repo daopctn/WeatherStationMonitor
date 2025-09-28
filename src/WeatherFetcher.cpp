@@ -34,9 +34,9 @@ WeatherFetcher::WeatherFetcher(QObject *parent, DatabaseManager *databaseManager
 
     // WeatherAPI
     QJsonObject apiObj = obj["WeatherAPI"].toObject();
-    QString baseUrl = apiObj["base_url"].toString();
-    QString apiKey = apiObj["api_key"].toString();
-    int timeout = apiObj["timeout"].toInt();
+    m_baseUrl = apiObj["base_url"].toString();
+    m_apiKey = apiObj["api_key"].toString();
+
 }
 
 WeatherFetcher::~WeatherFetcher()

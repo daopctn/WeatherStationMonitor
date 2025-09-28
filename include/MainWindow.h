@@ -39,10 +39,6 @@ private:
     QTimer *m_fetchTimer;
     double m_avgTemperature;
     double m_avgHumidity;
-    // const QString &host,
-    //                                              const QString &database,
-    //                                              const QString &username,
-    //                                              const QString &password,
     QString m_hostname;
     QString m_databaseName;
     QString m_username;

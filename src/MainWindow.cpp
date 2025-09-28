@@ -64,8 +64,9 @@ MainWindow::MainWindow(QWidget *parent)
     // // activate timer
     m_fetchTimer = new QTimer(this);
     connect(m_fetchTimer, &QTimer::timeout, this, &MainWindow::fetchWeatherForAllLocations);
-    m_fetchTimer->start(3600000); // fetch every 60 seconds
-
+    // m_fetchTimer->start(3600000); // fetch every 60 minutes
+    // m_fetchTimer->start(60000);   // fetch every 1 minute
+    m_fetchTimer->start(10000); // fetch every 10 seconds (for testing)
     // signals and slots
 
     connect(weatherFetcher, &WeatherFetcher::insertDataDone,

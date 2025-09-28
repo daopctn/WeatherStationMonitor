@@ -1,0 +1,13 @@
+{
+  "Database": {
+    "host": "localhost",
+    "name": "weather_station_db",
+    "user": "your_username",
+    "password": "your_password"
+  },
+  "WeatherAPI": {
+    "base_url": "https://api.openweathermap.org/data/2.5",
+    "api_key": "your_openweather_api_key_here",
+    "timeout": 10000
+  }
+}
