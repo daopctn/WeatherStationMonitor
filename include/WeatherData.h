@@ -8,4 +8,4 @@ struct WeatherData {
     QTime timestamp;   // Unix timestamp
 };
 
-#endif // WEATHERDATA_H
+#endif // WEATHERDATA_
