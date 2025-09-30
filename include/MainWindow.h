@@ -14,6 +14,8 @@
 #include "WeatherFetcher.h"
 #include "DatabaseManager.h"
 #include "PythonBridge.h"
+#include "WeatherWorker.h"
+#include "WeatherData.h"
 
 class MainWindow : public QMainWindow
 {
@@ -31,6 +33,7 @@ private slots:
     void fetchWeatherForAllLocations();
 
 private:
+
     Ui::MainWindow *ui;
     DatabaseManager *databaseManager;
     WeatherFetcher *weatherFetcher;
@@ -43,6 +46,13 @@ private:
     QString m_databaseName;
     QString m_username;
     QString m_password;
+
+    
+    QVector<WeatherData> m_weatherDataVector;
+    QMutex m_mutex;
+
+    QVector<WeatherWorker*> m_weatherWorkers;
+    // WeatherWorker *m_weatherWorker;
 };
 
 #endif // MAINWINDOW_H

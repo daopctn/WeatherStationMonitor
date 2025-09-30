@@ -2,80 +2,107 @@
 #include <QDebug>
 #include <QFile>
 #include <PythonBridge.h>
+#include <WeatherWorker.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge())
 {
-    ui->setupUi(this);
-    setWindowTitle("Weather Station Monitor");
+    // ui->setupUi(this);
+    // setWindowTitle("Weather Station Monitor");
 
-    // QFile file("/home/daopctn/Projects/WeatherStationMonitor/config.json");
+    // // QFile file("/home/daopctn/Projects/WeatherStationMonitor/config.json");
 
-    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    QDir().mkpath(configDir); // ensure exists
-    QString configPath = configDir + "/config.json";
-    qDebug() << "Using config file at:" << configPath;
-    QFile file(configPath);
+    // QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    // QDir().mkpath(configDir); // ensure exists
+    // QString configPath = configDir + "/config.json";
+    // qDebug() << "Using config file at:" << configPath;
+    // QFile file(configPath);
 
-    if (!file.open(QIODevice::ReadOnly))
-    {
-        qWarning() << "Cannot open config file";
-        return;
-    }
+    // if (!file.open(QIODevice::ReadOnly))
+    // {
+    //     qWarning() << "Cannot open config file";
+    //     return;
+    // }
 
-    QByteArray data = file.readAll();
-    file.close();
+    // QByteArray data = file.readAll();
+    // file.close();
 
-    QJsonDocument doc = QJsonDocument::fromJson(data);
-    if (!doc.isObject())
-    {
-        qWarning() << "Invalid JSON format";
-        return;
-    }
+    // QJsonDocument doc = QJsonDocument::fromJson(data);
+    // if (!doc.isObject())
+    // {
+    //     qWarning() << "Invalid JSON format";
+    //     return;
+    // }
 
-    QJsonObject obj = doc.object();
-    // Database
-    QJsonObject dbConfig = obj.value("Database").toObject();
-    m_hostname = dbConfig.value("host").toString();
-    m_databaseName = dbConfig.value("name").toString();
-    m_username = dbConfig.value("user").toString();
-    m_password = dbConfig.value("password").toString();
+    // QJsonObject obj = doc.object();
+    // // Database
+    // QJsonObject dbConfig = obj.value("Database").toObject();
+    // m_hostname = dbConfig.value("host").toString();
+    // m_databaseName = dbConfig.value("name").toString();
+    // m_username = dbConfig.value("user").toString();
+    // m_password = dbConfig.value("password").toString();
 
-    // database connection
-    databaseManager = new DatabaseManager(this);
-    bool connection = databaseManager->connectToDatabase(
-        m_hostname,
-        m_databaseName,
-        m_username,
-        m_password);
+    // // database connection
+    // databaseManager = new DatabaseManager(this);
+    // bool connection = databaseManager->connectToDatabase(
+    //     m_hostname,
+    //     m_databaseName,
+    //     m_username,
+    //     m_password);
 
-    if (connection)
-    {
-        qDebug() << "Database connected successfully.";
-    }
-    else
-    {
-        qDebug() << "Database connection failed:" << databaseManager->getLastError();
-    }
+    // if (connection)
+    // {
+    //     qDebug() << "Database connected successfully.";
+    // }
+    // else
+    // {
+    //     qDebug() << "Database connection failed:" << databaseManager->getLastError();
+    // }
 
-    // weather fetcher
-    weatherFetcher = new WeatherFetcher(this, databaseManager, pythonBridge);
+    // // weather fetcher
+    // weatherFetcher = new WeatherFetcher(this, databaseManager, pythonBridge);
 
-    // // activate timer
-    m_fetchTimer = new QTimer(this);
-    connect(m_fetchTimer, &QTimer::timeout, this, &MainWindow::fetchWeatherForAllLocations);
-    // m_fetchTimer->start(3600000); // fetch every 60 minutes
-    // m_fetchTimer->start(60000);   // fetch every 1 minute
-    m_fetchTimer->start(10000); // fetch every 10 seconds (for testing)
-    // signals and slots
+    // // // activate timer
+    // m_fetchTimer = new QTimer(this);
+    // connect(m_fetchTimer, &QTimer::timeout, this, &MainWindow::fetchWeatherForAllLocations);
+    // // m_fetchTimer->start(3600000); // fetch every 60 minutes
+    // // m_fetchTimer->start(60000);   // fetch every 1 minute
+    // m_fetchTimer->start(10000); // fetch every 10 seconds (for testing)
+    // // signals and slots
 
-    connect(weatherFetcher, &WeatherFetcher::insertDataDone,
-            this, &MainWindow::onInsertDataDone);
-    connect(weatherFetcher, &WeatherFetcher::errorOccurred,
-            this, &MainWindow::onInsertDataDone);
-    connect(ui->pushButton, &QPushButton::clicked,
-            this, &MainWindow::onButtonClicked);
+    // connect(weatherFetcher, &WeatherFetcher::insertDataDone,
+    //         this, &MainWindow::onInsertDataDone);
+    // connect(weatherFetcher, &WeatherFetcher::errorOccurred,
+    //         this, &MainWindow::onInsertDataDone);
+    // connect(ui->pushButton, &QPushButton::clicked,
+    //         this, &MainWindow::onButtonClicked);
     // MainWindow::onButtonClicked();
+
+    // Testing the WeatherWorker class
+
+    QList<Location> locations = {
+        {44.34, 10.99, "Zocca"},
+        {41.89, 12.49, "Rome"},
+        {48.85, 2.35, "Paris"},
+        {51.51, -0.13, "London"},
+        {40.71, -74.01, "New York"}};
+
+    // QString apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=a37d50cf573ace59c09175f7f0e7f164";
+    // m_weatherWorker = new WeatherWorker(apiURL, m_weatherDataVector, m_mutex, this);
+    // connect(m_weatherWorker, &WeatherWorker::finished, this, []()
+    //         { qDebug() << "WeatherWorker thread finished."; });
+    // m_weatherWorker->start();
+    for (const Location &loc : locations)
+    {
+        QString apiURL = QString("https://api.openweathermap.org/data/2.5/weather?lat=%1&lon=%2&appid=a37d50cf573ace59c09175f7f0e7f164")
+                             .arg(loc.lat)
+                             .arg(loc.lon);
+        WeatherWorker *worker = new WeatherWorker(apiURL, m_weatherDataVector, m_mutex, this);
+        connect(worker, &WeatherWorker::finished, this, [loc]()
+                { qDebug() << "WeatherWorker for" << loc.name << "thread finished."; });
+        worker->start();
+        m_weatherWorkers.append(worker);
+    }
 }
 
 void MainWindow::fetchWeatherForAllLocations()
@@ -93,13 +120,42 @@ void MainWindow::fetchWeatherForAllLocations()
 
 MainWindow::~MainWindow()
 {
-    delete ui;
-    if (databaseManager->isConnected())
+    // // Safe delete ui
+    // if (ui)
+    // {
+    //     delete ui;
+    //     ui = nullptr;
+    // }
+
+    // // Safe cleanup of database manager
+    // if (databaseManager)
+    // {
+    //     if (databaseManager->isConnected())
+    //     {
+    //         databaseManager->disconnectFromDatabase();
+    //     }
+    //     delete databaseManager;
+    //     databaseManager = nullptr;
+    // }
+
+    // // Safe delete weather fetcher
+    // if (weatherFetcher)
+    // {
+    //     delete weatherFetcher;
+    //     weatherFetcher = nullptr;
+    // }
+
+    // free weather workers
+    for (WeatherWorker *worker : m_weatherWorkers)
     {
-        databaseManager->disconnectFromDatabase();
+        if (worker)
+        {
+            worker->stop();
+            worker->wait(); // Ensure the thread has finished
+            delete worker;
+            worker = nullptr;
+        }
     }
-    delete databaseManager;
-    delete weatherFetcher;
 }
 
 void MainWindow::onInsertDataDone()
@@ -148,8 +204,6 @@ void MainWindow::onButtonClicked()
     }
     else
     {
-        // ui->label_4->setText("DB not connected");
-        // ui->label_5->setText("");
-        // ui->label_6->setText("");
+        qDebug() << "Database not connected.";
     }
 }

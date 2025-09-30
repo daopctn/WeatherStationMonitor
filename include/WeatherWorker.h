@@ -14,15 +14,26 @@
 #include <QThread>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDebug>
+#include <QTimer>
 #include <QMutex>
-#include <QQueue>
+#include <QVector>
+#include <QUrl>
+#include <QTime>
 #include "WeatherData.h"
 
 class WeatherWorker : public QThread
 {
     Q_OBJECT
 public:
-    explicit WeatherWorker(const QString &apiKey, const QString &city, QQueue<WeatherData> &dataQueue, QMutex &mutex, QObject *parent = nullptr);
+    explicit WeatherWorker(const QString &apiURL
+        , QVector<WeatherData> &weatherDataVector
+        , QMutex &mutex
+        , QObject *parent = nullptr);
     ~WeatherWorker();
     void run() override;
     void stop();
@@ -32,11 +43,12 @@ private slots:
     void onNetworkReply(QNetworkReply *reply);
 
 private:
-    QString m_apiKey;
-    QString m_city;
-    QQueue<WeatherData> &m_dataQueue;
+    QString m_apiURL;
+    QVector<WeatherData> &m_weatherDataVector;
     QMutex &m_mutex;
+    QNetworkAccessManager *m_networkManager;
     bool m_running;
+    void fetchWeatherData();
 };
 
 #endif // WEATHERWORKER_H

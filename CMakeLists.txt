@@ -20,6 +20,7 @@ set(SOURCES
     src/main.cpp
     src/MainWindow.cpp
     src/WeatherFetcher.cpp
+    src/WeatherWorker.cpp
     src/PythonBridge.cpp
     src/DatabaseManager.cpp
 )
@@ -27,6 +28,8 @@ set(SOURCES
 set(HEADERS
     include/MainWindow.h
     include/WeatherFetcher.h
+    include/WeatherWorker.h
+    include/WeatherData.h
     include/PythonBridge.h
     include/DatabaseManager.h
 )
