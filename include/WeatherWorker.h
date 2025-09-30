@@ -30,13 +30,11 @@ class WeatherWorker : public QThread
 {
     Q_OBJECT
 public:
-    explicit WeatherWorker(const QString &apiURL
-        , QVector<WeatherData> &weatherDataVector
-        , QMutex &mutex
-        , QObject *parent = nullptr);
+    explicit WeatherWorker(const QString &apiURL, QVector<WeatherData> &weatherDataVector, QMutex &mutex, QObject *parent = nullptr);
     ~WeatherWorker();
     void run() override;
     void stop();
+    WeatherData *lastestData = nullptr;
 signals:
     void weatherDataUpdated();
 private slots:

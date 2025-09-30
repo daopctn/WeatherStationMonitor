@@ -11,33 +11,36 @@ WeatherWorker::~WeatherWorker()
     qDebug() << "WeatherWorker destructor called.";
     stop();
     wait(); // Ensure the thread has finished
-    if (m_networkManager)
-    {
-        m_networkManager->deleteLater();
-        m_networkManager = nullptr;
-    }
 }
 
 void WeatherWorker::run()
 {
-    m_networkManager = new QNetworkAccessManager();
-    connect(m_networkManager, &QNetworkAccessManager::finished, this, &WeatherWorker::onNetworkReply);
+    // Create the network manager IN the worker thread
+    QNetworkAccessManager networkManager;
+    m_networkManager = &networkManager;
 
-    QTimer *timer = new QTimer();
-    connect(timer, &QTimer::timeout, this, &WeatherWorker::fetchWeatherData);
-    timer->start(5000); // 5 seconds for testing
+    // Connect the signal AFTER moving to thread context
+    connect(m_networkManager, &QNetworkAccessManager::finished,
+            this, &WeatherWorker::onNetworkReply,
+            Qt::DirectConnection); // Important: Use DirectConnection since we're in the same thread
+
+    QTimer timer;
+    connect(&timer, &QTimer::timeout,
+            this, &WeatherWorker::fetchWeatherData,
+            Qt::DirectConnection); // DirectConnection for same thread
+
+    timer.start(5000); // 5 seconds for testing
 
     m_running = true;
 
-    // Fetch data immediately, then every 5 seconds via timer
+    // Fetch data immediately
     fetchWeatherData();
 
-    // Start the event loop - this will process Qt signals and slots
+    // Start the event loop
     exec();
 
-    // Cleanup when event loop exits
-    timer->stop();
-    delete timer;
+    // Cleanup happens automatically when stack objects go out of scope
+    m_networkManager = nullptr;
 }
 
 void WeatherWorker::stop()
@@ -49,21 +52,23 @@ void WeatherWorker::stop()
 
 void WeatherWorker::fetchWeatherData()
 {
-    if (!m_networkManager)
+    if (!m_networkManager || !m_running)
     {
-        qWarning() << "NetworkManager not initialized";
+        qWarning() << "NetworkManager not initialized or worker stopped";
         return;
     }
 
-    // qDebug() << "Fetching weather data from:" << m_apiURL;
     QNetworkRequest request(m_apiURL);
-    m_networkManager->get(request);
-    // qDebug() << "Request sent, waiting for reply...";
+    // This now happens in the correct thread context
+    QNetworkReply *reply = m_networkManager->get(request);
+
+    // Alternative: Connect directly to the reply
+    // connect(reply, &QNetworkReply::finished, this, [this, reply]()
+    //         { onNetworkReply(reply); });
 }
 
 void WeatherWorker::onNetworkReply(QNetworkReply *reply)
 {
-    qDebug() << "onNetworkReply called!";
     if (reply->error() != QNetworkReply::NoError)
     {
         qWarning() << "Network error:" << reply->errorString();
@@ -95,21 +100,39 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
     double temperature = mainObj.value("temp").toDouble();
     double humidity = mainObj.value("humidity").toDouble();
 
-    WeatherData data;
-    data.temperature = temperature;
-    data.humidity = humidity;
-    data.timestamp = QTime::currentTime();
+    // Convert UNIX timestamp (dt) to QDateTime, then extract QTime
+    long long unixTime = jsonObj.value("dt").toVariant().toLongLong();
 
-    // Print parsed data for debugging
-    qDebug() << "Parsed Weather Data:";
-    qDebug() << "  Temperature:" << data.temperature << "K";
-    qDebug() << "  Humidity:" << data.humidity << "%";
-    qDebug() << "  Timestamp:" << data.timestamp.toString();
+    if (unixTime > lastestData->timestamp)
+    {
+        WeatherData newData;
+        newData.locationName = jsonObj.value("name").toString();
+        newData.temperature = temperature;
+        newData.humidity = humidity;
+        newData.timestamp = unixTime;
 
-    m_mutex.lock();
-    m_weatherDataVector.append(data);
-    qDebug() << "  Total data points collected:" << m_weatherDataVector.size();
-    m_mutex.unlock();
+        lastestData->locationName = newData.locationName;
+        lastestData->temperature = newData.temperature;
+        lastestData->humidity = newData.humidity;
+        lastestData->timestamp = newData.timestamp;
 
-    emit weatherDataUpdated();
+        // Print parsed data for debugging with thread id in 1 qDebug line
+
+        qDebug() << "Parsed Data - Thread ID:" << QThread::currentThreadId()
+                 << " Location:" << newData.locationName
+                 << " Temp:" << newData.temperature
+                 << " Humidity:" << newData.humidity
+                 << " Time:" << newData.timestamp;
+        m_mutex.lock();
+        m_weatherDataVector.append(newData);
+        m_mutex.unlock();
+        emit weatherDataUpdated();
+    }
+    else
+    {
+        qDebug() << "Thread ID:" << QThread::currentThreadId()
+                 << "Received older data. Ignoring update."
+                 << " New timestamp:" << unixTime
+                 << " Last timestamp:" << lastestData->timestamp;
+    }
 }

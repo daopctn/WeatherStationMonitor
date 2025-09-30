@@ -1,12 +1,13 @@
 #ifndef WEATHERDATA_H
 #define WEATHERDATA_H
 
-#include <QTime>
+#include <QDateTime>
 struct WeatherData
 {
-    double temperature; // in Celsius
-    double humidity;    // in percentage
-    QTime timestamp;    // time of the reading
+    QString locationName;
+    double temperature;  // in Celsius
+    double humidity;     // in percentage
+    long long timestamp; // time of the reading
 };
 
 #endif // WEATHERDATA_H
