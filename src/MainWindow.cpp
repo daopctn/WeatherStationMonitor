@@ -3,6 +3,7 @@
 #include <QFile>
 #include <PythonBridge.h>
 #include <WeatherWorker.h>
+#include <DatabaseThread.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge())
@@ -93,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent)
     lastestZoccaData->timestamp = 0;
 
     // query lastest data
-    QSqlQuery q("SELECT temperature, humidity, timestamp FROM london ORDER BY time DESC LIMIT 1");
+    QSqlQuery q("SELECT temperature, humidity, timestamp FROM london ORDER BY id DESC LIMIT 1");
     if (q.next())
     {
         lastestLondonData->locationName = "London";
@@ -110,7 +111,7 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "No data found in london table.";
     }
     q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM new_york ORDER BY time DESC LIMIT 1");
+    q.prepare("SELECT temperature, humidity, timestamp FROM new_york ORDER BY id DESC LIMIT 1");
     if (q.exec() && q.next())
     {
         lastestNewYorkData->locationName = "New York";
@@ -127,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "No data found in new_york table.";
     }
     q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM paris ORDER BY time DESC LIMIT 1");
+    q.prepare("SELECT temperature, humidity, timestamp FROM paris ORDER BY id DESC LIMIT 1");
     if (q.exec() && q.next())
     {
         lastestParisData->locationName = "Paris";
@@ -144,7 +145,7 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "No data found in paris table.";
     }
     q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM rome ORDER BY time DESC LIMIT 1");
+    q.prepare("SELECT temperature, humidity, timestamp FROM rome ORDER BY id DESC LIMIT 1");
     if (q.exec() && q.next())
     {
         lastestRomeData->locationName = "Rome";
@@ -161,7 +162,7 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "No data found in rome table.";
     }
     q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM zocca ORDER BY time DESC LIMIT 1");
+    q.prepare("SELECT temperature, humidity, timestamp FROM zocca ORDER BY id DESC LIMIT 1");
     if (q.exec() && q.next())
     {
         lastestZoccaData->locationName = "Zocca";
@@ -238,13 +239,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(newYorkWorker, &WeatherWorker::finished, this, []()
             { qDebug() << "New York WeatherWorker thread finished."; });
 
+    // database thread
+    DatabaseThread *dbThread = new DatabaseThread(databaseManager, m_weatherDataVector, m_mutex, this);
+    connect(dbThread, &DatabaseThread::finished, this, []()
+            { qDebug() << "DatabaseThread finished."; });
+    dbThread->start();
+
     zoccaWorker->start();
     romeWorker->start();
     parisWorker->start();
     londonWorker->start();
     newYorkWorker->start();
-
-    
 }
 
 void MainWindow::fetchWeatherForAllLocations()

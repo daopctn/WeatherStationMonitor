@@ -23,6 +23,7 @@ set(SOURCES
     src/WeatherWorker.cpp
     src/PythonBridge.cpp
     src/DatabaseManager.cpp
+    src/DatabaseThread.cpp
 )
 
 set(HEADERS
@@ -32,6 +33,7 @@ set(HEADERS
     include/WeatherData.h
     include/PythonBridge.h
     include/DatabaseManager.h
+    include/DatabaseThread.h
 )
 
 set(UI_FILES

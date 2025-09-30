@@ -29,7 +29,9 @@ void WeatherWorker::run()
             this, &WeatherWorker::fetchWeatherData,
             Qt::DirectConnection); // DirectConnection for same thread
 
-    timer.start(5000); // 5 seconds for testing
+    // 5 minutes for production
+
+    timer.start(300000); // 300,000 ms = 5 minutes
 
     m_running = true;
 
