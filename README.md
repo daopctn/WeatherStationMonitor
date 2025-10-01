@@ -219,19 +219,19 @@ s
 3. Add row colors✅
 4. Test UI responsiveness✅
 
-### **Day 12: Multi-threading**
+### **Day 12: Multi-threading**✅
 
 **Morning:**
-1. Design thread architecture (on paper)
-2. Create ThreadManager class
-3. Implement QThread for fetching
-4. One thread per station
+1. Design thread architecture (on paper)✅
+2. Create ThreadManager class✅
+3. Implement QThread for fetching✅
+4. One thread per station✅
 
 **Afternoon:**
-1. Test concurrent fetching
-2. Handle thread synchronization
-3. Update UI from threads safely
-4. Test with 5 stations
+1. Test concurrent fetching✅
+2. Handle thread synchronization✅
+3. Update UI from threads safely✅
+4. Test with 5 stations✅
 
 ### **Day 13: Batch Processing**
 
