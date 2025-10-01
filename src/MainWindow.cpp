@@ -6,11 +6,10 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge())
 {
-    // ui->setupUi(this);
-    // setWindowTitle("Weather Station Monitor");
+    ui->setupUi(this);
+    setWindowTitle("Weather Station Monitor");
 
     // QFile file("/home/daopctn/Projects/WeatherStationMonitor/config.json");
-
     QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
     QDir().mkpath(configDir); // ensure exists
     QString configPath = configDir + "/config.json";
@@ -59,125 +58,6 @@ MainWindow::MainWindow(QWidget *parent)
         qDebug() << "Database connection failed:" << databaseManager->getLastError();
     }
 
-    lastestLondonData = new WeatherData();
-    lastestNewYorkData = new WeatherData();
-    lastestParisData = new WeatherData();
-    lastestRomeData = new WeatherData();
-    lastestZoccaData = new WeatherData();
-
-    // dummy data
-    lastestLondonData->locationName = "London";
-    lastestLondonData->temperature = 0.0;
-    lastestLondonData->humidity = 0.0;
-    lastestLondonData->timestamp = 0;
-
-    lastestNewYorkData->locationName = "New York";
-    lastestNewYorkData->temperature = 0.0;
-    lastestNewYorkData->humidity = 0.0;
-    lastestNewYorkData->timestamp = 0;
-
-    lastestParisData->locationName = "Paris";
-    lastestParisData->temperature = 0.0;
-    lastestParisData->humidity = 0.0;
-    lastestParisData->timestamp = 0;
-
-    lastestRomeData->locationName = "Rome";
-    lastestRomeData->temperature = 0.0;
-    lastestRomeData->humidity = 0.0;
-    lastestRomeData->timestamp = 0;
-
-    lastestZoccaData->locationName = "Zocca";
-    lastestZoccaData->temperature = 0.0;
-    lastestZoccaData->humidity = 0.0;
-    lastestZoccaData->timestamp = 0;
-
-    // query lastest data
-    QSqlQuery q("SELECT temperature, humidity, timestamp FROM london ORDER BY id DESC LIMIT 1");
-    if (q.next())
-    {
-        lastestLondonData->locationName = "London";
-        lastestLondonData->temperature = q.value(0).toDouble();
-        lastestLondonData->humidity = q.value(1).toDouble();
-        lastestLondonData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest London Data:"
-                 << " Temp:" << lastestLondonData->temperature
-                 << " Humidity:" << lastestLondonData->humidity
-                 << " Time:" << lastestLondonData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in london table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM new_york ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestNewYorkData->locationName = "New York";
-        lastestNewYorkData->temperature = q.value(0).toDouble();
-        lastestNewYorkData->humidity = q.value(1).toDouble();
-        lastestNewYorkData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest New York Data:"
-                 << " Temp:" << lastestNewYorkData->temperature
-                 << " Humidity:" << lastestNewYorkData->humidity
-                 << " Time:" << lastestNewYorkData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in new_york table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM paris ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestParisData->locationName = "Paris";
-        lastestParisData->temperature = q.value(0).toDouble();
-        lastestParisData->humidity = q.value(1).toDouble();
-        lastestParisData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest Paris Data:"
-                 << " Temp:" << lastestParisData->temperature
-                 << " Humidity:" << lastestParisData->humidity
-                 << " Time:" << lastestParisData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in paris table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM rome ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestRomeData->locationName = "Rome";
-        lastestRomeData->temperature = q.value(0).toDouble();
-        lastestRomeData->humidity = q.value(1).toDouble();
-        lastestRomeData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest Rome Data:"
-                 << " Temp:" << lastestRomeData->temperature
-                 << " Humidity:" << lastestRomeData->humidity
-                 << " Time:" << lastestRomeData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in rome table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM zocca ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestZoccaData->locationName = "Zocca";
-        lastestZoccaData->temperature = q.value(0).toDouble();
-        lastestZoccaData->humidity = q.value(1).toDouble();
-        lastestZoccaData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest Zocca Data:"
-                 << " Temp:" << lastestZoccaData->temperature
-                 << " Humidity:" << lastestZoccaData->humidity
-                 << " Time:" << lastestZoccaData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in zocca table.";
-    }
-    q.finish();
-
     // // weather fetcher
     // weatherFetcher = new WeatherFetcher(this, databaseManager, pythonBridge);
 
@@ -187,14 +67,15 @@ MainWindow::MainWindow(QWidget *parent)
     // // m_fetchTimer->start(3600000); // fetch every 60 minutes
     // // m_fetchTimer->start(60000);   // fetch every 1 minute
     // m_fetchTimer->start(10000); // fetch every 10 seconds (for testing)
+
     // // signals and slots
 
     // connect(weatherFetcher, &WeatherFetcher::insertDataDone,
     //         this, &MainWindow::onInsertDataDone);
     // connect(weatherFetcher, &WeatherFetcher::errorOccurred,
     //         this, &MainWindow::onInsertDataDone);
-    // connect(ui->pushButton, &QPushButton::clicked,
-    //         this, &MainWindow::onButtonClicked);
+    connect(ui->pushButton, &QPushButton::clicked,
+            this, &MainWindow::onButtonClicked);
     // MainWindow::onButtonClicked();
 
     // Testing the WeatherWorker class
@@ -205,42 +86,9 @@ MainWindow::MainWindow(QWidget *parent)
     //         { qDebug() << "WeatherWorker thread finished."; });
     // m_weatherWorker->start();
 
-    zoccaWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=a37d50cf573ace59c09175f7f0e7f164", m_weatherDataVector, m_mutex, this);
-    zoccaWorker->lastestData = lastestZoccaData;
-    connect(zoccaWorker, &WeatherWorker::finished, this, []()
-            { qDebug() << "Zocca WeatherWorker thread finished."; });
-
-    romeWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=41.89&lon=12.49&appid=a37d50cf573ace59c09175f7f0e7f164", m_weatherDataVector, m_mutex, this);
-    romeWorker->lastestData = lastestRomeData;
-    connect(romeWorker, &WeatherWorker::finished, this, []()
-            { qDebug() << "Rome WeatherWorker thread finished."; });
-
-    parisWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=48.85&lon=2.35&appid=a37d50cf573ace59c09175f7f0e7f164", m_weatherDataVector, m_mutex, this);
-    parisWorker->lastestData = lastestParisData;
-    connect(parisWorker, &WeatherWorker::finished, this, []()
-            { qDebug() << "Paris WeatherWorker thread finished."; });
-
-    londonWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=51.51&lon=-0.13&appid=a37d50cf573ace59c09175f7f0e7f164", m_weatherDataVector, m_mutex, this);
-    londonWorker->lastestData = lastestLondonData;
-    connect(londonWorker, &WeatherWorker::finished, this, []()
-            { qDebug() << "London WeatherWorker thread finished."; });
-
-    newYorkWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=40.71&lon=-74.01&appid=a37d50cf573ace59c09175f7f0e7f164", m_weatherDataVector, m_mutex, this);
-    newYorkWorker->lastestData = lastestNewYorkData;
-    connect(newYorkWorker, &WeatherWorker::finished, this, []()
-            { qDebug() << "New York WeatherWorker thread finished."; });
-
-    // database thread
-    dbThread = new DatabaseThread(databaseManager, m_weatherDataVector, m_mutex, this);
-    connect(dbThread, &DatabaseThread::finished, this, []()
-            { qDebug() << "DatabaseThread finished."; });
-    dbThread->start();
-
-    zoccaWorker->start();
-    romeWorker->start();
-    parisWorker->start();
-    londonWorker->start();
-    newYorkWorker->start();
+    // Thread manager
+    // threadManager = new ThreadManager(this);
+    // threadManager->startThreads();
 
     // Khởi động spinner
     m_spinner = new Spinner(this);
@@ -262,94 +110,28 @@ void MainWindow::fetchWeatherForAllLocations()
 
 MainWindow::~MainWindow()
 {
-    // // Safe delete ui
-    // if (ui)
-    // {
-    //     delete ui;
-    //     ui = nullptr;
-    // }
-
-    // Safe cleanup of database manager
-    if (databaseManager)
+    // Safe delete ui
+    if (ui)
     {
-        if (databaseManager->isConnected())
-        {
-            databaseManager->disconnectFromDatabase();
-        }
-        delete databaseManager;
-        databaseManager = nullptr;
+        delete ui;
+        ui = nullptr;
     }
 
-    // // Safe delete weather fetcher
-    // if (weatherFetcher)
-    // {
-    //     delete weatherFetcher;
-    //     weatherFetcher = nullptr;
-    // }
-
-    // free weather workers
-
-    if (zoccaWorker)
+    // Safe delete weather fetcher
+    if (weatherFetcher)
     {
-        zoccaWorker->stop();
-        zoccaWorker->wait();
-        delete zoccaWorker;
-        zoccaWorker = nullptr;
-    }
-    if (romeWorker)
-    {
-        romeWorker->stop();
-        romeWorker->wait();
-        delete romeWorker;
-        romeWorker = nullptr;
-    }
-    if (parisWorker)
-    {
-        parisWorker->stop();
-        parisWorker->wait();
-        delete parisWorker;
-        parisWorker = nullptr;
-    }
-    if (londonWorker)
-    {
-        londonWorker->stop();
-        londonWorker->wait();
-        delete londonWorker;
-        londonWorker = nullptr;
-    }
-    if (newYorkWorker)
-    {
-        newYorkWorker->stop();
-        newYorkWorker->wait();
-        delete newYorkWorker;
-        newYorkWorker = nullptr;
+        delete weatherFetcher;
+        weatherFetcher = nullptr;
     }
 
-    // free latest data
-    if (lastestLondonData)
+    // free ThreadManager
+    if (threadManager)
     {
-        delete lastestLondonData;
-        lastestLondonData = nullptr;
-    }
-    if (lastestNewYorkData)
-    {
-        delete lastestNewYorkData;
-        lastestNewYorkData = nullptr;
-    }
-    if (lastestParisData)
-    {
-        delete lastestParisData;
-        lastestParisData = nullptr;
-    }
-    if (lastestRomeData)
-    {
-        delete lastestRomeData;
-        lastestRomeData = nullptr;
-    }
-    if (lastestZoccaData)
-    {
-        delete lastestZoccaData;
-        lastestZoccaData = nullptr;
+        qDebug() << "Stopping and waiting for threads to finish...";
+        threadManager->stopThreads();
+        threadManager->waitForThreads();
+        delete threadManager;
+        threadManager = nullptr;
     }
 
     // Dừng spinner
@@ -381,14 +163,19 @@ void MainWindow::onButtonClicked()
         ui->tableWidget->setRowCount(0);
         for (const QString &tbl : tables)
         {
-            QSqlQuery q("SELECT temperature, humidity, time FROM " + tbl + " ORDER BY time DESC LIMIT 1");
+            QSqlQuery q("SELECT temperature, humidity, timestamp FROM " + tbl + " ORDER BY id DESC LIMIT 1");
             qDebug() << "Querying table:" << tbl;
             if (q.next())
             {
+                qDebug() << "Latest data from" << tbl << ":"
+                         << "Temperature =" << q.value(0).toString()
+                         << "Humidity =" << q.value(1).toString()
+                         << "Timestamp =" << q.value(2).toString();
                 ui->tableWidget->insertRow(row);
                 ui->tableWidget->setItem(row, 0, new QTableWidgetItem(tbl));
                 ui->tableWidget->setItem(row, 1, new QTableWidgetItem(q.value(0).toString()));
                 ui->tableWidget->setItem(row, 2, new QTableWidgetItem(q.value(1).toString()));
+                qDebug() << "Calculating average data for table:" << tbl;
                 pythonBridge->calculateAverageData(
                     m_hostname,
                     m_databaseName,
@@ -397,6 +184,9 @@ void MainWindow::onButtonClicked()
                     tbl,
                     m_avgTemperature,
                     m_avgHumidity);
+                qDebug() << "Average data for" << tbl << ":"
+                         << "Avg Temperature =" << m_avgTemperature
+                         << "Avg Humidity =" << m_avgHumidity;
                 double avgTemp = m_avgTemperature;
                 double avgHumidity = m_avgHumidity;
                 ui->tableWidget->setItem(row, 3, new QTableWidgetItem(QString::number(avgTemp) + " °C"));

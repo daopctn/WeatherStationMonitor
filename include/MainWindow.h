@@ -18,6 +18,7 @@
 #include "WeatherData.h"
 #include "DatabaseThread.h"
 #include "Spinner.h"
+#include "ThreadManager.h"
 
 class MainWindow : public QMainWindow
 {
@@ -48,26 +49,9 @@ private:
     QString m_username;
     QString m_password;
 
-    QVector<WeatherData> m_weatherDataVector;
-    QMutex m_mutex;
-
-    // WeatherWorker *m_weatherWorker;
-
-    WeatherWorker *zoccaWorker;
-    WeatherWorker *romeWorker;
-    WeatherWorker *parisWorker;
-    WeatherWorker *londonWorker;
-    WeatherWorker *newYorkWorker;
-
-    WeatherData *lastestZoccaData;
-    WeatherData *lastestLondonData;
-    WeatherData *lastestNewYorkData;
-    WeatherData *lastestParisData;
-    WeatherData *lastestRomeData;
-
-    DatabaseThread *dbThread;
-
     Spinner *m_spinner;
+
+    ThreadManager *threadManager;
 };
 
 #endif // MAINWINDOW_H
