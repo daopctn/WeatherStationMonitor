@@ -87,8 +87,8 @@ MainWindow::MainWindow(QWidget *parent)
     // m_weatherWorker->start();
 
     // Thread manager
-    // threadManager = new ThreadManager(this);
-    // threadManager->startThreads();
+    threadManager = new ThreadManager(this);
+    threadManager->startThreads();
 
     // Khởi động spinner
     m_spinner = new Spinner(this);
@@ -117,17 +117,9 @@ MainWindow::~MainWindow()
         ui = nullptr;
     }
 
-    // Safe delete weather fetcher
-    if (weatherFetcher)
-    {
-        delete weatherFetcher;
-        weatherFetcher = nullptr;
-    }
-
     // free ThreadManager
     if (threadManager)
     {
-        qDebug() << "Stopping and waiting for threads to finish...";
         threadManager->stopThreads();
         threadManager->waitForThreads();
         delete threadManager;
