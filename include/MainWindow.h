@@ -16,6 +16,8 @@
 #include "PythonBridge.h"
 #include "WeatherWorker.h"
 #include "WeatherData.h"
+#include "DatabaseThread.h"
+#include "Spinner.h"
 
 class MainWindow : public QMainWindow
 {
@@ -62,6 +64,10 @@ private:
     WeatherData *lastestNewYorkData;
     WeatherData *lastestParisData;
     WeatherData *lastestRomeData;
+
+    DatabaseThread *dbThread;
+
+    Spinner *m_spinner;
 };
 
 #endif // MAINWINDOW_H

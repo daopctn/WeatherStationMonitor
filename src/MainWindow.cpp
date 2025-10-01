@@ -2,8 +2,6 @@
 #include <QDebug>
 #include <QFile>
 #include <PythonBridge.h>
-#include <WeatherWorker.h>
-#include <DatabaseThread.h>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge())
@@ -201,13 +199,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Testing the WeatherWorker class
 
-    QList<Location> locations = {
-        {44.34, 10.99, "Zocca"},
-        {41.89, 12.49, "Rome"},
-        {48.85, 2.35, "Paris"},
-        {51.51, -0.13, "London"},
-        {40.71, -74.01, "New York"}};
-
     // QString apiURL = "https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=a37d50cf573ace59c09175f7f0e7f164";
     // m_weatherWorker = new WeatherWorker(apiURL, m_weatherDataVector, m_mutex, this);
     // connect(m_weatherWorker, &WeatherWorker::finished, this, []()
@@ -240,7 +231,7 @@ MainWindow::MainWindow(QWidget *parent)
             { qDebug() << "New York WeatherWorker thread finished."; });
 
     // database thread
-    DatabaseThread *dbThread = new DatabaseThread(databaseManager, m_weatherDataVector, m_mutex, this);
+    dbThread = new DatabaseThread(databaseManager, m_weatherDataVector, m_mutex, this);
     connect(dbThread, &DatabaseThread::finished, this, []()
             { qDebug() << "DatabaseThread finished."; });
     dbThread->start();
@@ -250,6 +241,10 @@ MainWindow::MainWindow(QWidget *parent)
     parisWorker->start();
     londonWorker->start();
     newYorkWorker->start();
+
+    // Khởi động spinner
+    m_spinner = new Spinner(this);
+    m_spinner->start();
 }
 
 void MainWindow::fetchWeatherForAllLocations()
@@ -274,16 +269,16 @@ MainWindow::~MainWindow()
     //     ui = nullptr;
     // }
 
-    // // Safe cleanup of database manager
-    // if (databaseManager)
-    // {
-    //     if (databaseManager->isConnected())
-    //     {
-    //         databaseManager->disconnectFromDatabase();
-    //     }
-    //     delete databaseManager;
-    //     databaseManager = nullptr;
-    // }
+    // Safe cleanup of database manager
+    if (databaseManager)
+    {
+        if (databaseManager->isConnected())
+        {
+            databaseManager->disconnectFromDatabase();
+        }
+        delete databaseManager;
+        databaseManager = nullptr;
+    }
 
     // // Safe delete weather fetcher
     // if (weatherFetcher)
@@ -293,6 +288,78 @@ MainWindow::~MainWindow()
     // }
 
     // free weather workers
+
+    if (zoccaWorker)
+    {
+        zoccaWorker->stop();
+        zoccaWorker->wait();
+        delete zoccaWorker;
+        zoccaWorker = nullptr;
+    }
+    if (romeWorker)
+    {
+        romeWorker->stop();
+        romeWorker->wait();
+        delete romeWorker;
+        romeWorker = nullptr;
+    }
+    if (parisWorker)
+    {
+        parisWorker->stop();
+        parisWorker->wait();
+        delete parisWorker;
+        parisWorker = nullptr;
+    }
+    if (londonWorker)
+    {
+        londonWorker->stop();
+        londonWorker->wait();
+        delete londonWorker;
+        londonWorker = nullptr;
+    }
+    if (newYorkWorker)
+    {
+        newYorkWorker->stop();
+        newYorkWorker->wait();
+        delete newYorkWorker;
+        newYorkWorker = nullptr;
+    }
+
+    // free latest data
+    if (lastestLondonData)
+    {
+        delete lastestLondonData;
+        lastestLondonData = nullptr;
+    }
+    if (lastestNewYorkData)
+    {
+        delete lastestNewYorkData;
+        lastestNewYorkData = nullptr;
+    }
+    if (lastestParisData)
+    {
+        delete lastestParisData;
+        lastestParisData = nullptr;
+    }
+    if (lastestRomeData)
+    {
+        delete lastestRomeData;
+        lastestRomeData = nullptr;
+    }
+    if (lastestZoccaData)
+    {
+        delete lastestZoccaData;
+        lastestZoccaData = nullptr;
+    }
+
+    // Dừng spinner
+    if (m_spinner)
+    {
+        m_spinner->stop();
+        m_spinner->wait();
+        delete m_spinner;
+        m_spinner = nullptr;
+    }
 }
 
 void MainWindow::onInsertDataDone()

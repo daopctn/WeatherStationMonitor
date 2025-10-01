@@ -24,6 +24,7 @@ set(SOURCES
     src/PythonBridge.cpp
     src/DatabaseManager.cpp
     src/DatabaseThread.cpp
+    src/Spinner.cpp
 )
 
 set(HEADERS
@@ -34,6 +35,7 @@ set(HEADERS
     include/PythonBridge.h
     include/DatabaseManager.h
     include/DatabaseThread.h
+    include/Spinner.h
 )
 
 set(UI_FILES
