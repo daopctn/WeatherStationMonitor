@@ -26,7 +26,7 @@ bool PythonBridge::initialize()
     Py_Initialize();
     if (!Py_IsInitialized())
     {
-        std::cerr << "Failed to initialize Python" << std::endl;
+        qDebug() << "ERROR: Failed to initialize Python";
         return false;
     }
 
@@ -47,7 +47,7 @@ double PythonBridge::convertKelvinToCelsius(double kelvinTemp)
 {
     if (!m_initialized)
     {
-        std::cerr << "Python not initialized!" << std::endl;
+        qDebug() << "ERROR: Python not initialized!";
         return 0.0;
     }
 
@@ -56,7 +56,6 @@ double PythonBridge::convertKelvinToCelsius(double kelvinTemp)
     PyRun_SimpleString("import os");
     PyRun_SimpleString("parent_dir = os.path.dirname(os.getcwd())");
     PyRun_SimpleString("python_path = os.path.join(parent_dir, 'python')");
-    PyRun_SimpleString("print(f'Adding Python path: {python_path}')");
     PyRun_SimpleString("sys.path.insert(0, python_path)");
 
     // Import our processor module and call the function
@@ -64,7 +63,7 @@ double PythonBridge::convertKelvinToCelsius(double kelvinTemp)
     if (pModule == nullptr)
     {
         PyErr_Print();
-        std::cerr << "CRITICAL ERROR: Failed to import processor module!" << std::endl;
+        qDebug() << "ERROR: Failed to import processor module!";
         return 0.0;
     }
 
@@ -72,7 +71,7 @@ double PythonBridge::convertKelvinToCelsius(double kelvinTemp)
     if (pFunc == nullptr || !PyCallable_Check(pFunc))
     {
         PyErr_Print();
-        std::cerr << "CRITICAL ERROR: Cannot find kelvin_to_celsius function!" << std::endl;
+        qDebug() << "ERROR: Cannot find kelvin_to_celsius function!";
         Py_DECREF(pModule);
         return 0.0;
     }
@@ -87,12 +86,12 @@ double PythonBridge::convertKelvinToCelsius(double kelvinTemp)
     if (pValue != nullptr && PyFloat_Check(pValue))
     {
         result = PyFloat_AsDouble(pValue);
-        std::cout << "Python converted " << kelvinTemp << "K to " << result << "°C" << std::endl;
+        qDebug() << "Converted" << kelvinTemp << "K to" << result << "°C";
     }
     else
     {
         PyErr_Print();
-        std::cerr << "CRITICAL ERROR: Python function call failed!" << std::endl;
+        qDebug() << "ERROR: Python function call failed!";
     }
 
     // Cleanup
@@ -111,7 +110,7 @@ double PythonBridge::calculateAverageTemperature(const QString &host,
 {
     if (!m_initialized)
     {
-        std::cerr << "Python not initialized!" << std::endl;
+        qDebug() << "ERROR: Python not initialized!";
         return 0.0;
     }
 
@@ -127,7 +126,7 @@ double PythonBridge::calculateAverageTemperature(const QString &host,
     if (pModule == nullptr)
     {
         PyErr_Print();
-        std::cerr << "Failed to import processor module!" << std::endl;
+        qDebug() << "ERROR: Failed to import processor module!";
         return 0.0;
     }
 
@@ -136,7 +135,7 @@ double PythonBridge::calculateAverageTemperature(const QString &host,
     if (pFunc == nullptr || !PyCallable_Check(pFunc))
     {
         PyErr_Print();
-        std::cerr << "Cannot find calculate_average_from_db function!" << std::endl;
+        qDebug() << "ERROR: Cannot find calculate_average_from_db function!";
         Py_DECREF(pModule);
         return 0.0;
     }
@@ -156,12 +155,12 @@ double PythonBridge::calculateAverageTemperature(const QString &host,
     if (pValue != nullptr && PyFloat_Check(pValue))
     {
         result = PyFloat_AsDouble(pValue);
-        std::cout << "Python calculated average temperature: " << result << "°C" << std::endl;
+        qDebug() << "Avg Temp:" << result << "°C";
     }
     else
     {
         PyErr_Print();
-        std::cerr << "Python function call failed!" << std::endl;
+        qDebug() << "ERROR: Python function call failed!";
     }
 
     // Cleanup
@@ -226,7 +225,7 @@ double PythonBridge::calculateAverageHumidity(const QString &host,
     if (pValue != nullptr && PyFloat_Check(pValue))
     {
         result = PyFloat_AsDouble(pValue);
-        std::cout << "Python calculated average humidity: " << result << "%" << std::endl;
+        // std::cout << "Python calculated average humidity: " << result << "%" << std::endl;
     }
     else
     {
@@ -319,7 +318,6 @@ void PythonBridge::calculateAverageData(const QString &host,
             avgHumidity = PyFloat_AsDouble(humidityObj);
         }
 
-        std::cout << "Python calculated averages - Temperature: " << avgTemp << "°C, Humidity: " << avgHumidity << "%" << std::endl;
     }
     else
     {

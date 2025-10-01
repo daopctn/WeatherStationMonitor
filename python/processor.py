@@ -122,12 +122,12 @@ def calculate_both_averages_from_db(host, database, username, password, table):
                 if temp_values:
                     avg_temp = sum(temp_values) / len(temp_values)
                     avg_temp = float(round(avg_temp, 2))
-                    print(f"Calculated average temperature: {avg_temp:.2f}°C from {len(temp_values)} records")
 
                 if humidity_values:
                     avg_humidity = sum(humidity_values) / len(humidity_values)
                     avg_humidity = float(round(avg_humidity, 2))
-                    print(f"Calculated average humidity: {avg_humidity:.2f}% from {len(humidity_values)} records")
+
+                print(f"{table} - Avg: Temp {avg_temp:.2f}°C ({len(temp_values)}), Humidity {avg_humidity:.2f}% ({len(humidity_values)})")
             else:
                 print("No data found in database")
 

@@ -4,7 +4,6 @@
 DatabaseManager::DatabaseManager(QObject *parent)
     : QObject(parent)
 {
-    m_database = QSqlDatabase::addDatabase("QMYSQL");
 }
 
 DatabaseManager::~DatabaseManager()
@@ -13,12 +12,14 @@ DatabaseManager::~DatabaseManager()
 }
 
 bool DatabaseManager::connectToDatabase(const QString &hostname, const QString &databaseName,
-                                       const QString &username, const QString &password, int port)
+                                       const QString &username, const QString &password,
+                                       int port, const QString &connectionName)
 {
     if (m_database.isOpen()) {
         disconnectFromDatabase();
     }
 
+    m_database = QSqlDatabase::addDatabase("QMYSQL", connectionName);
     m_database.setHostName(hostname);
     m_database.setDatabaseName(databaseName);
     m_database.setUserName(username);
@@ -105,6 +106,11 @@ QSqlQuery DatabaseManager::prepareQuery(const QString &query)
 QString DatabaseManager::getLastError() const
 {
     return m_lastError;
+}
+
+QSqlDatabase DatabaseManager::getDatabase() const
+{
+    return m_database;
 }
 
 void DatabaseManager::setLastError(const QString &error)

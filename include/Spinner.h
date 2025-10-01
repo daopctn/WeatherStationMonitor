@@ -15,12 +15,15 @@ public:
     ~Spinner();
 
     void stop();
+    void pause();
+    void resume();
 
 protected:
     void run() override;
 
 private:
     std::atomic<bool> m_running;
+    std::atomic<bool> m_paused;
     std::chrono::steady_clock::time_point m_startTime;
 };
 

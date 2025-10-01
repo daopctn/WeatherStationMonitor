@@ -33,12 +33,9 @@ private slots:
     void onErrorOccurred(const QString &error);
     // void testDatabaseConnection();
     void onButtonClicked();
-    void fetchWeatherForAllLocations();
 
 private:
     Ui::MainWindow *ui;
-    DatabaseManager *databaseManager;
-    WeatherFetcher *weatherFetcher;
     PythonBridge *pythonBridge;
     QTime m_lastFetchTime;
     QTimer *m_fetchTimer;

@@ -47,7 +47,9 @@ ThreadManager::ThreadManager(QObject *parent)
         m_hostname,
         m_databaseName,
         m_username,
-        m_password);
+        m_password,
+        3306,
+        "ThreadManager_connection");
 
     if (connection)
     {
@@ -91,8 +93,10 @@ ThreadManager::ThreadManager(QObject *parent)
     lastestZoccaData->timestamp = 0;
 
     // query lastest data
-    QSqlQuery q("SELECT temperature, humidity, timestamp FROM london ORDER BY id DESC LIMIT 1");
-    if (q.next())
+    QSqlDatabase db = databaseManager->getDatabase();
+    QSqlQuery q(db);
+    q.prepare("SELECT temperature, humidity, timestamp FROM london ORDER BY id DESC LIMIT 1");
+    if (q.exec() && q.next())
     {
         lastestLondonData->locationName = "London";
         lastestLondonData->temperature = q.value(0).toDouble();

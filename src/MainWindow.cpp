@@ -40,24 +40,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_username = dbConfig.value("user").toString();
     m_password = dbConfig.value("password").toString();
 
-    // Create a quick database connection to get the lastest data of each table
-    // database connection
-    databaseManager = new DatabaseManager(this);
-    bool connection = databaseManager->connectToDatabase(
-        m_hostname,
-        m_databaseName,
-        m_username,
-        m_password);
-
-    if (connection)
-    {
-        qDebug() << "Database connected successfully.";
-    }
-    else
-    {
-        qDebug() << "Database connection failed:" << databaseManager->getLastError();
-    }
-
     // // weather fetcher
     // weatherFetcher = new WeatherFetcher(this, databaseManager, pythonBridge);
 
@@ -95,18 +77,18 @@ MainWindow::MainWindow(QWidget *parent)
     m_spinner->start();
 }
 
-void MainWindow::fetchWeatherForAllLocations()
-{
-    // qDebug() << "Fetching weather for all locations...";
-    QList<Location> locations = {
-        {44.34, 10.99, "Zocca"},
-        {41.89, 12.49, "Rome"},
-        {48.85, 2.35, "Paris"},
-        {51.51, -0.13, "London"},
-        {40.71, -74.01, "New York"}};
+// void MainWindow::fetchWeatherForAllLocations()
+// {
+//     // qDebug() << "Fetching weather for all locations...";
+//     QList<Location> locations = {
+//         {44.34, 10.99, "Zocca"},
+//         {41.89, 12.49, "Rome"},
+//         {48.85, 2.35, "Paris"},
+//         {51.51, -0.13, "London"},
+//         {40.71, -74.01, "New York"}};
 
-    weatherFetcher->fetchMultipleWeather(locations);
-}
+//     weatherFetcher->fetchMultipleWeather(locations);
+// }
 
 MainWindow::~MainWindow()
 {
@@ -124,6 +106,13 @@ MainWindow::~MainWindow()
         threadManager->waitForThreads();
         delete threadManager;
         threadManager = nullptr;
+    }
+
+    // free python bridge
+    if (pythonBridge)
+    {
+        delete pythonBridge;
+        pythonBridge = nullptr;
     }
 
     // Dừng spinner
@@ -147,49 +136,67 @@ void MainWindow::onErrorOccurred(const QString &error)
 
 void MainWindow::onButtonClicked()
 {
-    // update ui
-    if (databaseManager->isConnected())
+    // Pause spinner during operation
+    if (m_spinner)
     {
-        QStringList tables = {"london", "new_york", "paris", "rome", "zocca"};
-        int row = 0;
-        ui->tableWidget->setRowCount(0);
-        for (const QString &tbl : tables)
+        m_spinner->pause();
+    }
+
+    // Create database connection using DatabaseManager
+    DatabaseManager dbManager;
+    bool connected = dbManager.connectToDatabase(
+        m_hostname,
+        m_databaseName,
+        m_username,
+        m_password,
+        3306,
+        "MainWindow_connection");
+
+    if (!connected)
+    {
+        qDebug() << "Database connection failed:" << dbManager.getLastError();
+        return;
+    }
+
+    QSqlDatabase db = dbManager.getDatabase();
+
+    // update ui
+    QStringList tables = {"london", "new_york", "paris", "rome", "zocca"};
+    int row = 0;
+    ui->tableWidget->setRowCount(0);
+    for (const QString &tbl : tables)
+    {
+        QSqlQuery q(db);
+        q.prepare("SELECT temperature, humidity, timestamp FROM " + tbl + " ORDER BY id DESC LIMIT 1");
+        if (q.exec() && q.next())
         {
-            QSqlQuery q("SELECT temperature, humidity, timestamp FROM " + tbl + " ORDER BY id DESC LIMIT 1");
-            qDebug() << "Querying table:" << tbl;
-            if (q.next())
-            {
-                qDebug() << "Latest data from" << tbl << ":"
-                         << "Temperature =" << q.value(0).toString()
-                         << "Humidity =" << q.value(1).toString()
-                         << "Timestamp =" << q.value(2).toString();
-                ui->tableWidget->insertRow(row);
-                ui->tableWidget->setItem(row, 0, new QTableWidgetItem(tbl));
-                ui->tableWidget->setItem(row, 1, new QTableWidgetItem(q.value(0).toString()));
-                ui->tableWidget->setItem(row, 2, new QTableWidgetItem(q.value(1).toString()));
-                qDebug() << "Calculating average data for table:" << tbl;
-                pythonBridge->calculateAverageData(
-                    m_hostname,
-                    m_databaseName,
-                    m_username,
-                    m_password,
-                    tbl,
-                    m_avgTemperature,
-                    m_avgHumidity);
-                qDebug() << "Average data for" << tbl << ":"
-                         << "Avg Temperature =" << m_avgTemperature
-                         << "Avg Humidity =" << m_avgHumidity;
-                double avgTemp = m_avgTemperature;
-                double avgHumidity = m_avgHumidity;
-                ui->tableWidget->setItem(row, 3, new QTableWidgetItem(QString::number(avgTemp) + " °C"));
-                ui->tableWidget->setItem(row, 4, new QTableWidgetItem(QString::number(avgHumidity) + " %"));
-                ui->tableWidget->setItem(row, 5, new QTableWidgetItem(q.value(2).toString()));
-                row++;
-            }
+            ui->tableWidget->insertRow(row);
+            ui->tableWidget->setItem(row, 0, new QTableWidgetItem(tbl));
+            ui->tableWidget->setItem(row, 1, new QTableWidgetItem(q.value(0).toString()));
+            ui->tableWidget->setItem(row, 2, new QTableWidgetItem(q.value(1).toString()));
+            pythonBridge->calculateAverageData(
+                m_hostname,
+                m_databaseName,
+                m_username,
+                m_password,
+                tbl,
+                m_avgTemperature,
+                m_avgHumidity);
+            qDebug() << tbl << "- Temp:" << q.value(0).toString() << "Humidity:" << q.value(1).toString() << "Time:" << q.value(2).toString() << "- Avg Temp:" << m_avgTemperature << "Avg Humidity:" << m_avgHumidity;
+            double avgTemp = m_avgTemperature;
+            double avgHumidity = m_avgHumidity;
+            ui->tableWidget->setItem(row, 3, new QTableWidgetItem(QString::number(avgTemp) + " °C"));
+            ui->tableWidget->setItem(row, 4, new QTableWidgetItem(QString::number(avgHumidity) + " %"));
+            ui->tableWidget->setItem(row, 5, new QTableWidgetItem(q.value(2).toString()));
+            row++;
         }
     }
-    else
+
+    dbManager.disconnectFromDatabase();
+
+    // Resume spinner after operation
+    if (m_spinner)
     {
-        qDebug() << "Database not connected.";
+        m_spinner->resume();
     }
 }

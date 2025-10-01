@@ -17,7 +17,7 @@ public:
 
     bool connectToDatabase(const QString &hostname, const QString &databaseName,
                           const QString &username, const QString &password,
-                          int port = 3306);
+                          int port = 3306, const QString &connectionName = "QMYSQL");
     void disconnectFromDatabase();
     bool isConnected() const;
 
@@ -25,6 +25,7 @@ public:
     QSqlQuery prepareQuery(const QString &query);
 
     QString getLastError() const;
+    QSqlDatabase getDatabase() const;
 
 private:
     QSqlDatabase m_database;

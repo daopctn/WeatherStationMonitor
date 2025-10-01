@@ -9,7 +9,7 @@
 #define COLOR_RESET "\033[0m"
 
 Spinner::Spinner(QObject *parent)
-    : QThread(parent), m_running(false)
+    : QThread(parent), m_running(false), m_paused(false)
 {
 }
 
@@ -30,6 +30,20 @@ void Spinner::run()
 
     while (m_running)
     {
+        if (m_paused)
+        {
+            // Xóa spinner khi tạm dừng
+            for (size_t i = 0; i < lastOutput.length(); ++i)
+            {
+                std::cout << "\b \b";
+            }
+            std::cout.flush();
+            lastOutput = "";
+
+            QThread::msleep(100);
+            continue;
+        }
+
         // Tính thời gian đã trôi qua
         auto now = std::chrono::steady_clock::now();
         auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(now - m_startTime).count();
@@ -65,4 +79,14 @@ void Spinner::run()
 void Spinner::stop()
 {
     m_running = false;
+}
+
+void Spinner::pause()
+{
+    m_paused = true;
+}
+
+void Spinner::resume()
+{
+    m_paused = false;
 }
