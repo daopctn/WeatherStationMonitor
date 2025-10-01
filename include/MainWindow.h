@@ -3,8 +3,6 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-#include <QTime>
-#include <QTimer>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QFile>
@@ -29,16 +27,12 @@ public:
     ~MainWindow();
 
 private slots:
-    void onInsertDataDone();
-    void onErrorOccurred(const QString &error);
-    // void testDatabaseConnection();
+
     void onButtonClicked();
 
 private:
     Ui::MainWindow *ui;
     PythonBridge *pythonBridge;
-    QTime m_lastFetchTime;
-    QTimer *m_fetchTimer;
     double m_avgTemperature;
     double m_avgHumidity;
     QString m_hostname;
