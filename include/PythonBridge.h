@@ -8,19 +8,6 @@ public:
     PythonBridge();
     ~PythonBridge();
 
-    // Main function: convert Kelvin to Celsius using Python
-    double convertKelvinToCelsius(double kelvinTemp);
-    double calculateAverageTemperature(const QString &host,
-                                       const QString &database,
-                                       const QString &username,
-                                       const QString &password,
-                                       const QString &tbl);
-    double calculateAverageHumidity(const QString &host,
-                                    const QString &database,
-                                    const QString &username,
-                                    const QString &password,
-                                    const QString &tbl);
-    
     void calculateAverageData(const QString &host,
                               const QString &database,
                               const QString &username,
@@ -28,7 +15,6 @@ public:
                               const QString &tbl,
                               double &avgTemp,
                               double &avgHumidity);
-    
 
 private:
     bool m_initialized;

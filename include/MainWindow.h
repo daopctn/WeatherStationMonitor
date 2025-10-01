@@ -9,7 +9,6 @@
 #include <QStandardPaths>
 #include <QDir>
 #include "ui/ui_MainWindow.h"
-#include "WeatherFetcher.h"
 #include "DatabaseManager.h"
 #include "PythonBridge.h"
 #include "WeatherWorker.h"

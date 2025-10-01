@@ -19,7 +19,6 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS ${CMAKE_SOURCE_DIR}/ui)
 set(SOURCES
     src/main.cpp
     src/MainWindow.cpp
-    src/WeatherFetcher.cpp
     src/WeatherWorker.cpp
     src/PythonBridge.cpp
     src/DatabaseManager.cpp
@@ -30,7 +29,6 @@ set(SOURCES
 
 set(HEADERS
     include/MainWindow.h
-    include/WeatherFetcher.h
     include/WeatherWorker.h
     include/WeatherData.h
     include/PythonBridge.h
