@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="data">
+    <file>barometer.png</file>
+    <file>humidity.png</file>
+    <file>wind.png</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,23 @@
+<RCC>
+  <qresource prefix="weather_icons">
+    <file>01d@2x.png</file>
+    <file>01n@2x.png</file>
+    <file>02d@2x.png</file>
+    <file>02n@2x.png</file>
+    <file>03d@2x.png</file>
+    <file>03n@2x.png</file>
+    <file>04d@2x.png</file>
+    <file>04n@2x.png</file>
+    <file>09d@2x.png</file>
+    <file>09n@2x.png</file>
+    <file>10d@2x.png</file>
+    <file>10n@2x.png</file>
+    <file>11d@2x.png</file>
+    <file>11n@2x.png</file>
+    <file>13d@2x.png</file>
+    <file>13n@2x.png</file>
+    <file>50d@2x.png</file>
+    <file>50n@2x.png</file>
+    <file>weather_icons.qrc</file>
+  </qresource>
+</RCC>
