@@ -88,7 +88,7 @@ QLabel {
          <number>20</number>
         </property>
         <item>
-         <widget class="QFrame" name="frame_5">
+         <widget class="QFrame" name="frame0">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -111,19 +111,19 @@ QLabel {
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_10">
            <property name="spacing">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item alignment="Qt::AlignLeft">
             <widget class="QFrame" name="frame_12">
@@ -162,7 +162,7 @@ QLabel {
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_2">
+               <widget class="QLabel" name="CityZocca">
                 <property name="font">
                  <font>
                   <pointsize>18</pointsize>
@@ -182,7 +182,7 @@ QLabel {
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="CountryZocca">
                 <property name="font">
                  <font>
                   <pointsize>10</pointsize>
@@ -222,13 +222,13 @@ letter-spacing: 1px;</string>
             <widget class="QFrame" name="frame_13">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
@@ -240,10 +240,10 @@ letter-spacing: 1px;</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_19">
               <property name="spacing">
-               <number>5</number>
+               <number>6</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_12">
+               <widget class="QLabel" name="time0">
                 <property name="font">
                  <font>
                   <pointsize>12</pointsize>
@@ -252,28 +252,30 @@ letter-spacing: 1px;</string>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color: white;</string>
+                 <string notr="true">color: rgba(255, 255, 255, 0.9);</string>
                 </property>
                 <property name="text">
-                 <string>17/10/2025</string>
+                 <string>14:37:52 </string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QLabel" name="label_43">
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="date0">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
+                  <weight>50</weight>
+                  <bold>false</bold>
                  </font>
                 </property>
                 <property name="styleSheet">
-                 <string notr="true">color: rgba(255, 255, 255, 0.9);</string>
+                 <string notr="true">color: white;</string>
                 </property>
                 <property name="text">
-                 <string>14:37:52 </string>
+                 <string>17/10/2025</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -333,7 +335,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_7">
+               <widget class="QLabel" name="icon0">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -358,7 +360,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_58">
+               <widget class="QLabel" name="describe0">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
@@ -437,6 +439,18 @@ letter-spacing: 1px;</string>
               </property>
               <item>
                <widget class="QFrame" name="humidity0">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -445,21 +459,21 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="0,0">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
-                 <item>
+                 <item alignment="Qt::AlignHCenter">
                   <widget class="QLabel" name="label_53">
                    <property name="minimumSize">
                     <size>
@@ -484,8 +498,8 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_24">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="humLabel0">
                    <property name="font">
                     <font>
                      <pointsize>12</pointsize>
@@ -509,6 +523,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="wind0">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -517,19 +543,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_17">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_21">
@@ -556,8 +582,8 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_25">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="windLabel0">
                    <property name="font">
                     <font>
                      <pointsize>12</pointsize>
@@ -581,6 +607,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="press0">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -589,19 +627,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="0,0">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_23">
@@ -628,8 +666,8 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_26">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="pressLabel0">
                    <property name="font">
                     <font>
                      <pointsize>11</pointsize>
@@ -658,7 +696,7 @@ letter-spacing: 1px;</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_4">
+         <widget class="QFrame" name="frame1">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -681,19 +719,19 @@ letter-spacing: 1px;</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_6">
            <property name="spacing">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item alignment="Qt::AlignLeft">
             <widget class="QFrame" name="frame_16">
@@ -732,7 +770,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_3">
+               <widget class="QLabel" name="CityRome">
                 <property name="font">
                  <font>
                   <pointsize>18</pointsize>
@@ -752,7 +790,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_4">
+               <widget class="QLabel" name="CountryRome">
                 <property name="font">
                  <font>
                   <pointsize>10</pointsize>
@@ -798,7 +836,7 @@ letter-spacing: 1px;</string>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
@@ -809,17 +847,32 @@ letter-spacing: 1px;</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_20">
-              <item>
-               <widget class="QLabel" name="label_13">
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="time1">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>17/10/2025</string>
+                 <string>14:37:52 </string>
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QLabel" name="label_45">
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="date1">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>14:37:52 </string>
+                 <string>17/10/2025</string>
                 </property>
                </widget>
               </item>
@@ -876,7 +929,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_17">
+               <widget class="QLabel" name="icon1">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -901,7 +954,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_59">
+               <widget class="QLabel" name="describe1">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
@@ -980,6 +1033,18 @@ letter-spacing: 1px;</string>
               </property>
               <item>
                <widget class="QFrame" name="humidity1">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -988,19 +1053,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_27">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_54">
@@ -1027,10 +1092,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_30">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="humLabel1">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>100%</string>
                    </property>
                   </widget>
                  </item>
@@ -1039,6 +1110,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="wind1">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1047,19 +1130,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_28">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_22">
@@ -1086,10 +1169,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_31">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="windLabel1">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>5 m/s</string>
                    </property>
                   </widget>
                  </item>
@@ -1098,6 +1187,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="press1">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1106,19 +1207,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_29">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_33">
@@ -1145,10 +1246,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_34">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="pressLabel1">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>1013 hPa</string>
                    </property>
                   </widget>
                  </item>
@@ -1162,7 +1269,7 @@ letter-spacing: 1px;</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_3">
+         <widget class="QFrame" name="frame2">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -1185,19 +1292,19 @@ letter-spacing: 1px;</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_7">
            <property name="spacing">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item alignment="Qt::AlignLeft">
             <widget class="QFrame" name="frame_36">
@@ -1236,7 +1343,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_5">
+               <widget class="QLabel" name="CityParis">
                 <property name="font">
                  <font>
                   <pointsize>18</pointsize>
@@ -1256,7 +1363,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_6">
+               <widget class="QLabel" name="CountryParis">
                 <property name="font">
                  <font>
                   <pointsize>10</pointsize>
@@ -1296,13 +1403,13 @@ letter-spacing: 1px;</string>
             <widget class="QFrame" name="frame_29">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
@@ -1313,17 +1420,32 @@ letter-spacing: 1px;</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_21">
-              <item>
-               <widget class="QLabel" name="label_14">
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="time2">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>17/10/2025</string>
+                 <string>14:37:52 </string>
                 </property>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_47">
+               <widget class="QLabel" name="date2">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>14:37:52 </string>
+                 <string>17/10/2025</string>
                 </property>
                </widget>
               </item>
@@ -1380,7 +1502,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_18">
+               <widget class="QLabel" name="icon2">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -1405,7 +1527,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_60">
+               <widget class="QLabel" name="describe2">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
@@ -1484,6 +1606,18 @@ letter-spacing: 1px;</string>
               </property>
               <item>
                <widget class="QFrame" name="humidity2">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1492,19 +1626,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_30">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_55">
@@ -1531,10 +1665,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_36">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="humLabel2">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>100%</string>
                    </property>
                   </widget>
                  </item>
@@ -1543,6 +1683,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="wind2">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1551,19 +1703,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_31">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_29">
@@ -1590,10 +1742,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_38">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="windLabel2">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>1</string>
+                    <string>5 m/s</string>
                    </property>
                   </widget>
                  </item>
@@ -1602,6 +1760,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="press2">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1610,19 +1780,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_32">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_37">
@@ -1649,10 +1819,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_40">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="pressLabel2">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>1013 hPa</string>
                    </property>
                   </widget>
                  </item>
@@ -1666,7 +1842,7 @@ letter-spacing: 1px;</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_2">
+         <widget class="QFrame" name="frame3">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -1689,19 +1865,19 @@ letter-spacing: 1px;</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_8">
            <property name="spacing">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item alignment="Qt::AlignLeft">
             <widget class="QFrame" name="frame_40">
@@ -1740,7 +1916,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_8">
+               <widget class="QLabel" name="CityNewYork">
                 <property name="font">
                  <font>
                   <pointsize>18</pointsize>
@@ -1760,7 +1936,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_9">
+               <widget class="QLabel" name="CountryNewYork">
                 <property name="font">
                  <font>
                   <pointsize>10</pointsize>
@@ -1800,13 +1976,13 @@ letter-spacing: 1px;</string>
             <widget class="QFrame" name="frame_30">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
@@ -1817,17 +1993,32 @@ letter-spacing: 1px;</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_22">
-              <item>
-               <widget class="QLabel" name="label_15">
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="time3">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>17/10/2025</string>
+                 <string>14:37:52 </string>
                 </property>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_49">
+               <widget class="QLabel" name="date3">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>14:37:52 </string>
+                 <string>17/10/2025</string>
                 </property>
                </widget>
               </item>
@@ -1884,7 +2075,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_19">
+               <widget class="QLabel" name="icon3">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -1909,7 +2100,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_61">
+               <widget class="QLabel" name="describe3">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
@@ -1988,6 +2179,18 @@ letter-spacing: 1px;</string>
               </property>
               <item>
                <widget class="QFrame" name="humidity3">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -1996,19 +2199,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_33">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_56">
@@ -2035,10 +2238,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_42">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="humLabel3">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>100%</string>
                    </property>
                   </widget>
                  </item>
@@ -2047,6 +2256,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="wind3">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2055,19 +2276,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_34">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_32">
@@ -2094,10 +2315,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_44">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="windLabel3">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>5 m/s</string>
                    </property>
                   </widget>
                  </item>
@@ -2106,6 +2333,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="press3">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2114,19 +2353,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_35">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_39">
@@ -2153,10 +2392,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_46">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="pressLabel3">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>1013 hPa</string>
                    </property>
                   </widget>
                  </item>
@@ -2170,7 +2415,7 @@ letter-spacing: 1px;</string>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame">
+         <widget class="QFrame" name="frame4">
           <property name="minimumSize">
            <size>
             <width>0</width>
@@ -2193,19 +2438,19 @@ letter-spacing: 1px;</string>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_9">
            <property name="spacing">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin">
-            <number>0</number>
+            <number>5</number>
            </property>
            <item alignment="Qt::AlignLeft">
             <widget class="QFrame" name="frame_44">
@@ -2244,7 +2489,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item>
-               <widget class="QLabel" name="label_10">
+               <widget class="QLabel" name="CityLondon">
                 <property name="font">
                  <font>
                   <pointsize>18</pointsize>
@@ -2264,7 +2509,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item>
-               <widget class="QLabel" name="label_11">
+               <widget class="QLabel" name="CountryLondon">
                 <property name="font">
                  <font>
                   <pointsize>10</pointsize>
@@ -2304,13 +2549,13 @@ letter-spacing: 1px;</string>
             <widget class="QFrame" name="frame_31">
              <property name="minimumSize">
               <size>
-               <width>0</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
-               <width>16777215</width>
+               <width>100</width>
                <height>135</height>
               </size>
              </property>
@@ -2321,17 +2566,32 @@ letter-spacing: 1px;</string>
               <enum>QFrame::Raised</enum>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_23">
-              <item>
-               <widget class="QLabel" name="label_16">
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="time4">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>17/10/2025</string>
+                 <string>14:37:52 </string>
                 </property>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_51">
+               <widget class="QLabel" name="date4">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
                 <property name="text">
-                 <string>14:37:52 </string>
+                 <string>17/10/2025</string>
                 </property>
                </widget>
               </item>
@@ -2388,7 +2648,7 @@ letter-spacing: 1px;</string>
                <number>0</number>
               </property>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_20">
+               <widget class="QLabel" name="icon4">
                 <property name="minimumSize">
                  <size>
                   <width>100</width>
@@ -2413,7 +2673,7 @@ letter-spacing: 1px;</string>
                </widget>
               </item>
               <item alignment="Qt::AlignHCenter">
-               <widget class="QLabel" name="label_62">
+               <widget class="QLabel" name="describe4">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
@@ -2492,6 +2752,18 @@ letter-spacing: 1px;</string>
               </property>
               <item>
                <widget class="QFrame" name="humidity4">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2500,19 +2772,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_36">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_57">
@@ -2539,10 +2811,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_48">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="humLabel4">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>100%</string>
                    </property>
                   </widget>
                  </item>
@@ -2551,6 +2829,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="wind4">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2559,19 +2849,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_37">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_35">
@@ -2598,10 +2888,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_50">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="windLabel4">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>5 m/s</string>
                    </property>
                   </widget>
                  </item>
@@ -2610,6 +2906,18 @@ letter-spacing: 1px;</string>
               </item>
               <item>
                <widget class="QFrame" name="press4">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>120</width>
+                  <height>43</height>
+                 </size>
+                </property>
                 <property name="frameShape">
                  <enum>QFrame::StyledPanel</enum>
                 </property>
@@ -2618,19 +2926,19 @@ letter-spacing: 1px;</string>
                 </property>
                 <layout class="QHBoxLayout" name="horizontalLayout_38">
                  <property name="spacing">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="leftMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="rightMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <property name="bottomMargin">
-                  <number>0</number>
+                  <number>2</number>
                  </property>
                  <item>
                   <widget class="QLabel" name="label_41">
@@ -2657,10 +2965,16 @@ letter-spacing: 1px;</string>
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QLabel" name="label_52">
+                 <item alignment="Qt::AlignHCenter">
+                  <widget class="QLabel" name="pressLabel4">
+                   <property name="font">
+                    <font>
+                     <weight>75</weight>
+                     <bold>true</bold>
+                    </font>
+                   </property>
                    <property name="text">
-                    <string>TextLabel</string>
+                    <string>1013 hPa</string>
                    </property>
                   </widget>
                  </item>
