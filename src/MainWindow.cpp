@@ -181,11 +181,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Setup data update timer to refresh UI with latest weather data
     dataUpdateTimer = new QTimer(this);
-    connect(dataUpdateTimer, &QTimer::timeout, this, &MainWindow::onButtonClicked);
+    connect(dataUpdateTimer, &QTimer::timeout, this, &MainWindow::refreshWeatherUI);
     dataUpdateTimer->start(UI_UPDATE_INTERVAL_MS);
 
     // Update UI immediately on startup
-    onButtonClicked();
+    refreshWeatherUI();
 }
 
 MainWindow::~MainWindow()
@@ -231,11 +231,9 @@ MainWindow::~MainWindow()
     }
 }
 
-void MainWindow::onButtonClicked()
+void MainWindow::refreshWeatherUI()
 {
-    // qDebug() << "onButtonClicked() called - Updating UI...";
-
-    // Pause spinner during operation
+    // Pause spinner during UI refresh operation
     if (m_spinner)
     {
         m_spinner->pause();

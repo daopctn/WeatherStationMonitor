@@ -46,8 +46,11 @@ public:
     static constexpr int WEATHER_ICON_SIZE = 80;            ///< Weather icon display size in pixels
 
 private slots:
-
-    void onButtonClicked();
+    /**
+     * @brief Refreshes UI with latest weather data from database
+     * @note Called automatically by QTimer every UI_UPDATE_INTERVAL_MS (5 seconds)
+     */
+    void refreshWeatherUI();
 
 private:
     QTimer *dataUpdateTimer;
