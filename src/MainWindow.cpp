@@ -266,6 +266,10 @@ void MainWindow::refreshWeatherUI()
     // Update UI for each location
     QStringList tables = {"zocca", "rome", "paris", "new_york", "london"};
 
+    // Timezone offsets in seconds from UTC for each location
+    // zocca: UTC+1, rome: UTC+1, paris: UTC+1, new_york: UTC-5, london: UTC+0
+    QList<int> timezoneOffsets = {7200, 7200, 7200, -14400, 3600};
+
     for (int i = 0; i < tables.size(); ++i)
     {
         QString tableName = tables[i];
@@ -298,10 +302,11 @@ void MainWindow::refreshWeatherUI()
             // Convert Kelvin to Celsius
             double temperature = temperatureKelvin - 273.15;
 
-            // Convert Unix timestamp to formatted date/time strings
-            QDateTime dateTime = QDateTime::fromSecsSinceEpoch(unixTime);
-            QString dateStr = dateTime.toString("dd/MM/yyyy");
-            QString timeStr = dateTime.toString("hh:mm:ss");
+            // Convert Unix timestamp to local time using timezone offset
+            QDateTime dateTimeUTC = QDateTime::fromSecsSinceEpoch(unixTime, Qt::UTC);
+            QDateTime dateTimeLocal = dateTimeUTC.addSecs(timezoneOffsets[i]);
+            QString dateStr = dateTimeLocal.toString("dd/MM/yyyy");
+            QString timeStr = dateTimeLocal.toString("hh:mm:ss");
 
             // Update UI for this location using helper function
             updateLocationUI(ui, i, temperature, description, humidity, windSpeed,

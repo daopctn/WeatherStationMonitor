@@ -23,6 +23,7 @@ struct WeatherData
     long long timestamp;      ///< Time of weather reading (UNIX epoch seconds, UTC)
     long long sunrise;        ///< Sunrise time for this location (UNIX epoch seconds, UTC)
     long long sunset;         ///< Sunset time for this location (UNIX epoch seconds, UTC)
+    int timezone;             ///< Timezone offset in seconds from UTC (e.g., 7200 for UTC+2)
 };
 
 #endif // WEATHERDATA_H
