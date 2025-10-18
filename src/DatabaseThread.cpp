@@ -37,8 +37,8 @@ void DatabaseThread::run()
         // Insert data into database
         insertDataIntoDatabase();
 
-        // Sleep for 15 minutes, but check m_running every second for responsive shutdown
-        for (int i = 0; i < 10 && m_running; ++i)
+        // Sleep for configured interval, but check m_running every second for responsive shutdown
+        for (int i = 0; i < DB_INSERT_INTERVAL_SECONDS && m_running; ++i)
         {
             QThread::sleep(1); // Sleep 1 second at a time
         }

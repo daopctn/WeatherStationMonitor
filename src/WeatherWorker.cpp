@@ -24,14 +24,13 @@ void WeatherWorker::run()
             this, &WeatherWorker::onNetworkReply,
             Qt::DirectConnection); // Important: Use DirectConnection since we're in the same thread
 
+    // Setup timer to fetch weather data periodically
     QTimer timer;
     connect(&timer, &QTimer::timeout,
             this, &WeatherWorker::fetchWeatherData,
             Qt::DirectConnection); // DirectConnection for same thread
 
-    // 5 minutes for production
-
-    timer.start(300000); // 300,000 ms = 5 minutes
+    timer.start(WEATHER_FETCH_INTERVAL_MS);
 
     m_running = true;
 
@@ -71,19 +70,22 @@ void WeatherWorker::fetchWeatherData()
 
 void WeatherWorker::onNetworkReply(QNetworkReply *reply)
 {
+    // Check for network errors (timeout, DNS failure, connection refused, etc.)
     if (reply->error() != QNetworkReply::NoError)
     {
         qWarning() << "Network error:" << reply->errorString();
-        reply->deleteLater();
+        reply->deleteLater();  // Clean up to prevent memory leak
         return;
     }
 
+    // Read all response data and clean up the reply object
     QByteArray responseData = reply->readAll();
     reply->deleteLater();
 
-    // Print raw response for debugging
+    // Print raw response for debugging (commented out for production)
     // qDebug() << "Raw API Response:" << responseData;
 
+    // Parse JSON response from OpenWeatherMap API
     QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
     if (!jsonDoc.isObject())
     {
@@ -91,6 +93,7 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         return;
     }
 
+    // Validate that response contains required data structure
     QJsonObject jsonObj = jsonDoc.object();
     if (!jsonObj.contains("main") || !jsonObj["main"].isObject())
     {
@@ -98,16 +101,19 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         return;
     }
 
+    // Extract temperature, pressure, humidity from "main" object
+    // Note: Temperature is in Kelvin from API
     QJsonObject mainObj = jsonObj["main"].toObject();
     double temperature = mainObj.value("temp").toDouble();
     int pressure = mainObj.value("pressure").toInt();
     double humidity = mainObj.value("humidity").toDouble();
 
-    // Extract wind data
+    // Extract wind speed from "wind" object (in m/s)
     QJsonObject windObj = jsonObj["wind"].toObject();
     double windSpeed = windObj.value("speed").toDouble();
 
-    // Extract weather ID
+    // Extract weather ID from "weather" array (used for icon mapping)
+    // Weather ID determines weather condition (e.g., 800=clear, 804=clouds)
     int weatherId = -1;
     if (jsonObj.contains("weather") && jsonObj["weather"].isArray())
     {
@@ -119,7 +125,7 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         }
     }
 
-    // Extract weather description
+    // Extract human-readable weather description (e.g., "overcast clouds")
     QString description;
     if (jsonObj.contains("weather") && jsonObj["weather"].isArray())
     {
@@ -131,13 +137,16 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         }
     }
 
-    // Convert UNIX timestamp (dt) to QDateTime, then extract QTime
+    // Extract timestamps: current time, sunrise, and sunset (all in UNIX epoch seconds)
+    // These are used to determine day/night for icon selection
     long long unixTime = jsonObj.value("dt").toVariant().toLongLong();
     long long sunriseTime = jsonObj.value("sys").toObject().value("sunrise").toVariant().toLongLong();
     long long sunsetTime = jsonObj.value("sys").toObject().value("sunset").toVariant().toLongLong();
 
+    // Only process if this data is newer than what we already have (prevent duplicates)
     if (unixTime > lastestData->timestamp)
     {
+        // Create new weather data struct with parsed values
         WeatherData newData;
         newData.locationName = jsonObj.value("name").toString();
         newData.temperature = temperature;
@@ -150,6 +159,7 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         newData.sunrise = sunriseTime;
         newData.sunset = sunsetTime;
 
+        // Update latest data cache for duplicate detection
         lastestData->locationName = newData.locationName;
         lastestData->temperature = newData.temperature;
         lastestData->pressure = newData.pressure;
@@ -161,21 +171,25 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         lastestData->sunrise = sunriseTime;
         lastestData->sunset = sunsetTime;
 
-        // Print parsed data for debugging with thread id in 1 qDebug line
+        // Print parsed data for debugging
         qDebug() << "";
         qDebug() << "Parsed Data - Thread ID:" << QThread::currentThreadId()
                  << " Location:" << newData.locationName
                  << " Temp:" << newData.temperature
                  << " Humidity:" << newData.humidity
                  << " Time:" << newData.timestamp;
+
+        // Add new data to shared vector (thread-safe with mutex)
         m_mutex.lock();
         m_weatherDataVector.append(newData);
         m_mutex.unlock();
+
+        // Notify listeners that new weather data is available
         emit weatherDataUpdated();
     }
     else
     {
-        // new line
+        // Data is older than what we have - skip to avoid duplicates in database
         qDebug() << "";
         qDebug() << "Thread ID:" << QThread::currentThreadId()
                  << "Received older data. Ignoring update."

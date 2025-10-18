@@ -80,13 +80,26 @@ public:
     QSqlDatabase getDatabase() const;
 
 private:
-    QSqlDatabase m_database;
-    QString m_lastError;
+    QSqlDatabase m_database;  ///< Qt database connection object
+    QString m_lastError;      ///< Stores the last error message for retrieval
 
+    /**
+     * @brief Internal method to store error messages
+     * @param error Error message to store
+     */
     void setLastError(const QString &error);
 
 signals:
+    /**
+     * @brief Emitted when database connection status changes
+     * @param connected true if connected, false if disconnected
+     */
     void connectionStatusChanged(bool connected);
+
+    /**
+     * @brief Emitted when a database error occurs
+     * @param error Error message describing what went wrong
+     */
     void errorOccurred(const QString &error);
 };
 

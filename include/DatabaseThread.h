@@ -27,6 +27,9 @@ public:
     void run() override;
     void stop();
 
+    // Configuration Constants
+    static constexpr int DB_INSERT_INTERVAL_SECONDS = 10;   ///< Insert weather data to database every 10 seconds
+
 signals:
     void insertDataDone();
     void errorOccurred(const QString &error);

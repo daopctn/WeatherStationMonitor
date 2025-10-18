@@ -33,12 +33,19 @@ ThreadManager::ThreadManager(QObject *parent)
     }
 
     QJsonObject obj = doc.object();
-    // Database
+
+    // Extract database configuration
     QJsonObject dbConfig = obj.value("Database").toObject();
     QString m_hostname = dbConfig.value("host").toString();
     QString m_databaseName = dbConfig.value("name").toString();
     QString m_username = dbConfig.value("user").toString();
     QString m_password = dbConfig.value("password").toString();
+
+    // Extract Weather API configuration
+    QJsonObject weatherAPIConfig = obj.value("WeatherAPI").toObject();
+    QString apiKey = weatherAPIConfig.value("api_key").toString();
+    QString baseUrl = weatherAPIConfig.value("base_url").toString();
+    QJsonObject locations = weatherAPIConfig.value("locations").toObject();
 
     // Create a quick database connection to get the lastest data of each table
     // database connection
@@ -92,116 +99,52 @@ ThreadManager::ThreadManager(QObject *parent)
     lastestZoccaData->humidity = 0.0;
     lastestZoccaData->timestamp = 0;
 
-    // query lastest data
+    // Query latest data from database for each location
+    // This prevents duplicate API calls by checking timestamp before fetching new data
     QSqlDatabase db = databaseManager->getDatabase();
     QSqlQuery q(db);
-    q.prepare("SELECT temperature, humidity, timestamp FROM london ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestLondonData->locationName = "London";
-        lastestLondonData->temperature = q.value(0).toDouble();
-        lastestLondonData->humidity = q.value(1).toDouble();
-        lastestLondonData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest London Data:"
-                 << " Temp:" << lastestLondonData->temperature
-                 << " Humidity:" << lastestLondonData->humidity
-                 << " Time:" << lastestLondonData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in london table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM new_york ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestNewYorkData->locationName = "New York";
-        lastestNewYorkData->temperature = q.value(0).toDouble();
-        lastestNewYorkData->humidity = q.value(1).toDouble();
-        lastestNewYorkData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest New York Data:"
-                 << " Temp:" << lastestNewYorkData->temperature
-                 << " Humidity:" << lastestNewYorkData->humidity
-                 << " Time:" << lastestNewYorkData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in new_york table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM paris ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestParisData->locationName = "Paris";
-        lastestParisData->temperature = q.value(0).toDouble();
-        lastestParisData->humidity = q.value(1).toDouble();
-        lastestParisData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest Paris Data:"
-                 << " Temp:" << lastestParisData->temperature
-                 << " Humidity:" << lastestParisData->humidity
-                 << " Time:" << lastestParisData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in paris table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM rome ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestRomeData->locationName = "Rome";
-        lastestRomeData->temperature = q.value(0).toDouble();
-        lastestRomeData->humidity = q.value(1).toDouble();
-        lastestRomeData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest Rome Data:"
-                 << " Temp:" << lastestRomeData->temperature
-                 << " Humidity:" << lastestRomeData->humidity
-                 << " Time:" << lastestRomeData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in rome table.";
-    }
-    q.finish();
-    q.prepare("SELECT temperature, humidity, timestamp FROM zocca ORDER BY id DESC LIMIT 1");
-    if (q.exec() && q.next())
-    {
-        lastestZoccaData->locationName = "Zocca";
-        lastestZoccaData->temperature = q.value(0).toDouble();
-        lastestZoccaData->humidity = q.value(1).toDouble();
-        lastestZoccaData->timestamp = q.value(2).toLongLong();
-        qDebug() << "Lastest Zocca Data:"
-                 << " Temp:" << lastestZoccaData->temperature
-                 << " Humidity:" << lastestZoccaData->humidity
-                 << " Time:" << lastestZoccaData->timestamp;
-    }
-    else
-    {
-        qDebug() << "No data found in zocca table.";
-    }
-    q.finish();
 
-    zoccaWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=a37d50cf573ace59c09175f7f0e7f164", weatherDataVector, mutex, this);
+    loadLatestDataForLocation(q, "london", lastestLondonData);
+    loadLatestDataForLocation(q, "new_york", lastestNewYorkData);
+    loadLatestDataForLocation(q, "paris", lastestParisData);
+    loadLatestDataForLocation(q, "rome", lastestRomeData);
+    loadLatestDataForLocation(q, "zocca", lastestZoccaData);
+
+    // Build API URLs from configuration (no hardcoded coordinates or API keys)
+    // Format: https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=KEY
+    auto buildWeatherURL = [&](const QString& locationKey) -> QString {
+        QJsonObject loc = locations.value(locationKey).toObject();
+        double lat = loc.value("latitude").toDouble();
+        double lon = loc.value("longitude").toDouble();
+        return QString("%1/weather?lat=%2&lon=%3&appid=%4")
+            .arg(baseUrl)
+            .arg(lat)
+            .arg(lon)
+            .arg(apiKey);
+    };
+
+    // Create weather worker threads for each location
+    zoccaWorker = new WeatherWorker(buildWeatherURL("zocca"), weatherDataVector, mutex, this);
     zoccaWorker->lastestData = lastestZoccaData;
     connect(zoccaWorker, &WeatherWorker::finished, this, []()
             { qDebug() << "Zocca WeatherWorker thread finished."; });
 
-    romeWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=41.89&lon=12.49&appid=a37d50cf573ace59c09175f7f0e7f164", weatherDataVector, mutex, this);
+    romeWorker = new WeatherWorker(buildWeatherURL("rome"), weatherDataVector, mutex, this);
     romeWorker->lastestData = lastestRomeData;
     connect(romeWorker, &WeatherWorker::finished, this, []()
             { qDebug() << "Rome WeatherWorker thread finished."; });
 
-    parisWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=48.85&lon=2.35&appid=a37d50cf573ace59c09175f7f0e7f164", weatherDataVector, mutex, this);
+    parisWorker = new WeatherWorker(buildWeatherURL("paris"), weatherDataVector, mutex, this);
     parisWorker->lastestData = lastestParisData;
     connect(parisWorker, &WeatherWorker::finished, this, []()
             { qDebug() << "Paris WeatherWorker thread finished."; });
 
-    londonWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=51.51&lon=-0.13&appid=a37d50cf573ace59c09175f7f0e7f164", weatherDataVector, mutex, this);
+    londonWorker = new WeatherWorker(buildWeatherURL("london"), weatherDataVector, mutex, this);
     londonWorker->lastestData = lastestLondonData;
     connect(londonWorker, &WeatherWorker::finished, this, []()
             { qDebug() << "London WeatherWorker thread finished."; });
 
-    newYorkWorker = new WeatherWorker("https://api.openweathermap.org/data/2.5/weather?lat=40.71&lon=-74.01&appid=a37d50cf573ace59c09175f7f0e7f164", weatherDataVector, mutex, this);
+    newYorkWorker = new WeatherWorker(buildWeatherURL("new_york"), weatherDataVector, mutex, this);
     newYorkWorker->lastestData = lastestNewYorkData;
     connect(newYorkWorker, &WeatherWorker::finished, this, []()
             { qDebug() << "New York WeatherWorker thread finished."; });
@@ -346,4 +289,47 @@ void ThreadManager::waitForThreads()
         delete lastestZoccaData;
         lastestZoccaData = nullptr;
     }
+}
+
+void ThreadManager::loadLatestDataForLocation(QSqlQuery &query, const QString &tableName, WeatherData *data)
+{
+    // Prepare query to fetch most recent weather record from specified table
+    // Orders by ID descending to get latest entry, limits to 1 result
+    QString queryStr = QString("SELECT temperature, humidity, timestamp FROM %1 ORDER BY id DESC LIMIT 1").arg(tableName);
+    query.prepare(queryStr);
+
+    if (query.exec() && query.next())
+    {
+        // Successfully retrieved data - populate WeatherData struct
+        data->temperature = query.value(0).toDouble();
+        data->humidity = query.value(1).toDouble();
+        data->timestamp = query.value(2).toLongLong();
+
+        // Capitalize first letter of location name for display
+        QString displayName = tableName;
+        displayName[0] = displayName[0].toUpper();
+        // Handle underscore in "new_york" -> "New York"
+        displayName.replace('_', ' ');
+        if (displayName.contains(' ')) {
+            QStringList parts = displayName.split(' ');
+            for (QString &part : parts) {
+                part[0] = part[0].toUpper();
+            }
+            displayName = parts.join(' ');
+        }
+        data->locationName = displayName;
+
+        qDebug() << "Latest" << displayName << "Data:"
+                 << " Temp:" << data->temperature
+                 << " Humidity:" << data->humidity
+                 << " Time:" << data->timestamp;
+    }
+    else
+    {
+        // No data found in table - this is normal for first run
+        qDebug() << "No data found in" << tableName << "table.";
+    }
+
+    // Clean up query for next use
+    query.finish();
 }

@@ -44,6 +44,78 @@ namespace {
         // Return resource path
         return QString(":/weather_icons/%1%2@2x.png").arg(iconCode, dayNight);
     }
+
+    /**
+     * @brief Updates UI widgets for a specific location with weather data
+     * Reduces code duplication by centralizing UI update logic for all 5 locations
+     */
+    void updateLocationUI(Ui::MainWindow *ui, int locationIndex,
+                         double temperature, const QString &description,
+                         double humidity, double windSpeed, int pressure,
+                         const QString &dateStr, const QString &timeStr,
+                         int weatherId, long long unixTime,
+                         long long sunrise, long long sunset)
+    {
+        // Get appropriate weather icon
+        QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
+        QPixmap weatherIcon(iconPath);
+        QPixmap scaledIcon = weatherIcon.scaled(MainWindow::WEATHER_ICON_SIZE, MainWindow::WEATHER_ICON_SIZE,
+                                                Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        // Update UI widgets based on location index
+        switch (locationIndex) {
+        case 0:
+            ui->temp0->setText(QString::number(temperature, 'f', 1) + "°C");
+            ui->describe0->setText(description);
+            ui->humLabel0->setText(QString::number(humidity, 'f', 0) + "%");
+            ui->windLabel0->setText(QString::number(windSpeed, 'f', 1) + " km/h");
+            ui->pressLabel0->setText(QString::number(pressure) + " hPa");
+            ui->date0->setText(dateStr);
+            ui->time0->setText(timeStr);
+            ui->icon0->setPixmap(scaledIcon);
+            break;
+        case 1:
+            ui->temp1->setText(QString::number(temperature, 'f', 1) + "°C");
+            ui->describe1->setText(description);
+            ui->humLabel1->setText(QString::number(humidity, 'f', 0) + "%");
+            ui->windLabel1->setText(QString::number(windSpeed, 'f', 1) + " km/h");
+            ui->pressLabel1->setText(QString::number(pressure) + " hPa");
+            ui->date1->setText(dateStr);
+            ui->time1->setText(timeStr);
+            ui->icon1->setPixmap(scaledIcon);
+            break;
+        case 2:
+            ui->temp2->setText(QString::number(temperature, 'f', 1) + "°C");
+            ui->describe2->setText(description);
+            ui->humLabel2->setText(QString::number(humidity, 'f', 0) + "%");
+            ui->windLabel2->setText(QString::number(windSpeed, 'f', 1) + " km/h");
+            ui->pressLabel2->setText(QString::number(pressure) + " hPa");
+            ui->date2->setText(dateStr);
+            ui->time2->setText(timeStr);
+            ui->icon2->setPixmap(scaledIcon);
+            break;
+        case 3:
+            ui->temp3->setText(QString::number(temperature, 'f', 1) + "°C");
+            ui->describe3->setText(description);
+            ui->humLabel3->setText(QString::number(humidity, 'f', 0) + "%");
+            ui->windLabel3->setText(QString::number(windSpeed, 'f', 1) + " km/h");
+            ui->pressLabel3->setText(QString::number(pressure) + " hPa");
+            ui->date3->setText(dateStr);
+            ui->time3->setText(timeStr);
+            ui->icon3->setPixmap(scaledIcon);
+            break;
+        case 4:
+            ui->temp4->setText(QString::number(temperature, 'f', 1) + "°C");
+            ui->describe4->setText(description);
+            ui->humLabel4->setText(QString::number(humidity, 'f', 0) + "%");
+            ui->windLabel4->setText(QString::number(windSpeed, 'f', 1) + " km/h");
+            ui->pressLabel4->setText(QString::number(pressure) + " hPa");
+            ui->date4->setText(dateStr);
+            ui->time4->setText(timeStr);
+            ui->icon4->setPixmap(scaledIcon);
+            break;
+        }
+    }
 }
 
 MainWindow::MainWindow(QWidget *parent)
@@ -107,10 +179,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_spinner = new Spinner(this);
     m_spinner->start();
 
-    // Setup data update timer
+    // Setup data update timer to refresh UI with latest weather data
     dataUpdateTimer = new QTimer(this);
     connect(dataUpdateTimer, &QTimer::timeout, this, &MainWindow::onButtonClicked);
-    dataUpdateTimer->start(5000); // Cập nhật mỗi 60 giây
+    dataUpdateTimer->start(UI_UPDATE_INTERVAL_MS);
 
     // Update UI immediately on startup
     onButtonClicked();
@@ -228,91 +300,14 @@ void MainWindow::onButtonClicked()
             // Convert Kelvin to Celsius
             double temperature = temperatureKelvin - 273.15;
 
-            // Convert Unix timestamp to QDateTime
+            // Convert Unix timestamp to formatted date/time strings
             QDateTime dateTime = QDateTime::fromSecsSinceEpoch(unixTime);
             QString dateStr = dateTime.toString("dd/MM/yyyy");
             QString timeStr = dateTime.toString("hh:mm:ss");
 
-            // Update UI labels based on index
-            switch (i)
-            {
-            case 0:
-            {
-                ui->temp0->setText(QString::number(temperature, 'f', 1) + "°C");
-                ui->describe0->setText(description);
-                ui->humLabel0->setText(QString::number(humidity, 'f', 0) + "%");
-                ui->windLabel0->setText(QString::number(windSpeed, 'f', 1) + " km/h");
-                ui->pressLabel0->setText(QString::number(pressure) + " hPa");
-                ui->date0->setText(dateStr);
-                ui->time0->setText(timeStr);
-
-                // Update weather icon dynamically based on weatherId and time
-                QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
-                QPixmap weatherIcon(iconPath);
-                ui->icon0->setPixmap(weatherIcon.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                break;
-            }
-            case 1:
-            {
-                ui->temp1->setText(QString::number(temperature, 'f', 1) + "°C");
-                ui->describe1->setText(description);
-                ui->humLabel1->setText(QString::number(humidity, 'f', 0) + "%");
-                ui->windLabel1->setText(QString::number(windSpeed, 'f', 1) + " km/h");
-                ui->pressLabel1->setText(QString::number(pressure) + " hPa");
-                ui->date1->setText(dateStr);
-                ui->time1->setText(timeStr);
-
-                QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
-                QPixmap weatherIcon(iconPath);
-                ui->icon1->setPixmap(weatherIcon.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                break;
-            }
-            case 2:
-            {
-                ui->temp2->setText(QString::number(temperature, 'f', 1) + "°C");
-                ui->describe2->setText(description);
-                ui->humLabel2->setText(QString::number(humidity, 'f', 0) + "%");
-                ui->windLabel2->setText(QString::number(windSpeed, 'f', 1) + " km/h");
-                ui->pressLabel2->setText(QString::number(pressure) + " hPa");
-                ui->date2->setText(dateStr);
-                ui->time2->setText(timeStr);
-
-                QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
-                QPixmap weatherIcon(iconPath);
-                ui->icon2->setPixmap(weatherIcon.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                break;
-            }
-            case 3:
-            {
-                ui->temp3->setText(QString::number(temperature, 'f', 1) + "°C");
-                ui->describe3->setText(description);
-                ui->humLabel3->setText(QString::number(humidity, 'f', 0) + "%");
-                ui->windLabel3->setText(QString::number(windSpeed, 'f', 1) + " km/h");
-                ui->pressLabel3->setText(QString::number(pressure) + " hPa");
-                ui->date3->setText(dateStr);
-                ui->time3->setText(timeStr);
-
-                QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
-                QPixmap weatherIcon(iconPath);
-                ui->icon3->setPixmap(weatherIcon.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                break;
-            }
-            case 4:
-            {
-                ui->temp4->setText(QString::number(temperature, 'f', 1) + "°C");
-                ui->describe4->setText(description);
-                ui->humLabel4->setText(QString::number(humidity, 'f', 0) + "%");
-                ui->windLabel4->setText(QString::number(windSpeed, 'f', 1) + " km/h");
-                ui->pressLabel4->setText(QString::number(pressure) + " hPa");
-                ui->date4->setText(dateStr);
-                ui->time4->setText(timeStr);
-
-                QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
-                QPixmap weatherIcon(iconPath);
-                ui->icon4->setPixmap(weatherIcon.scaled(80, 80, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                break;
-            }
-            }
+            // Update UI for this location using helper function
+            updateLocationUI(ui, i, temperature, description, humidity, windSpeed,
+                           pressure, dateStr, timeStr, weatherId, unixTime, sunrise, sunset);
         }
     }
 
