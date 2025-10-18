@@ -100,26 +100,69 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
 
     QJsonObject mainObj = jsonObj["main"].toObject();
     double temperature = mainObj.value("temp").toDouble();
+    int pressure = mainObj.value("pressure").toInt();
     double humidity = mainObj.value("humidity").toDouble();
+
+    // Extract wind data
+    QJsonObject windObj = jsonObj["wind"].toObject();
+    double windSpeed = windObj.value("speed").toDouble();
+
+    // Extract weather ID
+    int weatherId = -1;
+    if (jsonObj.contains("weather") && jsonObj["weather"].isArray())
+    {
+        QJsonArray weatherArray = jsonObj["weather"].toArray();
+        if (!weatherArray.isEmpty())
+        {
+            QJsonObject weatherObj = weatherArray[0].toObject();
+            weatherId = weatherObj.value("id").toInt();
+        }
+    }
+
+    // Extract weather description
+    QString description;
+    if (jsonObj.contains("weather") && jsonObj["weather"].isArray())
+    {
+        QJsonArray weatherArray = jsonObj["weather"].toArray();
+        if (!weatherArray.isEmpty())
+        {
+            QJsonObject weatherObj = weatherArray[0].toObject();
+            description = weatherObj.value("description").toString();
+        }
+    }
 
     // Convert UNIX timestamp (dt) to QDateTime, then extract QTime
     long long unixTime = jsonObj.value("dt").toVariant().toLongLong();
+    long long sunriseTime = jsonObj.value("sys").toObject().value("sunrise").toVariant().toLongLong();
+    long long sunsetTime = jsonObj.value("sys").toObject().value("sunset").toVariant().toLongLong();
 
     if (unixTime > lastestData->timestamp)
     {
         WeatherData newData;
         newData.locationName = jsonObj.value("name").toString();
         newData.temperature = temperature;
+        newData.pressure = pressure;
         newData.humidity = humidity;
+        newData.windSpeed = windSpeed;
+        newData.weatherId = weatherId;
+        newData.description = description;
         newData.timestamp = unixTime;
+        newData.sunrise = sunriseTime;
+        newData.sunset = sunsetTime;
 
         lastestData->locationName = newData.locationName;
         lastestData->temperature = newData.temperature;
+        lastestData->pressure = newData.pressure;
         lastestData->humidity = newData.humidity;
+        lastestData->windSpeed = newData.windSpeed;
+        lastestData->weatherId = newData.weatherId;
+        lastestData->description = newData.description;
         lastestData->timestamp = newData.timestamp;
+        lastestData->sunrise = sunriseTime;
+        lastestData->sunset = sunsetTime;
 
         // Print parsed data for debugging with thread id in 1 qDebug line
-
+        qDebug() << "";
         qDebug() << "Parsed Data - Thread ID:" << QThread::currentThreadId()
                  << " Location:" << newData.locationName
                  << " Temp:" << newData.temperature
@@ -132,6 +175,8 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
     }
     else
     {
+        // new line
+        qDebug() << "";
         qDebug() << "Thread ID:" << QThread::currentThreadId()
                  << "Received older data. Ignoring update."
                  << " New timestamp:" << unixTime

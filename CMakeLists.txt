@@ -42,10 +42,16 @@ set(UI_FILES
     ui/MainWindow.ui
 )
 
+set(RESOURCES
+    resources/icons/data/data.qrc
+    resources/icons/weather/weather_icons.qrc
+)
+
 add_executable(${PROJECT_NAME}
     ${SOURCES}
     ${HEADERS}
     ${UI_FILES}
+    ${RESOURCES}
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE

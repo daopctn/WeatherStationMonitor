@@ -77,22 +77,31 @@ void DatabaseThread::insertDataIntoDatabase()
         QString sanitizedTableName = data.locationName.toLower();
         sanitizedTableName.replace(QRegularExpression("[^a-z0-9_]"), "_");
 
-        QString query = QString("INSERT INTO %1 (temperature, humidity, timestamp) "
-                                "VALUES (%2, %3, %4)")
+        QString query = QString("INSERT INTO %1 (temperature, pressure, humidity, windSpeed, weather_id, description, timestamp, sunrise, sunset) "
+                                "VALUES (%2, %3, %4, %5, %6, '%7', %8, %9, %10)")
                             .arg(sanitizedTableName)
                             .arg(data.temperature)
+                            .arg(data.pressure)
                             .arg(data.humidity)
-                            .arg(data.timestamp);
+                            .arg(data.windSpeed)
+                            .arg(data.weatherId)
+                            .arg(data.description)
+                            .arg(data.timestamp)
+                            .arg(data.sunrise)
+                            .arg(data.sunset);
 
         if (!m_dbManager->executeQuery(query))
         {
             emit errorOccurred("Failed to insert data: " + m_dbManager->getLastError());
+            qDebug() << "";
             qDebug() << "Database insert error:" << m_dbManager->getLastError();
         }
         else
         {
+            qDebug() << "";
             qDebug() << "Inserted weather data for" << data.locationName
-                     << "- Temp:" << data.temperature << "C, Humidity:" << data.humidity << "%";
+                     << "- Temp:" << data.temperature << "C, Humidity:" << data.humidity << "%"
+                     << ", Pressure:" << data.pressure << "hPa, Wind:" << data.windSpeed << "km/h";
         }
     }
 

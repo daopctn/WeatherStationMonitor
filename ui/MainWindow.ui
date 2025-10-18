@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>974</width>
+    <width>848</width>
     <height>1025</height>
    </rect>
   </property>
@@ -338,14 +338,14 @@ letter-spacing: 1px;</string>
                <widget class="QLabel" name="icon0">
                 <property name="minimumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="text">
@@ -356,6 +356,20 @@ letter-spacing: 1px;</string>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="temp0">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>23</string>
                 </property>
                </widget>
               </item>
@@ -473,7 +487,7 @@ letter-spacing: 1px;</string>
                  <property name="bottomMargin">
                   <number>2</number>
                  </property>
-                 <item alignment="Qt::AlignHCenter">
+                 <item alignment="Qt::AlignLeft">
                   <widget class="QLabel" name="label_53">
                    <property name="minimumSize">
                     <size>
@@ -557,7 +571,7 @@ letter-spacing: 1px;</string>
                  <property name="bottomMargin">
                   <number>2</number>
                  </property>
-                 <item>
+                 <item alignment="Qt::AlignLeft">
                   <widget class="QLabel" name="label_21">
                    <property name="minimumSize">
                     <size>
@@ -641,7 +655,7 @@ letter-spacing: 1px;</string>
                  <property name="bottomMargin">
                   <number>2</number>
                  </property>
-                 <item>
+                 <item alignment="Qt::AlignLeft">
                   <widget class="QLabel" name="label_23">
                    <property name="minimumSize">
                     <size>
@@ -932,14 +946,14 @@ letter-spacing: 1px;</string>
                <widget class="QLabel" name="icon1">
                 <property name="minimumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="text">
@@ -950,6 +964,20 @@ letter-spacing: 1px;</string>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="temp1">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>23</string>
                 </property>
                </widget>
               </item>
@@ -1505,14 +1533,14 @@ letter-spacing: 1px;</string>
                <widget class="QLabel" name="icon2">
                 <property name="minimumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="text">
@@ -1523,6 +1551,20 @@ letter-spacing: 1px;</string>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="temp2">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>23</string>
                 </property>
                </widget>
               </item>
@@ -2078,14 +2120,14 @@ letter-spacing: 1px;</string>
                <widget class="QLabel" name="icon3">
                 <property name="minimumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="text">
@@ -2096,6 +2138,20 @@ letter-spacing: 1px;</string>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="temp3">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>23</string>
                 </property>
                </widget>
               </item>
@@ -2651,14 +2707,14 @@ letter-spacing: 1px;</string>
                <widget class="QLabel" name="icon4">
                 <property name="minimumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>100</width>
-                  <height>100</height>
+                  <width>80</width>
+                  <height>80</height>
                  </size>
                 </property>
                 <property name="text">
@@ -2669,6 +2725,20 @@ letter-spacing: 1px;</string>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item alignment="Qt::AlignHCenter">
+               <widget class="QLabel" name="temp4">
+                <property name="font">
+                 <font>
+                  <pointsize>14</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>23</string>
                 </property>
                </widget>
               </item>

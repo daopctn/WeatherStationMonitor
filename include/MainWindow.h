@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QStandardPaths>
 #include <QDir>
+#include <QTimer>
 #include "ui/ui_MainWindow.h"
 #include "DatabaseManager.h"
 #include "PythonBridge.h"
@@ -30,6 +31,7 @@ private slots:
     void onButtonClicked();
 
 private:
+    QTimer *dataUpdateTimer;
     Ui::MainWindow *ui;
     PythonBridge *pythonBridge;
     double m_avgTemperature;
@@ -42,6 +44,7 @@ private:
     Spinner *m_spinner;
 
     ThreadManager *threadManager;
+    DatabaseManager *m_dbManager;  // Persistent database connection
 };
 
 #endif // MAINWINDOW_H
