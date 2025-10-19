@@ -507,17 +507,25 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     chart->addSeries(humMarkers);
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    // Set chart title with location name
+    // Set chart title with location name - white text to match theme
     chart->setTitle(locationName);
     QFont titleFont;
-    titleFont.setPointSize(10);
+    titleFont.setPointSize(11);
     titleFont.setBold(true);
     chart->setTitleFont(titleFont);
+    chart->setTitleBrush(QBrush(Qt::white));  // White title
 
-    // Remove margins for cleaner look and minimize spacing
-    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    // Make chart background transparent - the QChartView provides the frosted glass effect
+    chart->setBackgroundBrush(QBrush(Qt::transparent));
+    chart->setBackgroundPen(QPen(Qt::transparent));
     chart->setBackgroundRoundness(0);
-    chart->setMargins(QMargins(5, 5, 5, 5));  // Minimal margins around the entire chart
+
+    // Keep plot area transparent
+    chart->setPlotAreaBackgroundVisible(false);
+
+    // Remove all margins to maximize chart space
+    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    chart->setMargins(QMargins(0, 0, 0, 0));
 
     // Create X-axis - no grid, no labels (tooltips will show exact timestamps)
     QDateTimeAxis *axisX = new QDateTimeAxis();
@@ -525,7 +533,7 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     axisX->setGridLineVisible(false);  // Hide grid lines
     axisX->setLineVisible(false);  // Hide axis line itself
 
-    // Set readable font for Y-axis
+    // Set compact font for Y-axis to minimize space
     QFont axisFont;
     axisFont.setPointSize(7);
 
@@ -536,12 +544,12 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     tempMarkers->attachAxis(axisX);
     humMarkers->attachAxis(axisX);
 
-    // Create Y-axis for Temperature (left side)
+    // Create Y-axis for Temperature (left side) - white text to match theme
     QValueAxis *axisYTemp = new QValueAxis();
     axisYTemp->setLabelFormat("%.0f");
     axisYTemp->setLabelsFont(axisFont);
-    axisYTemp->setLinePenColor(QColor(230, 126, 34)); // Orange color to match temperature
-    axisYTemp->setLabelsColor(QColor(230, 126, 34));
+    axisYTemp->setLinePenColor(QColor(255, 255, 255, 80));  // Subtle white line
+    axisYTemp->setLabelsColor(Qt::white);  // White labels
     axisYTemp->setGridLineVisible(false);  // Remove grid lines
     axisYTemp->setRange(-30, 60);  // Fixed range: -30°C to 60°C
 
@@ -550,12 +558,12 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     zeroLine->attachAxis(axisYTemp);  // Attach zero line to temperature Y-axis
     tempMarkers->attachAxis(axisYTemp);  // Attach markers to same axis
 
-    // Create Y-axis for Humidity (right side)
+    // Create Y-axis for Humidity (right side) - white text to match theme
     QValueAxis *axisYHum = new QValueAxis();
     axisYHum->setLabelFormat("%.0f");
     axisYHum->setLabelsFont(axisFont);
-    axisYHum->setLinePenColor(QColor(41, 128, 185)); // Blue color to match humidity
-    axisYHum->setLabelsColor(QColor(41, 128, 185));
+    axisYHum->setLinePenColor(QColor(255, 255, 255, 80));  // Subtle white line
+    axisYHum->setLabelsColor(Qt::white);  // White labels
     axisYHum->setGridLineVisible(false);  // Remove grid lines
     axisYHum->setRange(0, 100);  // Fixed range: 0% to 100%
 
@@ -563,23 +571,10 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     humSeries->attachAxis(axisYHum);
     humMarkers->attachAxis(axisYHum);  // Attach markers to same axis
 
-    // Configure legend - make it very compact
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignBottom);
-    QFont legendFont = chart->legend()->font();
-    legendFont.setPointSize(7);  // Even smaller font
-    chart->legend()->setFont(legendFont);
-    chart->legend()->setMarkerShape(QLegend::MarkerShapeRectangle);
+    // Hide legend - we'll use a shared legend for all charts
+    chart->legend()->setVisible(false);
 
-    // Minimize legend margins
-    chart->legend()->setContentsMargins(0, 0, 0, 0);
-
-    // Hide zero line and markers from legend
-    chart->legend()->markers(zeroLine)[0]->setVisible(false);
-    chart->legend()->markers(tempMarkers)[0]->setVisible(false);
-    chart->legend()->markers(humMarkers)[0]->setVisible(false);
-
-    // Apply chart to view
+    // Apply chart to view - stylesheet handles the frosted glass styling
     chartView->setChart(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->setContentsMargins(0, 0, 0, 0);  // Remove view margins

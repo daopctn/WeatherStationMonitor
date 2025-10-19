@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
-    <height>1025</height>
+    <width>718</width>
+    <height>953</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -73,19 +73,19 @@ QLabel {
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
-         <number>20</number>
+         <number>10</number>
         </property>
         <property name="leftMargin">
-         <number>20</number>
+         <number>10</number>
         </property>
         <property name="topMargin">
-         <number>20</number>
+         <number>10</number>
         </property>
         <property name="rightMargin">
-         <number>20</number>
+         <number>10</number>
         </property>
         <property name="bottomMargin">
-         <number>20</number>
+         <number>10</number>
         </property>
         <item>
          <widget class="QFrame" name="frame0">
@@ -3073,176 +3073,231 @@ letter-spacing: 1px;</string>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
+       <property name="styleSheet">
+        <string notr="true">QWidget#tab_2 {
+    background: transparent;
+}
+
+QFrame {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+QChartView {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}</string>
+       </property>
        <attribute name="title">
         <string>Charts</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>10</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
         <item>
-         <widget class="QFrame" name="frame_10">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QChartView" name="chartViewZocca">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>160</height>
+           </size>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>160</height>
+           </size>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QChartView" name="chartViewZocca">
-             <property name="renderHint" stdset="0">
-              <set>QPainter::Antialiasing</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_9">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QChartView" name="chartViewRome">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>160</height>
+           </size>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>160</height>
+           </size>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_2">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QChartView" name="chartViewRome">
-             <property name="renderHint" stdset="0">
-              <set>QPainter::Antialiasing</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_8">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QChartView" name="chartViewParis">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>160</height>
+           </size>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>160</height>
+           </size>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_3">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QChartView" name="chartViewParis">
-             <property name="renderHint" stdset="0">
-              <set>QPainter::Antialiasing</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_7">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QChartView" name="chartViewNewYork">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>160</height>
+           </size>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>160</height>
+           </size>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_4">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>2</number>
-           </property>
-           <property name="topMargin">
-            <number>2</number>
-           </property>
-           <property name="rightMargin">
-            <number>2</number>
-           </property>
-           <property name="bottomMargin">
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="QChartView" name="chartViewNewYork">
-             <property name="renderHint" stdset="0">
-              <set>QPainter::Antialiasing</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_6">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
+         <widget class="QChartView" name="chartViewLondon">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>160</height>
+           </size>
           </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>160</height>
+           </size>
           </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="legendWidget" native="true">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>20</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>20</height>
+           </size>
+          </property>
+          <layout class="QHBoxLayout" name="legendLayout">
            <property name="spacing">
-            <number>0</number>
+            <number>30</number>
            </property>
            <property name="leftMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="rightMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="bottomMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
-            <widget class="QChartView" name="chartViewLondon">
-             <property name="renderHint" stdset="0">
-              <set>QPainter::Antialiasing</set>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="tempLegend">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+    color: white;
+    font-size: 10pt;
+    background: transparent;
+    border: none;
+}</string>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;span style=&quot;color:#E67E22;&quot;&gt;■&lt;/span&gt; Temperature (°C)&lt;/body&gt;&lt;/html&gt;</string>
              </property>
             </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="humLegend">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QLabel {
+    color: white;
+    font-size: 10pt;
+    background: transparent;
+    border: none;
+}</string>
+             </property>
+             <property name="text">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;span style=&quot;color:#2980B9;&quot;&gt;■&lt;/span&gt; Humidity (%)&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
            </item>
           </layout>
          </widget>
@@ -3253,7 +3308,6 @@ letter-spacing: 1px;</string>
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
   <customwidget>
