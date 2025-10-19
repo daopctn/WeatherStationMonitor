@@ -4,6 +4,14 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDateTime>
+#include <QDate>
+#include <QPen>
+#include <QColor>
+#include <QFont>
+#include <QMargins>
+#include <QToolTip>
+#include <QCursor>
+#include <QtCharts/QLegend>
 #include <PythonBridge.h>
 
 // Anonymous namespace for helper functions
@@ -186,6 +194,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Update UI immediately on startup
     refreshWeatherUI();
+
+    // Initialize charts with historical data
+    initializeCharts();
 }
 
 MainWindow::~MainWindow()
@@ -319,4 +330,259 @@ void MainWindow::refreshWeatherUI()
     {
         m_spinner->resume();
     }
+}
+
+void MainWindow::initializeCharts()
+{
+    // Timezone offsets in seconds from UTC for each location
+
+    setupChart(ui->chartViewZocca, "zocca", "Zocca", 7200);
+    setupChart(ui->chartViewRome, "rome", "Rome", 7200);
+    setupChart(ui->chartViewParis, "paris", "Paris", 7200);
+    setupChart(ui->chartViewNewYork, "new_york", "New York", -14400);
+    setupChart(ui->chartViewLondon, "london", "London", 3600);
+}
+
+void MainWindow::setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset)
+{
+    if (!m_dbManager || !m_dbManager->isConnected())
+    {
+        qWarning() << "Database not connected, cannot setup chart for" << locationName;
+        return;
+    }
+
+    QSqlDatabase db = m_dbManager->getDatabase();
+
+    // Query last 100 records ordered by timestamp ascending (oldest first)
+    QSqlQuery query(db);
+    QString queryStr = QString("SELECT temperature, humidity, timestamp FROM %1 ORDER BY timestamp DESC LIMIT 100")
+                           .arg(tableName);
+
+    if (!query.exec(queryStr))
+    {
+        qDebug() << "Chart query failed for" << tableName << ":" << query.lastError().text();
+        return;
+    }
+
+    // Create series for temperature and humidity
+    QLineSeries *tempSeries = new QLineSeries();
+    tempSeries->setName("Temperature (°C)");
+
+    // Make the line thicker and more visible
+    QPen tempPen(QColor(230, 126, 34)); // Orange color
+    tempPen.setWidth(3);
+    tempSeries->setPen(tempPen);
+
+    QLineSeries *humSeries = new QLineSeries();
+    humSeries->setName("Humidity (%)");
+
+    // Make the line thicker and more visible
+    QPen humPen(QColor(41, 128, 185)); // Blue color
+    humPen.setWidth(3);
+    humSeries->setPen(humPen);
+
+    // Collect data points (they come in reverse order, so we need to reverse)
+    QList<QPointF> tempPoints;
+    QList<QPointF> humPoints;
+    long long firstTimestamp = 0;
+    long long lastTimestamp = 0;
+
+    while (query.next())
+    {
+        double temperatureKelvin = query.value(0).toDouble();
+        double humidity = query.value(1).toDouble();
+        long long unixTime = query.value(2).toLongLong();
+
+        // Track first and last timestamps for date range
+        if (firstTimestamp == 0) {
+            lastTimestamp = unixTime;  // First record is actually the latest (DESC order)
+        }
+        firstTimestamp = unixTime;  // Last record will be the oldest
+
+        // Convert Kelvin to Celsius
+        double temperature = temperatureKelvin - 273.15;
+
+        // Convert Unix timestamp to milliseconds for QDateTime
+        qint64 timestampMs = unixTime * 1000LL;
+
+        tempPoints.prepend(QPointF(timestampMs, temperature));
+        humPoints.prepend(QPointF(timestampMs, humidity));
+    }
+
+    // Add points to series
+    for (const QPointF &point : tempPoints)
+    {
+        tempSeries->append(point);
+    }
+
+    for (const QPointF &point : humPoints)
+    {
+        humSeries->append(point);
+    }
+
+    // Create scatter series for markers at data points with tooltips
+    QScatterSeries *tempMarkers = new QScatterSeries();
+    tempMarkers->setName("");  // Don't show in legend
+    tempMarkers->setMarkerSize(8);  // Larger markers for easier hovering
+    tempMarkers->setColor(QColor(230, 126, 34));  // Orange to match temp line
+    tempMarkers->setBorderColor(QColor(255, 255, 255));  // White border for visibility
+    tempMarkers->setMarkerShape(QScatterSeries::MarkerShapeCircle);
+
+    for (const QPointF &point : tempPoints)
+    {
+        tempMarkers->append(point);
+    }
+
+    // Enable tooltips on temperature markers
+    connect(tempMarkers, &QScatterSeries::hovered, [timezoneOffset](const QPointF &point, bool state) {
+        if (state) {
+            // Mouse is over the point - show tooltip
+            QDateTime dtUTC = QDateTime::fromMSecsSinceEpoch(point.x(), Qt::UTC);
+            QDateTime dtLocal = dtUTC.addSecs(timezoneOffset);  // Apply timezone offset
+            QString timestamp = dtLocal.toString("dd/MM/yyyy hh:mm:ss");
+            double tempCelsius = point.y();
+
+            QToolTip::showText(QCursor::pos(),
+                QString("Temperature: %1°C\n%2")
+                .arg(tempCelsius, 0, 'f', 1)
+                .arg(timestamp));
+        } else {
+            // Mouse moved away - hide tooltip
+            QToolTip::hideText();
+        }
+    });
+
+    QScatterSeries *humMarkers = new QScatterSeries();
+    humMarkers->setName("");  // Don't show in legend
+    humMarkers->setMarkerSize(8);  // Larger markers for easier hovering
+    humMarkers->setColor(QColor(41, 128, 185));  // Blue to match humidity line
+    humMarkers->setBorderColor(QColor(255, 255, 255));  // White border for visibility
+    humMarkers->setMarkerShape(QScatterSeries::MarkerShapeCircle);
+
+    for (const QPointF &point : humPoints)
+    {
+        humMarkers->append(point);
+    }
+
+    // Enable tooltips on humidity markers
+    connect(humMarkers, &QScatterSeries::hovered, [timezoneOffset](const QPointF &point, bool state) {
+        if (state) {
+            // Mouse is over the point - show tooltip
+            QDateTime dtUTC = QDateTime::fromMSecsSinceEpoch(point.x(), Qt::UTC);
+            QDateTime dtLocal = dtUTC.addSecs(timezoneOffset);  // Apply timezone offset
+            QString timestamp = dtLocal.toString("dd/MM/yyyy hh:mm:ss");
+            double humidity = point.y();
+
+            QToolTip::showText(QCursor::pos(),
+                QString("Humidity: %1%\n%2")
+                .arg(humidity, 0, 'f', 1)
+                .arg(timestamp));
+        } else {
+            // Mouse moved away - hide tooltip
+            QToolTip::hideText();
+        }
+    });
+
+    // Create zero reference line for temperature axis
+    QLineSeries *zeroLine = new QLineSeries();
+    zeroLine->setName("");  // Don't show in legend
+    if (!tempPoints.isEmpty()) {
+        // Span the entire X-axis range
+        qint64 minX = tempPoints.first().x();
+        qint64 maxX = tempPoints.last().x();
+        zeroLine->append(QPointF(minX, 0));
+        zeroLine->append(QPointF(maxX, 0));
+    }
+    QPen zeroPen(QColor(128, 128, 128));  // Gray color
+    zeroPen.setWidth(1);
+    zeroPen.setStyle(Qt::DashLine);  // Dashed line
+    zeroLine->setPen(zeroPen);
+
+    // Create chart
+    QChart *chart = new QChart();
+    chart->addSeries(tempSeries);
+    chart->addSeries(humSeries);
+    chart->addSeries(zeroLine);  // Add zero reference line
+    chart->addSeries(tempMarkers);  // Add markers on top of lines
+    chart->addSeries(humMarkers);
+    chart->setAnimationOptions(QChart::SeriesAnimations);
+
+    // Set chart title with location name
+    chart->setTitle(locationName);
+    QFont titleFont;
+    titleFont.setPointSize(10);
+    titleFont.setBold(true);
+    chart->setTitleFont(titleFont);
+
+    // Remove margins for cleaner look and minimize spacing
+    chart->layout()->setContentsMargins(0, 0, 0, 0);
+    chart->setBackgroundRoundness(0);
+    chart->setMargins(QMargins(5, 5, 5, 5));  // Minimal margins around the entire chart
+
+    // Create X-axis - no grid, no labels (tooltips will show exact timestamps)
+    QDateTimeAxis *axisX = new QDateTimeAxis();
+    axisX->setLabelsVisible(false);  // Hide labels
+    axisX->setGridLineVisible(false);  // Hide grid lines
+    axisX->setLineVisible(false);  // Hide axis line itself
+
+    // Set readable font for Y-axis
+    QFont axisFont;
+    axisFont.setPointSize(7);
+
+    chart->addAxis(axisX, Qt::AlignBottom);
+    tempSeries->attachAxis(axisX);
+    humSeries->attachAxis(axisX);
+    zeroLine->attachAxis(axisX);  // Attach zero line to X-axis
+    tempMarkers->attachAxis(axisX);
+    humMarkers->attachAxis(axisX);
+
+    // Create Y-axis for Temperature (left side)
+    QValueAxis *axisYTemp = new QValueAxis();
+    axisYTemp->setLabelFormat("%.0f");
+    axisYTemp->setLabelsFont(axisFont);
+    axisYTemp->setLinePenColor(QColor(230, 126, 34)); // Orange color to match temperature
+    axisYTemp->setLabelsColor(QColor(230, 126, 34));
+    axisYTemp->setGridLineVisible(false);  // Remove grid lines
+    axisYTemp->setRange(-30, 60);  // Fixed range: -30°C to 60°C
+
+    chart->addAxis(axisYTemp, Qt::AlignLeft);
+    tempSeries->attachAxis(axisYTemp);
+    zeroLine->attachAxis(axisYTemp);  // Attach zero line to temperature Y-axis
+    tempMarkers->attachAxis(axisYTemp);  // Attach markers to same axis
+
+    // Create Y-axis for Humidity (right side)
+    QValueAxis *axisYHum = new QValueAxis();
+    axisYHum->setLabelFormat("%.0f");
+    axisYHum->setLabelsFont(axisFont);
+    axisYHum->setLinePenColor(QColor(41, 128, 185)); // Blue color to match humidity
+    axisYHum->setLabelsColor(QColor(41, 128, 185));
+    axisYHum->setGridLineVisible(false);  // Remove grid lines
+    axisYHum->setRange(0, 100);  // Fixed range: 0% to 100%
+
+    chart->addAxis(axisYHum, Qt::AlignRight);
+    humSeries->attachAxis(axisYHum);
+    humMarkers->attachAxis(axisYHum);  // Attach markers to same axis
+
+    // Configure legend - make it very compact
+    chart->legend()->setVisible(true);
+    chart->legend()->setAlignment(Qt::AlignBottom);
+    QFont legendFont = chart->legend()->font();
+    legendFont.setPointSize(7);  // Even smaller font
+    chart->legend()->setFont(legendFont);
+    chart->legend()->setMarkerShape(QLegend::MarkerShapeRectangle);
+
+    // Minimize legend margins
+    chart->legend()->setContentsMargins(0, 0, 0, 0);
+
+    // Hide zero line and markers from legend
+    chart->legend()->markers(zeroLine)[0]->setVisible(false);
+    chart->legend()->markers(tempMarkers)[0]->setVisible(false);
+    chart->legend()->markers(humMarkers)[0]->setVisible(false);
+
+    // Apply chart to view
+    chartView->setChart(chart);
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->setContentsMargins(0, 0, 0, 0);  // Remove view margins
+
+    qDebug() << "Chart initialized for" << locationName << "with" << tempPoints.size() << "data points";
 }

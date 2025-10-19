@@ -9,6 +9,16 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QTimer>
+#include <QtCharts/QChart>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCharts/QScatterSeries>
+#include <QtCharts/QDateTimeAxis>
+#include <QtCharts/QValueAxis>
+#include <QtCharts/QCategoryAxis>
+
+QT_CHARTS_USE_NAMESPACE
+
 #include "ui/ui_MainWindow.h"
 #include "DatabaseManager.h"
 #include "PythonBridge.h"
@@ -67,6 +77,21 @@ private:
 
     ThreadManager *threadManager;
     DatabaseManager *m_dbManager;  // Persistent database connection
+
+    /**
+     * @brief Initializes all chart views with data from database
+     * @note Called once during MainWindow construction
+     */
+    void initializeCharts();
+
+    /**
+     * @brief Creates and populates a chart for a specific location
+     * @param chartView The QChartView widget to populate
+     * @param tableName Database table name for the location
+     * @param locationName Display name for the chart title
+     * @param timezoneOffset Timezone offset in seconds from UTC
+     */
+    void setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset);
 };
 
 #endif // MAINWINDOW_H
