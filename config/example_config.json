@@ -1,0 +1,14 @@
+{
+  "Database": {
+    "host": "${DB_HOST:-localhost}",
+    "name": "${DB_NAME:-weather_station_db}",
+    "user": "${DB_USER:-root}",
+    "password": "${DB_PASSWORD}"
+  },
+  "WeatherAPI": {
+    "base_url": "https://api.openweathermap.org/data/2.5",
+    "api_key": "${WEATHER_API_KEY}",
+    "timeout": 10000,
+    "fetch_interval_ms": 300000
+  }
+}

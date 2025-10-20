@@ -1,10 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: weather-station-monitor
-Upstream-Contact: Your Name <your.email@example.com>
-Source: https://github.com/yourusername/WeatherStationMonitor
+Upstream-Contact: Your Name <daopctn@gmail.com>
+Source: https://github.com/daopctn/WeatherStationMonitor
 
 Files: *
-Copyright: 2025 Your Name
+Copyright: 2025 Daopctn
 License: MIT
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal

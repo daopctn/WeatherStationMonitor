@@ -177,19 +177,26 @@ Update the following fields:
 ```json
 {
   "Database": {
-    "host": "localhost",
-    "name": "weather_station_db",
-    "user": "root",           // or "weather_user" if you created one
-    "password": "your_mysql_password"
+    "host": "${DB_HOST:-localhost}",
+    "name": "${DB_NAME:-weather_station_db}",
+    "user": "${DB_USER:-root}",
+    "password": "${DB_PASSWORD}"
   },
   "WeatherAPI": {
     "base_url": "https://api.openweathermap.org/data/2.5",
-    "api_key": "your_openweathermap_api_key_here",
+    "api_key": "${WEATHER_API_KEY}",
     "timeout": 10000,
     "fetch_interval_ms": 300000
   }
 }
 ```
+
+**Security Note:** This configuration uses environment variables for sensitive credentials. Set them securely:
+- `DB_PASSWORD`: Your MySQL database password
+- `WEATHER_API_KEY`: Your OpenWeatherMap API key
+- Optional: `DB_HOST`, `DB_NAME`, `DB_USER` (defaults provided)
+
+Never hardcode real credentials in configuration files. If you created a dedicated database user, set `DB_USER=weather_user`.
 
 ### Step 3: Verify Configuration
 
@@ -273,7 +280,9 @@ pip3 install numpy pandas mysql-connector-python
 
 **If you get permission errors for config:**
 ```bash
-sudo chown $USER:$USER /etc/weather-station-monitor/config.json
+# Instead, verify the config file owner and group:
+ls -l /etc/weather-station-monitor/config.json
+# Contact your system administrator if you cannot read this file
 ```
 
 ---

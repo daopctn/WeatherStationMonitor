@@ -11,20 +11,26 @@ USE weather_station_db;
 CREATE TABLE IF NOT EXISTS zocca (
     id INT AUTO_INCREMENT PRIMARY KEY,
     temperature DECIMAL(5,2) NOT NULL COMMENT 'Temperature in Celsius',
-    humidity INT NOT NULL COMMENT 'Humidity percentage',
+    humidity INT NOT NULL COMMENT 'Humidity percentage (0-100)',
     pressure INT NOT NULL COMMENT 'Atmospheric pressure in hPa',
     wind_speed DECIMAL(5,2) NOT NULL COMMENT 'Wind speed in m/s',
-    wind_direction INT NOT NULL COMMENT 'Wind direction in degrees',
-    clouds INT NOT NULL COMMENT 'Cloudiness percentage',
+    wind_direction INT NOT NULL COMMENT 'Wind direction in degrees (0-360)',
+    clouds INT NOT NULL COMMENT 'Cloudiness percentage (0-100)',
     weather_main VARCHAR(50) NOT NULL COMMENT 'Main weather condition',
     weather_description VARCHAR(100) NOT NULL COMMENT 'Weather description',
     weather_icon VARCHAR(10) NOT NULL COMMENT 'Weather icon code',
-    visibility INT NOT NULL COMMENT 'Visibility in meters',
+    visibility INT NOT NULL COMMENT 'Visibility in meters (>=0)',
     sunrise BIGINT NOT NULL COMMENT 'Sunrise time (Unix timestamp)',
     sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)',
     timezone_offset INT NOT NULL COMMENT 'Timezone offset in seconds',
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Data fetch timestamp',
-    INDEX idx_timestamp (timestamp)
+    INDEX idx_timestamp (timestamp),
+    CHECK (humidity >= 0 AND humidity <= 100),
+    CHECK (clouds >= 0 AND clouds <= 100),
+    CHECK (wind_direction >= 0 AND wind_direction < 360),
+    CHECK (visibility >= 0),
+    CHECK (wind_speed >= 0),
+    CHECK (pressure > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for Zocca, Italy';
 
 -- Create weather data table for Rome, Italy
@@ -44,7 +50,13 @@ CREATE TABLE IF NOT EXISTS rome (
     sunset BIGINT NOT NULL,
     timezone_offset INT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp)
+    INDEX idx_timestamp (timestamp),
+    CHECK (humidity >= 0 AND humidity <= 100),
+    CHECK (clouds >= 0 AND clouds <= 100),
+    CHECK (wind_direction >= 0 AND wind_direction < 360),
+    CHECK (visibility >= 0),
+    CHECK (wind_speed >= 0),
+    CHECK (pressure > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for Rome, Italy';
 
 -- Create weather data table for Paris, France
@@ -64,7 +76,13 @@ CREATE TABLE IF NOT EXISTS paris (
     sunset BIGINT NOT NULL,
     timezone_offset INT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp)
+    INDEX idx_timestamp (timestamp),
+    CHECK (humidity >= 0 AND humidity <= 100),
+    CHECK (clouds >= 0 AND clouds <= 100),
+    CHECK (wind_direction >= 0 AND wind_direction < 360),
+    CHECK (visibility >= 0),
+    CHECK (wind_speed >= 0),
+    CHECK (pressure > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for Paris, France';
 
 -- Create weather data table for London, UK
@@ -84,7 +102,13 @@ CREATE TABLE IF NOT EXISTS london (
     sunset BIGINT NOT NULL,
     timezone_offset INT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp)
+    INDEX idx_timestamp (timestamp),
+    CHECK (humidity >= 0 AND humidity <= 100),
+    CHECK (clouds >= 0 AND clouds <= 100),
+    CHECK (wind_direction >= 0 AND wind_direction < 360),
+    CHECK (visibility >= 0),
+    CHECK (wind_speed >= 0),
+    CHECK (pressure > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for London, UK';
 
 -- Create weather data table for New York, USA
@@ -104,7 +128,13 @@ CREATE TABLE IF NOT EXISTS new_york (
     sunset BIGINT NOT NULL,
     timezone_offset INT NOT NULL,
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp)
+    INDEX idx_timestamp (timestamp),
+    CHECK (humidity >= 0 AND humidity <= 100),
+    CHECK (clouds >= 0 AND clouds <= 100),
+    CHECK (wind_direction >= 0 AND wind_direction < 360),
+    CHECK (visibility >= 0),
+    CHECK (wind_speed >= 0),
+    CHECK (pressure > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for New York, USA';
 
 -- Create user for the application (optional, for security)

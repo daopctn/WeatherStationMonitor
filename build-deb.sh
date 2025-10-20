@@ -26,7 +26,7 @@ echo "Checking for required build tools..."
 MISSING_TOOLS=""
 
 for tool in dpkg-buildpackage debhelper cmake; do
-    if ! command -v $tool &> /dev/null; then
+    if ! command -v "$tool" &> /dev/null; then
         MISSING_TOOLS="$MISSING_TOOLS $tool"
     fi
 done
@@ -39,13 +39,6 @@ if [ -n "$MISSING_TOOLS" ]; then
     sudo apt-get install -y build-essential debhelper cmake \
         qtbase5-dev libqt5charts5-dev libqt5sql5-mysql \
         python3-dev python3-pip
-fi
-
-# Check for Qt5
-echo "Checking for Qt5 development packages..."
-if ! dpkg -l | grep -q qtbase5-dev; then
-    echo -e "${YELLOW}Qt5 development packages not found. Installing...${NC}"
-    sudo apt-get install -y qtbase5-dev libqt5charts5-dev libqt5sql5-mysql
 fi
 
 echo -e "${GREEN}All build dependencies satisfied!${NC}"
@@ -85,14 +78,14 @@ if [ -n "$DEB_FILE" ]; then
     echo "Package size: $(du -h "$DEB_FILE" | cut -f1)"
     echo ""
     echo "To install:"
-    echo "  sudo dpkg -i $DEB_FILE"
+    echo "  sudo dpkg -i \"$DEB_FILE\""
     echo "  sudo apt-get install -f  # Fix any dependency issues"
     echo ""
     echo "To inspect package contents:"
-    echo "  dpkg -c $DEB_FILE"
+    echo "  dpkg -c \"$DEB_FILE\""
     echo ""
     echo "To get package info:"
-    echo "  dpkg -I $DEB_FILE"
+    echo "  dpkg -I \"$DEB_FILE\""
     echo ""
 else
     echo -e "${RED}Error: .deb file not found!${NC}"

@@ -3,6 +3,7 @@ build/
 debug/
 release/
 obj-*/
+obj-x86_64-linux-gnu/
 
 # Qt specific
 *.pro.user
@@ -50,6 +51,7 @@ cmake_install.cmake
 Makefile
 *.cmake
 !CMakeLists.txt
+**/*.d
 
 # Logs
 *.log

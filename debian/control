@@ -1,7 +1,7 @@
 Source: weather-station-monitor
 Section: science
 Priority: optional
-Maintainer: Your Name <your.email@example.com>
+Maintainer: daopctn <daopctn@gmail.com>
 Build-Depends: debhelper (>= 11),
                cmake (>= 3.16),
                qtbase5-dev,
@@ -10,7 +10,7 @@ Build-Depends: debhelper (>= 11),
                python3-dev (>= 3.10),
                python3-pip
 Standards-Version: 4.5.0
-Homepage: https://github.com/yourusername/WeatherStationMonitor
+Homepage: https://github.com/daopctn/WeatherStationMonitor
 
 Package: weather-station-monitor
 Architecture: any
@@ -25,10 +25,10 @@ Depends: ${shlibs:Depends},
          python3-pip,
          python3-numpy,
          python3-pandas,
-         python3-mysql.connector | python3-mysqldb,
-         mysql-server,
-         mysql-client
-Recommends: mysql-workbench
+         python3-mysql.connector | python3-mysqldb
+Recommends: mysql-server,
+            mysql-client,
+            mysql-workbench
 Description: Real-time weather station monitoring application
  Weather Station Monitor is a Qt-based desktop application that monitors
  weather data from multiple locations using the OpenWeatherMap API.

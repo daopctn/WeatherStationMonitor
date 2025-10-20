@@ -19,16 +19,18 @@ override_dh_auto_install:
 	dh_auto_install
 	# Install Python processor script
 	mkdir -p debian/weather-station-monitor/usr/share/weather-station-monitor/python
-	cp -r python/* debian/weather-station-monitor/usr/share/weather-station-monitor/python/
+	rsync -a --exclude='__pycache__' --exclude='*.pyc' --exclude='*.pyo' python/ debian/weather-station-monitor/usr/share/weather-station-monitor/python/
 	# Install config examples
 	mkdir -p debian/weather-station-monitor/usr/share/weather-station-monitor/config
 	cp resources/config/examples/example_config.json debian/weather-station-monitor/usr/share/weather-station-monitor/config/
 	# Install database scripts
 	mkdir -p debian/weather-station-monitor/usr/share/weather-station-monitor/database
-	cp database/*.sql debian/weather-station-monitor/usr/share/weather-station-monitor/database/ 2>/dev/null || true
+	if [ -d database ] && [ -n "$(ls -A database/*.sql 2>/dev/null)" ]; then \
+		cp database/*.sql debian/weather-station-monitor/usr/share/weather-station-monitor/database/; \
+	fi
 	# Install UI files
 	mkdir -p debian/weather-station-monitor/usr/share/weather-station-monitor/ui
-	cp ui/*.ui debian/weather-station-monitor/usr/share/weather-station-monitor/ui/
+	cp ui/*.ui debian/weather-station-monitor/usr/share/weather-station-monitor/ui/ 2>/dev/null || true
 	# Install resource files
 	mkdir -p debian/weather-station-monitor/usr/share/weather-station-monitor/resources
 	cp -r resources/icons debian/weather-station-monitor/usr/share/weather-station-monitor/resources/

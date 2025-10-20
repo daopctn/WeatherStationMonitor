@@ -7,18 +7,18 @@ case "$1" in
     configure)
         echo "Configuring Weather Station Monitor..."
 
-        # Install Python dependencies
-        echo "Installing Python dependencies..."
-        pip3 install --system numpy pandas mysql-connector-python >/dev/null 2>&1 || true
-
         # Create config directory
         mkdir -p /etc/weather-station-monitor
 
         # Copy example config if config doesn't exist
         if [ ! -f /etc/weather-station-monitor/config.json ]; then
+            if [ ! -f /usr/share/weather-station-monitor/config/example_config.json ]; then
+                echo "Error: Example config file not found" >&2
+                exit 1
+            fi
             cp /usr/share/weather-station-monitor/config/example_config.json \
                /etc/weather-station-monitor/config.json
-            chmod 644 /etc/weather-station-monitor/config.json
+            chmod 600 /etc/weather-station-monitor/config.json
             echo "Example configuration created at /etc/weather-station-monitor/config.json"
         fi
 

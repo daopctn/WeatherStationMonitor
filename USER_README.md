@@ -30,7 +30,8 @@ Weather Station Monitor is a professional desktop application that provides real
 
 ## Screenshots
 
-*Coming soon - Add screenshots of your application here*
+![first tab](image.png)
+![second tab](image-1.png)
 
 ---
 
@@ -75,21 +76,7 @@ See [INSTALL.md](INSTALL.md) for comprehensive installation instructions includi
 
 ### 2. Configure the Application
 
-Edit `/etc/weather-station-monitor/config.json`:
-
-```json
-{
-  "Database": {
-    "host": "localhost",
-    "name": "weather_station_db",
-    "user": "your_mysql_user",
-    "password": "your_mysql_password"
-  },
-  "WeatherAPI": {
-    "api_key": "your_api_key_here"
-  }
-}
-```
+Edit `/etc/weather-station-monitor/config.json` with your database credentials and OpenWeatherMap API key. See the [Configuration](#configuration) section below for full options and examples.
 
 ### 3. Launch
 
@@ -194,7 +181,7 @@ The application automatically fetches new data every 5 minutes. You can see the 
 sudo apt-get install qtbase5-dev qtcharts5-dev python3-dev cmake
 
 # Clone and build
-git clone https://github.com/yourusername/WeatherStationMonitor.git
+git clone https://github.com/daopctn/WeatherStationMonitor.git
 cd WeatherStationMonitor
 ./build-deb.sh
 ```
@@ -269,8 +256,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 - **Documentation:** [INSTALL.md](INSTALL.md)
-- **Issues:** [GitHub Issues](https://github.com/yourusername/WeatherStationMonitor/issues)
-- **Email:** your.email@example.com
+- **Issues:** [GitHub Issues](https://github.com/daopctn/WeatherStationMonitor/issues)
+- **Email:** daopctn@gmail.com
 
 ---
 

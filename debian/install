@@ -3,4 +3,10 @@ debian/weather-station-monitor.desktop usr/share/applications/
 
 # Install documentation
 README.md usr/share/doc/weather-station-monitor/
-database/README.md usr/share/doc/weather-station-monitor/
+database/README.md usr/share/doc/weather-station-monitor/DATABASE_README.md
+
+# Install database schema
+database/schema.sql usr/share/weather-station-monitor/database/
+
+# Install configuration template
+resources/config/examples/example_config.json usr/share/weather-station-monitor/config/
