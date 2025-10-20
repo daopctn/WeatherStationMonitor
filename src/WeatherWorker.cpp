@@ -184,8 +184,8 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
         m_weatherDataVector.append(newData);
         m_mutex.unlock();
 
-        // Notify listeners that new weather data is available
-        emit weatherDataUpdated();
+        // Notify listeners that new weather data is available (send copy of data for real-time UI update)
+        emit weatherDataUpdated(newData);
     }
     else
     {

@@ -37,11 +37,11 @@ QT_CHARTS_USE_NAMESPACE
  * - Loading configuration from JSON file
  * - Establishing database connection
  * - Managing thread lifecycle via ThreadManager
- * - Periodic UI updates with latest weather data from database
+ * - Real-time UI updates via signals from WeatherWorker threads
  * - Dynamic weather icon display based on conditions and day/night
  *
- * The UI refreshes every 5 seconds to display the most recent weather data
- * stored in the MySQL database by the background worker threads.
+ * The UI updates in real-time whenever new weather data arrives from the API,
+ * using Qt's signal/slot mechanism to receive data from background worker threads.
  */
 class MainWindow : public QMainWindow
 {
@@ -51,16 +51,37 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    /**
+     * @struct LocationInfo
+     * @brief Stores configuration for a weather monitoring location
+     */
+    struct LocationInfo
+    {
+        QString tableName;      ///< Database table name (e.g., "zocca", "new_york")
+        QString displayName;    ///< Display name for UI (e.g., "Zocca", "New York")
+        int timezoneOffset;     ///< Timezone offset in seconds from UTC
+        int uiIndex;            ///< Index for UI widget mapping (0-4)
+    };
+
+    /// Centralized location configuration to avoid duplication across methods
+    static const QVector<LocationInfo> LOCATIONS;
+
     // UI Configuration Constants
-    static constexpr int UI_UPDATE_INTERVAL_MS = 5000;      ///< UI refresh interval (5 seconds)
     static constexpr int WEATHER_ICON_SIZE = 80;            ///< Weather icon display size in pixels
 
 private slots:
     /**
-     * @brief Refreshes UI with latest weather data from database
-     * @note Called automatically by QTimer every UI_UPDATE_INTERVAL_MS (5 seconds)
+     * @brief Refreshes UI with latest weather data from database for all locations
+     * @note Called once during startup to populate initial UI state
      */
     void refreshWeatherUI();
+
+    /**
+     * @brief Handles real-time weather data updates from worker threads
+     * @param data The new weather data received from API
+     * @note This slot receives signals directly from WeatherWorker threads
+     */
+    void onWeatherDataUpdated(const WeatherData &data);
 
 private:
     QTimer *dataUpdateTimer;

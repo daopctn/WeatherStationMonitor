@@ -14,6 +14,15 @@
 #include <QtCharts/QLegend>
 #include <PythonBridge.h>
 
+// Initialize location configuration data (shared across all methods to follow DRY principle)
+const QVector<MainWindow::LocationInfo> MainWindow::LOCATIONS = {
+    {"zocca", "Zocca", 7200, 0},          // UTC+2 (Europe/Rome timezone)
+    {"rome", "Rome", 7200, 1},            // UTC+2 (Europe/Rome timezone)
+    {"paris", "Paris", 7200, 2},          // UTC+2 (Europe/Paris timezone)
+    {"new_york", "New York", -14400, 3},  // UTC-4 (America/New_York with DST)
+    {"london", "London", 3600, 4}         // UTC+1 (Europe/London with BST)
+};
+
 // Anonymous namespace for helper functions
 namespace
 {
@@ -204,17 +213,19 @@ MainWindow::MainWindow(QWidget *parent)
     threadManager = new ThreadManager(this);
     threadManager->startThreads();
 
+    // Connect weather workers to receive real-time updates
+    threadManager->connectWeatherUpdates(this, SLOT(onWeatherDataUpdated(const WeatherData &)));
+
     // Khởi động spinner
     m_spinner = new Spinner(this);
     m_spinner->start();
 
-    // Setup data update timer to refresh UI with latest weather data
-    dataUpdateTimer = new QTimer(this);
-    connect(dataUpdateTimer, &QTimer::timeout, this, &MainWindow::refreshWeatherUI);
-    dataUpdateTimer->start(UI_UPDATE_INTERVAL_MS);
-
-    // Update UI immediately on startup
+    // Update UI immediately on startup with existing database data
+    // After this, UI will be updated in real-time via weatherDataUpdated signals
     refreshWeatherUI();
+
+    // Note: Removed 5-second polling timer - using real-time signal-based updates instead
+    dataUpdateTimer = nullptr;
 
     // Initialize charts with historical data
     initializeCharts();
@@ -295,26 +306,18 @@ void MainWindow::refreshWeatherUI()
         return;
     }
 
-    // Update UI for each location
-    QStringList tables = {"zocca", "rome", "paris", "new_york", "london"};
-
-    // Timezone offsets in seconds from UTC for each location
-    // zocca: UTC+1, rome: UTC+1, paris: UTC+1, new_york: UTC-5, london: UTC+0
-    QList<int> timezoneOffsets = {7200, 7200, 7200, -14400, 3600};
-
-    for (int i = 0; i < tables.size(); ++i)
+    // Update UI for each location using centralized configuration
+    for (const LocationInfo &location : LOCATIONS)
     {
-        QString tableName = tables[i];
-
         // Query the latest weather data for this location
         QSqlQuery query(db);
         QString queryStr = QString("SELECT temperature, humidity, pressure, windSpeed, description, timestamp, weather_id, sunrise, sunset "
                                    "FROM %1 ORDER BY timestamp DESC LIMIT 1")
-                               .arg(tableName);
+                               .arg(location.tableName);
 
         if (!query.exec(queryStr))
         {
-            qDebug() << "Query failed for" << tableName << ":" << query.lastError().text();
+            qDebug() << "Query failed for" << location.tableName << ":" << query.lastError().text();
             continue;
         }
 
@@ -336,12 +339,12 @@ void MainWindow::refreshWeatherUI()
 
             // Convert Unix timestamp to local time using timezone offset
             QDateTime dateTimeUTC = QDateTime::fromSecsSinceEpoch(unixTime, Qt::UTC);
-            QDateTime dateTimeLocal = dateTimeUTC.addSecs(timezoneOffsets[i]);
+            QDateTime dateTimeLocal = dateTimeUTC.addSecs(location.timezoneOffset);
             QString dateStr = dateTimeLocal.toString("dd/MM/yyyy");
             QString timeStr = dateTimeLocal.toString("hh:mm:ss");
 
             // Update UI for this location using helper function
-            updateLocationUI(ui, i, temperature, description, humidity, windSpeed,
+            updateLocationUI(ui, location.uiIndex, temperature, description, humidity, windSpeed,
                              pressure, dateStr, timeStr, weatherId, unixTime, sunrise, sunset);
         }
     }
@@ -355,13 +358,79 @@ void MainWindow::refreshWeatherUI()
 
 void MainWindow::initializeCharts()
 {
-    // Timezone offsets in seconds from UTC for each location
+    // Map UI indices to chart view widgets
+    QChartView *chartViews[] = {
+        ui->chartViewZocca,    // Index 0
+        ui->chartViewRome,     // Index 1
+        ui->chartViewParis,    // Index 2
+        ui->chartViewNewYork,  // Index 3
+        ui->chartViewLondon    // Index 4
+    };
 
-    setupChart(ui->chartViewZocca, "zocca", "Zocca", 7200);
-    setupChart(ui->chartViewRome, "rome", "Rome", 7200);
-    setupChart(ui->chartViewParis, "paris", "Paris", 7200);
-    setupChart(ui->chartViewNewYork, "new_york", "New York", -14400);
-    setupChart(ui->chartViewLondon, "london", "London", 3600);
+    constexpr int numChartViews = sizeof(chartViews) / sizeof(chartViews[0]);
+
+    // Initialize charts using centralized location configuration
+    for (const LocationInfo &location : LOCATIONS)
+    {
+        if (location.uiIndex < 0 || location.uiIndex >= numChartViews)
+        {
+            qWarning() << "Invalid uiIndex" << location.uiIndex << "for location" << location.displayName;
+            continue;
+        }
+        setupChart(chartViews[location.uiIndex], location.tableName,
+                   location.displayName, location.timezoneOffset);
+    }
+}
+
+void MainWindow::onWeatherDataUpdated(const WeatherData &data)
+{
+    // Pause spinner during UI update
+    if (m_spinner)
+    {
+        m_spinner->pause();
+    }
+
+    // Find location configuration by display name
+    const LocationInfo *location = nullptr;
+    for (const LocationInfo &loc : LOCATIONS)
+    {
+        if (loc.displayName == data.locationName)
+        {
+            location = &loc;
+            break;
+        }
+    }
+
+    if (!location)
+    {
+        qWarning() << "Unknown location:" << data.locationName;
+        if (m_spinner)
+        {
+            m_spinner->resume();
+        }
+        return;
+    }
+
+    // Convert Kelvin to Celsius
+    double temperature = data.temperature - 273.15;
+
+    // Convert Unix timestamp to local time using timezone offset
+    QDateTime dateTimeUTC = QDateTime::fromSecsSinceEpoch(data.timestamp, Qt::UTC);
+    QDateTime dateTimeLocal = dateTimeUTC.addSecs(location->timezoneOffset);
+    QString dateStr = dateTimeLocal.toString("dd/MM/yyyy");
+    QString timeStr = dateTimeLocal.toString("hh:mm:ss");
+
+    // Update UI for this location using helper function
+    updateLocationUI(ui, location->uiIndex, temperature, data.description, data.humidity, data.windSpeed,
+                     data.pressure, dateStr, timeStr, data.weatherId, data.timestamp, data.sunrise, data.sunset);
+
+    qDebug() << "Real-time UI update for" << data.locationName << "- Temp:" << temperature << "°C";
+
+    // Resume spinner after operation
+    if (m_spinner)
+    {
+        m_spinner->resume();
+    }
 }
 
 void MainWindow::setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset)

@@ -168,6 +168,38 @@ ThreadManager::~ThreadManager()
     waitForThreads();
 }
 
+void ThreadManager::connectWeatherUpdates(QObject *receiver, const char *slot)
+{
+    if (!receiver || !slot)
+    {
+        qWarning() << "connectWeatherUpdates: Invalid receiver or slot parameter";
+        return;
+    }
+
+    // Connect all weather workers' weatherDataUpdated signals to the receiver's slot
+    // Qt will automatically use QueuedConnection for cross-thread signals
+    if (zoccaWorker)
+    {
+        connect(zoccaWorker, SIGNAL(weatherDataUpdated(const WeatherData &)), receiver, slot);
+    }
+    if (romeWorker)
+    {
+        connect(romeWorker, SIGNAL(weatherDataUpdated(const WeatherData &)), receiver, slot);
+    }
+    if (parisWorker)
+    {
+        connect(parisWorker, SIGNAL(weatherDataUpdated(const WeatherData &)), receiver, slot);
+    }
+    if (londonWorker)
+    {
+        connect(londonWorker, SIGNAL(weatherDataUpdated(const WeatherData &)), receiver, slot);
+    }
+    if (newYorkWorker)
+    {
+        connect(newYorkWorker, SIGNAL(weatherDataUpdated(const WeatherData &)), receiver, slot);
+    }
+}
+
 void ThreadManager::startThreads()
 {
     if (zoccaWorker && !zoccaWorker->isRunning())

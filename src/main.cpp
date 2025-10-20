@@ -1,5 +1,6 @@
 #include <QApplication>
 #include "../include/MainWindow.h"
+#include "../include/WeatherData.h"
 #include <iostream>
 
 // Undefine Qt macros that conflict with Python
@@ -11,6 +12,9 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    // Register WeatherData type for cross-thread signal/slot communication
+    qRegisterMetaType<WeatherData>("WeatherData");
 
     MainWindow window;
     window.show();

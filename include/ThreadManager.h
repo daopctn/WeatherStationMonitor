@@ -42,6 +42,14 @@ public:
     void stopThreads();
     void waitForThreads();
 
+    /**
+     * @brief Connect weather data update signals from all workers to a receiver slot
+     * @param receiver The object that will receive the signals
+     * @param slot The slot method to invoke (use SLOT() macro)
+     * @note This connects all 5 WeatherWorker signals to enable real-time UI updates
+     */
+    void connectWeatherUpdates(QObject *receiver, const char *slot);
+
 signals:
     void allThreadsFinished();
 

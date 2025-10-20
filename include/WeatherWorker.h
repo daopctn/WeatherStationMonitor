@@ -40,7 +40,7 @@ public:
     static constexpr int WEATHER_FETCH_INTERVAL_MS = 300000;  ///< Fetch weather data every 5 minutes (300,000 ms)
 
 signals:
-    void weatherDataUpdated();
+    void weatherDataUpdated(const WeatherData &data);
 private slots:
     void onNetworkReply(QNetworkReply *reply);
 
