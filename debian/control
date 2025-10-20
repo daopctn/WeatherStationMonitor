@@ -1,0 +1,44 @@
+Source: weather-station-monitor
+Section: science
+Priority: optional
+Maintainer: Your Name <your.email@example.com>
+Build-Depends: debhelper (>= 11),
+               cmake (>= 3.16),
+               qtbase5-dev,
+               libqt5charts5-dev,
+               libqt5sql5-mysql,
+               python3-dev (>= 3.10),
+               python3-pip
+Standards-Version: 4.5.0
+Homepage: https://github.com/yourusername/WeatherStationMonitor
+
+Package: weather-station-monitor
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends},
+         libqt5core5a,
+         libqt5widgets5,
+         libqt5network5,
+         libqt5sql5-mysql,
+         libqt5charts5,
+         python3 (>= 3.10),
+         python3-pip,
+         python3-numpy,
+         python3-pandas,
+         python3-mysql.connector | python3-mysqldb,
+         mysql-server,
+         mysql-client
+Recommends: mysql-workbench
+Description: Real-time weather station monitoring application
+ Weather Station Monitor is a Qt-based desktop application that monitors
+ weather data from multiple locations using the OpenWeatherMap API.
+ .
+ Features:
+  - Monitor 5 cities simultaneously (Zocca, Rome, Paris, London, New York)
+  - Real-time temperature, humidity, pressure, and wind data
+  - Interactive charts with historical data visualization
+  - Multi-threaded architecture for concurrent API calls
+  - MySQL database for data persistence
+  - Python-powered analytics and statistics
+  - Automatic refresh every 5 minutes
+  - Beautiful Qt5-based user interface

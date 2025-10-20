@@ -71,4 +71,41 @@ target_link_libraries(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES
     WIN32_EXECUTABLE TRUE
     MACOSX_BUNDLE TRUE
+    OUTPUT_NAME weather-station-monitor
+)
+
+# Installation rules
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+    COMPONENT applications
+)
+
+# Install Python scripts
+install(DIRECTORY python/
+    DESTINATION share/weather-station-monitor/python
+    FILES_MATCHING PATTERN "*.py"
+    PATTERN "__pycache__" EXCLUDE
+)
+
+# Install configuration examples
+install(FILES resources/config/examples/example_config.json
+    DESTINATION share/weather-station-monitor/config
+)
+
+# Install database scripts
+install(DIRECTORY database/
+    DESTINATION share/weather-station-monitor/database
+    FILES_MATCHING PATTERN "*.sql"
+)
+
+# Install UI files
+install(DIRECTORY ui/
+    DESTINATION share/weather-station-monitor/ui
+    FILES_MATCHING PATTERN "*.ui"
+)
+
+# Install resource icons
+install(DIRECTORY resources/icons/
+    DESTINATION share/weather-station-monitor/resources/icons
+    FILES_MATCHING PATTERN "*.png" PATTERN "*.qrc"
 )

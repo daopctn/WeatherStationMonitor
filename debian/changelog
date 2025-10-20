@@ -1,0 +1,11 @@
+weather-station-monitor (1.0.0) jammy; urgency=medium
+
+  * Initial release
+  * Real-time weather monitoring for 5 cities
+  * Interactive charts with historical data
+  * Multi-threaded API fetching
+  * MySQL database integration
+  * Python analytics engine
+  * Qt5-based GUI with auto-refresh
+
+ -- Your Name <your.email@example.com>  Mon, 20 Oct 2025 00:00:00 +0000

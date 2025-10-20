@@ -1,0 +1,77 @@
+#!/bin/bash
+# Post-installation script for Weather Station Monitor
+
+set -e
+
+case "$1" in
+    configure)
+        echo "Configuring Weather Station Monitor..."
+
+        # Install Python dependencies
+        echo "Installing Python dependencies..."
+        pip3 install --system numpy pandas mysql-connector-python >/dev/null 2>&1 || true
+
+        # Create config directory
+        mkdir -p /etc/weather-station-monitor
+
+        # Copy example config if config doesn't exist
+        if [ ! -f /etc/weather-station-monitor/config.json ]; then
+            cp /usr/share/weather-station-monitor/config/example_config.json \
+               /etc/weather-station-monitor/config.json
+            chmod 644 /etc/weather-station-monitor/config.json
+            echo "Example configuration created at /etc/weather-station-monitor/config.json"
+        fi
+
+        # Check if MySQL is running
+        if systemctl is-active --quiet mysql; then
+            echo ""
+            echo "========================================"
+            echo "  Weather Station Monitor Installed!"
+            echo "========================================"
+            echo ""
+            echo "Next steps:"
+            echo ""
+            echo "1. Set up the database:"
+            echo "   sudo mysql -u root -p < /usr/share/weather-station-monitor/database/schema.sql"
+            echo ""
+            echo "2. Edit the configuration file:"
+            echo "   sudo nano /etc/weather-station-monitor/config.json"
+            echo ""
+            echo "   Update these fields:"
+            echo "   - Database credentials (host, user, password)"
+            echo "   - OpenWeatherMap API key"
+            echo ""
+            echo "3. Run the application:"
+            echo "   weather-station-monitor"
+            echo ""
+            echo "For detailed setup instructions, see:"
+            echo "   /usr/share/doc/weather-station-monitor/README.md"
+            echo ""
+        else
+            echo ""
+            echo "========================================"
+            echo "  Weather Station Monitor Installed!"
+            echo "========================================"
+            echo ""
+            echo "WARNING: MySQL service is not running!"
+            echo ""
+            echo "Please start MySQL first:"
+            echo "   sudo systemctl start mysql"
+            echo "   sudo systemctl enable mysql"
+            echo ""
+            echo "Then follow the setup steps above."
+            echo ""
+        fi
+
+        ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+exit 0

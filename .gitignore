@@ -2,6 +2,7 @@
 build/
 debug/
 release/
+obj-*/
 
 # Qt specific
 *.pro.user
@@ -11,6 +12,7 @@ release/
 *.qmake.stash
 moc_*.cpp
 moc_*.h
+*.moc
 qrc_*.cpp
 ui_*.h
 *.autosave
@@ -27,6 +29,7 @@ resources/config/prod/
 .vscode/
 .vs/
 .idea/
+.claude/settings.local.json
 
 # OS specific
 .DS_Store
@@ -60,3 +63,18 @@ __pycache__/
 *.so
 .venv/
 venv/
+
+# Debian packaging
+debian/weather-station-monitor/
+debian/files
+debian/.debhelper/
+debian/debhelper-build-stamp
+debian/*.substvars
+debian/*.log
+*.deb
+*.ddeb
+*.buildinfo
+*.changes
+*.dsc
+*.tar.xz
+*.tar.gz

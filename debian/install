@@ -1,0 +1,6 @@
+# Install the desktop file
+debian/weather-station-monitor.desktop usr/share/applications/
+
+# Install documentation
+README.md usr/share/doc/weather-station-monitor/
+database/README.md usr/share/doc/weather-station-monitor/
