@@ -16,11 +16,11 @@
 
 // Initialize location configuration data (shared across all methods to follow DRY principle)
 const QVector<MainWindow::LocationInfo> MainWindow::LOCATIONS = {
-    {"zocca", "Zocca", 7200, 0},          // UTC+2 (Europe/Rome timezone)
-    {"rome", "Rome", 7200, 1},            // UTC+2 (Europe/Rome timezone)
-    {"paris", "Paris", 7200, 2},          // UTC+2 (Europe/Paris timezone)
-    {"new_york", "New York", -14400, 3},  // UTC-4 (America/New_York with DST)
-    {"london", "London", 3600, 4}         // UTC+1 (Europe/London with BST)
+    {"zocca", "Zocca", 7200, 0},         // UTC+2 (Europe/Rome timezone)
+    {"rome", "Rome", 7200, 1},           // UTC+2 (Europe/Rome timezone)
+    {"paris", "Paris", 7200, 2},         // UTC+2 (Europe/Paris timezone)
+    {"new_york", "New York", -14400, 3}, // UTC-4 (America/New_York with DST)
+    {"london", "London", 3600, 4}        // UTC+1 (Europe/London with BST)
 };
 
 // Anonymous namespace for helper functions
@@ -157,18 +157,7 @@ namespace
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-    , pythonBridge(new PythonBridge())
-    , m_dbManager(nullptr)
-    , m_tempSeries{nullptr, nullptr, nullptr, nullptr, nullptr}
-    , m_humSeries{nullptr, nullptr, nullptr, nullptr, nullptr}
-    , m_tempMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}
-    , m_humMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}
-    , m_zeroLine{nullptr, nullptr, nullptr, nullptr, nullptr}
-    , m_axisX{nullptr, nullptr, nullptr, nullptr, nullptr}
-    , m_timezoneOffsets{0, 0, 0, 0, 0}
-    , m_hasVirtualPoint{false, false, false, false, false}
+    : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge()), m_dbManager(nullptr), m_tempSeries{nullptr, nullptr, nullptr, nullptr, nullptr}, m_humSeries{nullptr, nullptr, nullptr, nullptr, nullptr}, m_tempMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}, m_humMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}, m_zeroLine{nullptr, nullptr, nullptr, nullptr, nullptr}, m_axisX{nullptr, nullptr, nullptr, nullptr, nullptr}, m_timezoneOffsets{0, 0, 0, 0, 0}, m_hasVirtualPoint{false, false, false, false, false}
 {
     ui->setupUi(this);
     setWindowTitle("Weather Station Monitor");
@@ -233,9 +222,6 @@ MainWindow::MainWindow(QWidget *parent)
     // Update UI immediately on startup with existing database data
     // After this, UI will be updated in real-time via weatherDataUpdated signals
     refreshWeatherUI();
-
-    // Note: Removed 5-second polling timer - using real-time signal-based updates instead
-    dataUpdateTimer = nullptr;
 
     // Initialize charts with historical data
     initializeCharts();
@@ -370,11 +356,11 @@ void MainWindow::initializeCharts()
 {
     // Map UI indices to chart view widgets
     QChartView *chartViews[] = {
-        ui->chartViewZocca,    // Index 0
-        ui->chartViewRome,     // Index 1
-        ui->chartViewParis,    // Index 2
-        ui->chartViewNewYork,  // Index 3
-        ui->chartViewLondon    // Index 4
+        ui->chartViewZocca,   // Index 0
+        ui->chartViewRome,    // Index 1
+        ui->chartViewParis,   // Index 2
+        ui->chartViewNewYork, // Index 3
+        ui->chartViewLondon   // Index 4
     };
 
     constexpr int numChartViews = sizeof(chartViews) / sizeof(chartViews[0]);
@@ -542,7 +528,7 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     else if (tempPoints.size() == 1)
     {
         // For single point, don't add to line series - markers will show it
-        m_hasVirtualPoint[locationIndex] = true;  // Flag that we're in "marker-only" mode
+        m_hasVirtualPoint[locationIndex] = true; // Flag that we're in "marker-only" mode
         qDebug() << "Single point mode for location index" << locationIndex << "- showing marker only";
     }
 
@@ -790,7 +776,7 @@ void MainWindow::updateChartRealtime(int locationIndex, const WeatherData &data)
             m_humSeries[locationIndex]->remove(0);
         }
 
-        markerCountBefore = 99;  // After removal
+        markerCountBefore = 99; // After removal
     }
 
     // Always add to marker series (markers show for any number of points)

@@ -110,7 +110,7 @@ Charts automatically update as new data arrives.
 
 ### Auto-Refresh
 
-The application automatically fetches new data every 5 minutes. You can see the last update time in the status bar.
+The application provides real-time data updates, automatically fetching new weather data every 5 minutes in the background. The fetched data is also inserted into the MySQL database for historical tracking and analytics. You can see the last update time in the status bar.
 
 ---
 

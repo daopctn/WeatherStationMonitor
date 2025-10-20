@@ -84,7 +84,6 @@ private slots:
     void onWeatherDataUpdated(const WeatherData &data);
 
 private:
-    QTimer *dataUpdateTimer;
     Ui::MainWindow *ui;
     PythonBridge *pythonBridge;
     double m_avgTemperature;
