@@ -15,7 +15,8 @@
 #include <PythonBridge.h>
 
 // Anonymous namespace for helper functions
-namespace {
+namespace
+{
     QString getWeatherIconPath(int weatherId, long long timestamp,
                                long long sunrise, long long sunset)
     {
@@ -24,26 +25,45 @@ namespace {
 
         // Map weatherId to OpenWeatherMap icon code
         QString iconCode;
-        if (weatherId >= 200 && weatherId < 300) {
-            iconCode = "11";  // Thunderstorm
-        } else if (weatherId >= 300 && weatherId < 400) {
-            iconCode = "09";  // Drizzle
-        } else if (weatherId >= 500 && weatherId < 600) {
-            iconCode = "10";  // Rain
-        } else if (weatherId >= 600 && weatherId < 700) {
-            iconCode = "13";  // Snow
-        } else if (weatherId >= 700 && weatherId < 800) {
-            iconCode = "50";  // Atmosphere (fog, mist, etc.)
-        } else if (weatherId == 800) {
-            iconCode = "01";  // Clear sky
-        } else if (weatherId == 801) {
-            iconCode = "02";  // Few clouds (11-25%)
-        } else if (weatherId == 802) {
-            iconCode = "03";  // Scattered clouds (25-50%)
-        } else if (weatherId >= 803 && weatherId <= 804) {
-            iconCode = "04";  // Broken/Overcast clouds (51-100%)
-        } else {
-            iconCode = "01";  // Default to clear sky
+        if (weatherId >= 200 && weatherId < 300)
+        {
+            iconCode = "11"; // Thunderstorm
+        }
+        else if (weatherId >= 300 && weatherId < 400)
+        {
+            iconCode = "09"; // Drizzle
+        }
+        else if (weatherId >= 500 && weatherId < 600)
+        {
+            iconCode = "10"; // Rain
+        }
+        else if (weatherId >= 600 && weatherId < 700)
+        {
+            iconCode = "13"; // Snow
+        }
+        else if (weatherId >= 700 && weatherId < 800)
+        {
+            iconCode = "50"; // Atmosphere (fog, mist, etc.)
+        }
+        else if (weatherId == 800)
+        {
+            iconCode = "01"; // Clear sky
+        }
+        else if (weatherId == 801)
+        {
+            iconCode = "02"; // Few clouds (11-25%)
+        }
+        else if (weatherId == 802)
+        {
+            iconCode = "03"; // Scattered clouds (25-50%)
+        }
+        else if (weatherId >= 803 && weatherId <= 804)
+        {
+            iconCode = "04"; // Broken/Overcast clouds (51-100%)
+        }
+        else
+        {
+            iconCode = "01"; // Default to clear sky
         }
 
         // Determine day/night suffix
@@ -58,11 +78,11 @@ namespace {
      * Reduces code duplication by centralizing UI update logic for all 5 locations
      */
     void updateLocationUI(Ui::MainWindow *ui, int locationIndex,
-                         double temperature, const QString &description,
-                         double humidity, double windSpeed, int pressure,
-                         const QString &dateStr, const QString &timeStr,
-                         int weatherId, long long unixTime,
-                         long long sunrise, long long sunset)
+                          double temperature, const QString &description,
+                          double humidity, double windSpeed, int pressure,
+                          const QString &dateStr, const QString &timeStr,
+                          int weatherId, long long unixTime,
+                          long long sunrise, long long sunset)
     {
         // Get appropriate weather icon
         QString iconPath = getWeatherIconPath(weatherId, unixTime, sunrise, sunset);
@@ -71,7 +91,8 @@ namespace {
                                                 Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
         // Update UI widgets based on location index
-        switch (locationIndex) {
+        switch (locationIndex)
+        {
         case 0:
             ui->temp0->setText(QString::number(temperature, 'f', 1) + "°C");
             ui->describe0->setText(description);
@@ -321,7 +342,7 @@ void MainWindow::refreshWeatherUI()
 
             // Update UI for this location using helper function
             updateLocationUI(ui, i, temperature, description, humidity, windSpeed,
-                           pressure, dateStr, timeStr, weatherId, unixTime, sunrise, sunset);
+                             pressure, dateStr, timeStr, weatherId, unixTime, sunrise, sunset);
         }
     }
 
@@ -394,10 +415,11 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
         long long unixTime = query.value(2).toLongLong();
 
         // Track first and last timestamps for date range
-        if (firstTimestamp == 0) {
-            lastTimestamp = unixTime;  // First record is actually the latest (DESC order)
+        if (firstTimestamp == 0)
+        {
+            lastTimestamp = unixTime; // First record is actually the latest (DESC order)
         }
-        firstTimestamp = unixTime;  // Last record will be the oldest
+        firstTimestamp = unixTime; // Last record will be the oldest
 
         // Convert Kelvin to Celsius
         double temperature = temperatureKelvin - 273.15;
@@ -422,10 +444,10 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
 
     // Create scatter series for markers at data points with tooltips
     QScatterSeries *tempMarkers = new QScatterSeries();
-    tempMarkers->setName("");  // Don't show in legend
-    tempMarkers->setMarkerSize(8);  // Larger markers for easier hovering
-    tempMarkers->setColor(QColor(230, 126, 34));  // Orange to match temp line
-    tempMarkers->setBorderColor(QColor(255, 255, 255));  // White border for visibility
+    tempMarkers->setName("");                           // Don't show in legend
+    tempMarkers->setMarkerSize(8);                      // Larger markers for easier hovering
+    tempMarkers->setColor(QColor(230, 126, 34));        // Orange to match temp line
+    tempMarkers->setBorderColor(QColor(255, 255, 255)); // White border for visibility
     tempMarkers->setMarkerShape(QScatterSeries::MarkerShapeCircle);
 
     for (const QPointF &point : tempPoints)
@@ -434,7 +456,8 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     }
 
     // Enable tooltips on temperature markers
-    connect(tempMarkers, &QScatterSeries::hovered, [timezoneOffset](const QPointF &point, bool state) {
+    connect(tempMarkers, &QScatterSeries::hovered, [timezoneOffset](const QPointF &point, bool state)
+            {
         if (state) {
             // Mouse is over the point - show tooltip
             QDateTime dtUTC = QDateTime::fromMSecsSinceEpoch(point.x(), Qt::UTC);
@@ -449,14 +472,13 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
         } else {
             // Mouse moved away - hide tooltip
             QToolTip::hideText();
-        }
-    });
+        } });
 
     QScatterSeries *humMarkers = new QScatterSeries();
-    humMarkers->setName("");  // Don't show in legend
-    humMarkers->setMarkerSize(8);  // Larger markers for easier hovering
-    humMarkers->setColor(QColor(41, 128, 185));  // Blue to match humidity line
-    humMarkers->setBorderColor(QColor(255, 255, 255));  // White border for visibility
+    humMarkers->setName("");                           // Don't show in legend
+    humMarkers->setMarkerSize(8);                      // Larger markers for easier hovering
+    humMarkers->setColor(QColor(41, 128, 185));        // Blue to match humidity line
+    humMarkers->setBorderColor(QColor(255, 255, 255)); // White border for visibility
     humMarkers->setMarkerShape(QScatterSeries::MarkerShapeCircle);
 
     for (const QPointF &point : humPoints)
@@ -465,7 +487,8 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     }
 
     // Enable tooltips on humidity markers
-    connect(humMarkers, &QScatterSeries::hovered, [timezoneOffset](const QPointF &point, bool state) {
+    connect(humMarkers, &QScatterSeries::hovered, [timezoneOffset](const QPointF &point, bool state)
+            {
         if (state) {
             // Mouse is over the point - show tooltip
             QDateTime dtUTC = QDateTime::fromMSecsSinceEpoch(point.x(), Qt::UTC);
@@ -480,30 +503,30 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
         } else {
             // Mouse moved away - hide tooltip
             QToolTip::hideText();
-        }
-    });
+        } });
 
     // Create zero reference line for temperature axis
     QLineSeries *zeroLine = new QLineSeries();
-    zeroLine->setName("");  // Don't show in legend
-    if (!tempPoints.isEmpty()) {
+    zeroLine->setName(""); // Don't show in legend
+    if (!tempPoints.isEmpty())
+    {
         // Span the entire X-axis range
         qint64 minX = tempPoints.first().x();
         qint64 maxX = tempPoints.last().x();
         zeroLine->append(QPointF(minX, 0));
         zeroLine->append(QPointF(maxX, 0));
     }
-    QPen zeroPen(QColor(128, 128, 128));  // Gray color
+    QPen zeroPen(QColor(128, 128, 128)); // Gray color
     zeroPen.setWidth(1);
-    zeroPen.setStyle(Qt::DashLine);  // Dashed line
+    zeroPen.setStyle(Qt::DashLine); // Dashed line
     zeroLine->setPen(zeroPen);
 
     // Create chart
     QChart *chart = new QChart();
     chart->addSeries(tempSeries);
     chart->addSeries(humSeries);
-    chart->addSeries(zeroLine);  // Add zero reference line
-    chart->addSeries(tempMarkers);  // Add markers on top of lines
+    chart->addSeries(zeroLine);    // Add zero reference line
+    chart->addSeries(tempMarkers); // Add markers on top of lines
     chart->addSeries(humMarkers);
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
@@ -513,7 +536,7 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     titleFont.setPointSize(11);
     titleFont.setBold(true);
     chart->setTitleFont(titleFont);
-    chart->setTitleBrush(QBrush(Qt::white));  // White title
+    chart->setTitleBrush(QBrush(Qt::white)); // White title
 
     // Make chart background transparent - the QChartView provides the frosted glass effect
     chart->setBackgroundBrush(QBrush(Qt::transparent));
@@ -529,9 +552,9 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
 
     // Create X-axis - no grid, no labels (tooltips will show exact timestamps)
     QDateTimeAxis *axisX = new QDateTimeAxis();
-    axisX->setLabelsVisible(false);  // Hide labels
-    axisX->setGridLineVisible(false);  // Hide grid lines
-    axisX->setLineVisible(false);  // Hide axis line itself
+    axisX->setLabelsVisible(false);   // Hide labels
+    axisX->setGridLineVisible(false); // Hide grid lines
+    axisX->setLineVisible(false);     // Hide axis line itself
 
     // Set compact font for Y-axis to minimize space
     QFont axisFont;
@@ -540,36 +563,48 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     chart->addAxis(axisX, Qt::AlignBottom);
     tempSeries->attachAxis(axisX);
     humSeries->attachAxis(axisX);
-    zeroLine->attachAxis(axisX);  // Attach zero line to X-axis
+    zeroLine->attachAxis(axisX); // Attach zero line to X-axis
     tempMarkers->attachAxis(axisX);
     humMarkers->attachAxis(axisX);
 
-    // Create Y-axis for Temperature (left side) - white text to match theme
+    // Create Y-axis for Temperature (left side) - orange text to match theme
     QValueAxis *axisYTemp = new QValueAxis();
     axisYTemp->setLabelFormat("%.0f");
     axisYTemp->setLabelsFont(axisFont);
-    axisYTemp->setLinePenColor(QColor(255, 255, 255, 80));  // Subtle white line
-    axisYTemp->setLabelsColor(Qt::white);  // White labels
-    axisYTemp->setGridLineVisible(false);  // Remove grid lines
-    axisYTemp->setRange(-30, 60);  // Fixed range: -30°C to 60°C
+    axisYTemp->setLinePenColor(QColor(230, 126, 34)); // Subtle orange line
+    axisYTemp->setLabelsColor(QColor(230, 126, 34));  // Orange labels
+
+    QFont tempFont = axisYTemp->labelsFont(); // Bold font for emphasis
+    tempFont.setPointSize(10);
+    tempFont.setBold(true);
+    axisYTemp->setLabelsFont(tempFont);
+
+    axisYTemp->setGridLineVisible(false); // Remove grid lines
+    axisYTemp->setRange(-30, 60);         // Fixed range: -30°C to 60°C
 
     chart->addAxis(axisYTemp, Qt::AlignLeft);
     tempSeries->attachAxis(axisYTemp);
-    zeroLine->attachAxis(axisYTemp);  // Attach zero line to temperature Y-axis
-    tempMarkers->attachAxis(axisYTemp);  // Attach markers to same axis
+    zeroLine->attachAxis(axisYTemp);    // Attach zero line to temperature Y-axis
+    tempMarkers->attachAxis(axisYTemp); // Attach markers to same axis
 
-    // Create Y-axis for Humidity (right side) - white text to match theme
+    // Create Y-axis for Humidity (right side) - blue text to match theme
     QValueAxis *axisYHum = new QValueAxis();
     axisYHum->setLabelFormat("%.0f");
     axisYHum->setLabelsFont(axisFont);
-    axisYHum->setLinePenColor(QColor(255, 255, 255, 80));  // Subtle white line
-    axisYHum->setLabelsColor(Qt::white);  // White labels
-    axisYHum->setGridLineVisible(false);  // Remove grid lines
-    axisYHum->setRange(0, 100);  // Fixed range: 0% to 100%
+    axisYHum->setLinePenColor(QColor(41, 128, 185)); // Subtle blue line
+    axisYHum->setLabelsColor(QColor(41, 128, 185));  // Blue labels
+
+    QFont humFont = axisYHum->labelsFont();
+    humFont.setPointSize(10);
+    humFont.setBold(true);
+    axisYHum->setLabelsFont(humFont);
+
+    axisYHum->setGridLineVisible(false); // Remove grid lines
+    axisYHum->setRange(0, 100);          // Fixed range: 0% to 100%
 
     chart->addAxis(axisYHum, Qt::AlignRight);
     humSeries->attachAxis(axisYHum);
-    humMarkers->attachAxis(axisYHum);  // Attach markers to same axis
+    humMarkers->attachAxis(axisYHum); // Attach markers to same axis
 
     // Hide legend - we'll use a shared legend for all charts
     chart->legend()->setVisible(false);
@@ -577,7 +612,7 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     // Apply chart to view - stylesheet handles the frosted glass styling
     chartView->setChart(chart);
     chartView->setRenderHint(QPainter::Antialiasing);
-    chartView->setContentsMargins(0, 0, 0, 0);  // Remove view margins
+    chartView->setContentsMargins(0, 0, 0, 0); // Remove view margins
 
     qDebug() << "Chart initialized for" << locationName << "with" << tempPoints.size() << "data points";
 }
