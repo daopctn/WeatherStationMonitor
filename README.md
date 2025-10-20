@@ -20,7 +20,7 @@ Weather Station Monitor is a professional desktop application that provides real
 - **Multi-City Monitoring** - Track 5 cities simultaneously (Zocca, Rome, Paris, London, New York)
 - **Real-Time Updates** - Automatic data refresh every 5 minutes
 - **Interactive Charts** - Beautiful temperature and humidity charts with historical data
-- **Comprehensive Data** - Temperature, humidity, pressure, wind speed/direction, visibility
+- **Comprehensive Data** - Temperature, humidity, pressure, wind speed/, visibility
 - **Python Analytics** - Automatic calculation of averages and statistics
 - **Database Persistence** - MySQL backend for reliable data storage
 - **Modern UI** - Clean Qt5-based interface with weather icons
@@ -96,7 +96,7 @@ Or find it in your application menu under "Science" or search for "Weather Stati
 The application displays:
 - **Real-time data** for 5 cities in individual panels
 - **Temperature** (°C), **Humidity** (%), **Pressure** (hPa)
-- **Wind** speed and direction
+- **Wind** speed
 - **Weather conditions** with descriptive icons
 - **Sunrise/Sunset** times
 
