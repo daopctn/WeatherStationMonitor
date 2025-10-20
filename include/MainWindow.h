@@ -99,6 +99,16 @@ private:
     ThreadManager *threadManager;
     DatabaseManager *m_dbManager;  // Persistent database connection
 
+    // Chart series references for real-time updates (indexed by location.uiIndex)
+    QLineSeries *m_tempSeries[5];      ///< Temperature line series for each location
+    QLineSeries *m_humSeries[5];       ///< Humidity line series for each location
+    QScatterSeries *m_tempMarkers[5];  ///< Temperature marker series for each location
+    QScatterSeries *m_humMarkers[5];   ///< Humidity marker series for each location
+    QLineSeries *m_zeroLine[5];        ///< Zero reference line for each location
+    QDateTimeAxis *m_axisX[5];         ///< X-axis (time) for each chart - needed to update range
+    int m_timezoneOffsets[5];          ///< Timezone offsets for tooltip display
+    bool m_hasVirtualPoint[5];         ///< Tracks if chart has a virtual second point for single-point display
+
     /**
      * @brief Initializes all chart views with data from database
      * @note Called once during MainWindow construction
@@ -111,8 +121,17 @@ private:
      * @param tableName Database table name for the location
      * @param locationName Display name for the chart title
      * @param timezoneOffset Timezone offset in seconds from UTC
+     * @param locationIndex Index of the location (0-4) for storing series references
      */
-    void setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset);
+    void setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset, int locationIndex);
+
+    /**
+     * @brief Updates a chart in real-time with new weather data
+     * @param locationIndex Index of the location (0-4)
+     * @param data The new weather data to add to the chart
+     * @note Maintains a rolling window of 100 data points
+     */
+    void updateChartRealtime(int locationIndex, const WeatherData &data);
 };
 
 #endif // MAINWINDOW_H

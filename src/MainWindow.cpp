@@ -157,9 +157,19 @@ namespace
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge()), m_dbManager(nullptr)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+    , pythonBridge(new PythonBridge())
+    , m_dbManager(nullptr)
+    , m_tempSeries{nullptr, nullptr, nullptr, nullptr, nullptr}
+    , m_humSeries{nullptr, nullptr, nullptr, nullptr, nullptr}
+    , m_tempMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}
+    , m_humMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}
+    , m_zeroLine{nullptr, nullptr, nullptr, nullptr, nullptr}
+    , m_axisX{nullptr, nullptr, nullptr, nullptr, nullptr}
+    , m_timezoneOffsets{0, 0, 0, 0, 0}
+    , m_hasVirtualPoint{false, false, false, false, false}
 {
-
     ui->setupUi(this);
     setWindowTitle("Weather Station Monitor");
 
@@ -378,7 +388,7 @@ void MainWindow::initializeCharts()
             continue;
         }
         setupChart(chartViews[location.uiIndex], location.tableName,
-                   location.displayName, location.timezoneOffset);
+                   location.displayName, location.timezoneOffset, location.uiIndex);
     }
 }
 
@@ -424,6 +434,9 @@ void MainWindow::onWeatherDataUpdated(const WeatherData &data)
     updateLocationUI(ui, location->uiIndex, temperature, data.description, data.humidity, data.windSpeed,
                      data.pressure, dateStr, timeStr, data.weatherId, data.timestamp, data.sunrise, data.sunset);
 
+    // Update chart in real-time with new data point
+    updateChartRealtime(location->uiIndex, data);
+
     qDebug() << "Real-time UI update for" << data.locationName << "- Temp:" << temperature << "°C";
 
     // Resume spinner after operation
@@ -433,12 +446,18 @@ void MainWindow::onWeatherDataUpdated(const WeatherData &data)
     }
 }
 
-void MainWindow::setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset)
+void MainWindow::setupChart(QChartView *chartView, const QString &tableName, const QString &locationName, int timezoneOffset, int locationIndex)
 {
     if (!m_dbManager || !m_dbManager->isConnected())
     {
         qWarning() << "Database not connected, cannot setup chart for" << locationName;
         return;
+    }
+
+    // Store timezone offset for this location
+    if (locationIndex >= 0 && locationIndex < 5)
+    {
+        m_timezoneOffsets[locationIndex] = timezoneOffset;
     }
 
     QSqlDatabase db = m_dbManager->getDatabase();
@@ -471,6 +490,13 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     humPen.setWidth(3);
     humSeries->setPen(humPen);
 
+    // Store series references for real-time updates
+    if (locationIndex >= 0 && locationIndex < 5)
+    {
+        m_tempSeries[locationIndex] = tempSeries;
+        m_humSeries[locationIndex] = humSeries;
+    }
+
     // Collect data points (they come in reverse order, so we need to reverse)
     QList<QPointF> tempPoints;
     QList<QPointF> humPoints;
@@ -500,15 +526,24 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
         humPoints.prepend(QPointF(timestampMs, humidity));
     }
 
-    // Add points to series
-    for (const QPointF &point : tempPoints)
+    // Add points to line series (only if we have 2 or more points to draw a line)
+    if (tempPoints.size() >= 2)
     {
-        tempSeries->append(point);
-    }
+        for (const QPointF &point : tempPoints)
+        {
+            tempSeries->append(point);
+        }
 
-    for (const QPointF &point : humPoints)
+        for (const QPointF &point : humPoints)
+        {
+            humSeries->append(point);
+        }
+    }
+    else if (tempPoints.size() == 1)
     {
-        humSeries->append(point);
+        // For single point, don't add to line series - markers will show it
+        m_hasVirtualPoint[locationIndex] = true;  // Flag that we're in "marker-only" mode
+        qDebug() << "Single point mode for location index" << locationIndex << "- showing marker only";
     }
 
     // Create scatter series for markers at data points with tooltips
@@ -522,6 +557,12 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     for (const QPointF &point : tempPoints)
     {
         tempMarkers->append(point);
+    }
+
+    // Store marker series reference for real-time updates
+    if (locationIndex >= 0 && locationIndex < 5)
+    {
+        m_tempMarkers[locationIndex] = tempMarkers;
     }
 
     // Enable tooltips on temperature markers
@@ -553,6 +594,12 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     for (const QPointF &point : humPoints)
     {
         humMarkers->append(point);
+    }
+
+    // Store marker series reference for real-time updates
+    if (locationIndex >= 0 && locationIndex < 5)
+    {
+        m_humMarkers[locationIndex] = humMarkers;
     }
 
     // Enable tooltips on humidity markers
@@ -590,6 +637,12 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     zeroPen.setStyle(Qt::DashLine); // Dashed line
     zeroLine->setPen(zeroPen);
 
+    // Store zero line reference for real-time updates
+    if (locationIndex >= 0 && locationIndex < 5)
+    {
+        m_zeroLine[locationIndex] = zeroLine;
+    }
+
     // Create chart
     QChart *chart = new QChart();
     chart->addSeries(tempSeries);
@@ -624,6 +677,12 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     axisX->setLabelsVisible(false);   // Hide labels
     axisX->setGridLineVisible(false); // Hide grid lines
     axisX->setLineVisible(false);     // Hide axis line itself
+
+    // Store X-axis reference for real-time updates
+    if (locationIndex >= 0 && locationIndex < 5)
+    {
+        m_axisX[locationIndex] = axisX;
+    }
 
     // Set compact font for Y-axis to minimize space
     QFont axisFont;
@@ -684,4 +743,118 @@ void MainWindow::setupChart(QChartView *chartView, const QString &tableName, con
     chartView->setContentsMargins(0, 0, 0, 0); // Remove view margins
 
     qDebug() << "Chart initialized for" << locationName << "with" << tempPoints.size() << "data points";
+}
+
+void MainWindow::updateChartRealtime(int locationIndex, const WeatherData &data)
+{
+    // Validate location index
+    if (locationIndex < 0 || locationIndex >= 5)
+    {
+        qWarning() << "Invalid location index for chart update:" << locationIndex;
+        return;
+    }
+
+    // Ensure series and axis exist for this location
+    if (!m_tempSeries[locationIndex] || !m_humSeries[locationIndex] ||
+        !m_tempMarkers[locationIndex] || !m_humMarkers[locationIndex] ||
+        !m_zeroLine[locationIndex] || !m_axisX[locationIndex])
+    {
+        qWarning() << "Chart series or axis not initialized for location index:" << locationIndex;
+        return;
+    }
+
+    // Convert Kelvin to Celsius
+    double temperature = data.temperature - 273.15;
+
+    // Convert Unix timestamp to milliseconds for QDateTime
+    qint64 timestampMs = data.timestamp * 1000LL;
+
+    // Create new data points
+    QPointF tempPoint(timestampMs, temperature);
+    QPointF humPoint(timestampMs, data.humidity);
+
+    // Get current marker count BEFORE adding new point
+    int markerCountBefore = m_tempMarkers[locationIndex]->count();
+
+    // Maintain 100-point rolling window for markers
+    if (markerCountBefore >= 100)
+    {
+        // Remove oldest point (first point)
+        m_tempMarkers[locationIndex]->remove(0);
+        m_humMarkers[locationIndex]->remove(0);
+
+        // Also remove from line series if it exists there
+        if (m_tempSeries[locationIndex]->count() > 0)
+        {
+            m_tempSeries[locationIndex]->remove(0);
+            m_humSeries[locationIndex]->remove(0);
+        }
+
+        markerCountBefore = 99;  // After removal
+    }
+
+    // Always add to marker series (markers show for any number of points)
+    m_tempMarkers[locationIndex]->append(tempPoint);
+    m_humMarkers[locationIndex]->append(humPoint);
+
+    // Handle line series based on point count BEFORE this addition
+    if (markerCountBefore == 0)
+    {
+        // This is the first point - only show marker, no line
+        m_hasVirtualPoint[locationIndex] = true;
+        qDebug() << "First point - marker-only mode for location index" << locationIndex;
+    }
+    else if (markerCountBefore == 1 && m_hasVirtualPoint[locationIndex])
+    {
+        // This is the second point - now create the line with both points
+        QPointF firstPoint = m_tempMarkers[locationIndex]->at(0);
+        QPointF firstHumPoint = m_humMarkers[locationIndex]->at(0);
+
+        m_tempSeries[locationIndex]->append(firstPoint);
+        m_humSeries[locationIndex]->append(firstHumPoint);
+        m_tempSeries[locationIndex]->append(tempPoint);
+        m_humSeries[locationIndex]->append(humPoint);
+
+        m_hasVirtualPoint[locationIndex] = false;
+        qDebug() << "Second point arrived - created line for location index" << locationIndex;
+    }
+    else if (markerCountBefore >= 1)
+    {
+        // We already have a line - just add this point to it
+        m_tempSeries[locationIndex]->append(tempPoint);
+        m_humSeries[locationIndex]->append(humPoint);
+    }
+
+    // Update X-axis range and zero line to show new data
+    // Use marker series for range calculation (always has real data)
+    if (m_tempMarkers[locationIndex]->count() > 0)
+    {
+        qint64 minX = m_tempMarkers[locationIndex]->at(0).x();
+        qint64 maxX = m_tempMarkers[locationIndex]->at(m_tempMarkers[locationIndex]->count() - 1).x();
+
+        // Only add padding if we have exactly 1 point (to make it visible)
+        if (m_tempMarkers[locationIndex]->count() == 1)
+        {
+            // Add ±30 minutes padding (1800000 ms) around the single point
+            qint64 padding = 1800000;
+            minX -= padding;
+            maxX += padding;
+        }
+        // For 2+ points, use the actual data range without padding
+
+        // Update X-axis range to display the data window
+        QDateTime minDateTime = QDateTime::fromMSecsSinceEpoch(minX, Qt::UTC);
+        QDateTime maxDateTime = QDateTime::fromMSecsSinceEpoch(maxX, Qt::UTC);
+        m_axisX[locationIndex]->setRange(minDateTime, maxDateTime);
+
+        // Clear and update zero line to span the range
+        m_zeroLine[locationIndex]->clear();
+        m_zeroLine[locationIndex]->append(QPointF(minX, 0));
+        m_zeroLine[locationIndex]->append(QPointF(maxX, 0));
+    }
+
+    qDebug() << "Chart updated for location index" << locationIndex
+             << "- Temp:" << temperature << "°C, Humidity:" << data.humidity << "%"
+             << "- Total markers:" << m_tempMarkers[locationIndex]->count()
+             << ", Line points:" << m_tempSeries[locationIndex]->count();
 }
