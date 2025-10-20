@@ -14,6 +14,7 @@ obj-x86_64-linux-gnu/
 moc_*.cpp
 moc_*.h
 *.moc
+main.moc
 qrc_*.cpp
 ui_*.h
 *.autosave

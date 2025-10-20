@@ -58,7 +58,7 @@ weather-station-monitor
 
 ### Detailed Installation
 
-See [INSTALL.md](INSTALL.md) for comprehensive installation instructions including:
+See [INSTALL.md](docs/INSTALL.md) for comprehensive installation instructions including:
 - Building from source
 - Database setup
 - Configuration details
@@ -235,7 +235,7 @@ Contributions are welcome! Please:
 - Run from terminal to see error messages
 - Check Qt installation
 
-See [INSTALL.md](INSTALL.md) for detailed troubleshooting.
+See [INSTALL.md](docs/INSTALL.md) for detailed troubleshooting.
 
 ---
 
@@ -255,7 +255,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Support
 
-- **Documentation:** [INSTALL.md](INSTALL.md)
+- **Documentation:** [INSTALL.md](docs/INSTALL.md)
 - **Issues:** [GitHub Issues](https://github.com/daopctn/WeatherStationMonitor/issues)
 - **Email:** daopctn@gmail.com
 
