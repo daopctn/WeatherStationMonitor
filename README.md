@@ -151,18 +151,18 @@ The application provides real-time data updates, automatically fetching new weat
 ### Components
 
 ```
-┌─────────────────────────────────────────────────┐
-│           Qt5 GUI (MainWindow)                  │
-│   ┌─────────────────────────────────────────┐   │
-│   │ Weather Overview │ Charts │ Statistics │   │
-│   └─────────────────────────────────────────┘   │
-├─────────────────────────────────────────────────┤
-│        ThreadManager (Multi-threaded API)      │
-├─────────────────────────────────────────────────┤
+┌───────────────────────────────────────────────────┐
+│           Qt5 GUI (MainWindow)                    │
+│   ┌─────────────────────────────────────────┐     │
+│   │ Weather Overview │ Charts │ Statistics  │     │
+│   └─────────────────────────────────────────┘     │
+├───────────────────────────────────────────────────┤
+│        ThreadManager (Multi-threaded API)         │
+├───────────────────────────────────────────────────┤
 │ DatabaseManager │ PythonBridge │ StatisticsEngine │
-├─────────────────────────────────────────────────┤
-│     MySQL DB    │  Python Analytics (NumPy/Pandas) │
-└─────────────────────────────────────────────────┘
+├───────────────────────────────────────────────────┤
+│     MySQL DB    │  Python Analytics (NumPy/Pandas)│
+└───────────────────────────────────────────────────┘
 ```
 
 **Key Components:**
