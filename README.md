@@ -20,19 +20,23 @@ Weather Station Monitor is a professional desktop application that provides real
 - **Multi-City Monitoring** - Track 5 cities simultaneously (Zocca, Rome, Paris, London, New York)
 - **Real-Time Updates** - Automatic data refresh every 5 minutes
 - **Interactive Charts** - Beautiful temperature and humidity charts with historical data
-- **Comprehensive Data** - Temperature, humidity, pressure, wind speed/, visibility
-- **Python Analytics** - Automatic calculation of averages and statistics
-- **Database Persistence** - MySQL backend for reliable data storage
-- **Modern UI** - Clean Qt5-based interface with weather icons
+- **Advanced Statistics** - Comprehensive analytics including trends, patterns, and multi-period comparisons
+- **Cross-Location Insights** - Compare weather conditions across all cities in real-time
+- **Weather Pattern Analysis** - Distribution analysis of weather conditions with percentages
+- **Trend Detection** - Automatic identification of increasing/decreasing/stable trends
+- **Comprehensive Data** - Temperature, humidity, pressure, wind speed, gust, visibility, and comfort index
+- **Python Analytics** - Advanced statistical calculations including rate of change and comfort analysis
+- **Database Persistence** - MySQL backend for reliable data storage with historical tracking
+- **Modern UI** - Clean Qt5-based interface with weather icons and three comprehensive tabs
 - **Multi-Threaded** - Concurrent API calls for fast data fetching
 
 ---
 
 ## Screenshots
 
-![first tab](docs/Overview%20tab.png)
-![second tab](docs/Charts%20tab.png)
-![third tab](docs/statistics%20tab.png)
+![Weather Overview Tab](docs/Overview%20tab.png)
+![Interactive Charts Tab](docs/Charts%20tab.png)
+![Advanced Statistics Tab](docs/statistics%20tab.png)
 ---
 
 ## Installation
@@ -91,26 +95,45 @@ Or find it in your application menu under "Science" or search for "Weather Stati
 
 ## Usage
 
-### Main Window
+### Main Window Tabs
 
-The application displays:
-- **Real-time data** for 5 cities in individual panels
-- **Temperature** (°C), **Humidity** (%), **Pressure** (hPa)
-- **Wind** speed
+The application features three comprehensive tabs for different views of your weather data:
+
+#### Weather Overview Tab
+
+Real-time weather data for all 5 cities in individual panels:
+- **Temperature** (°C) with current readings
+- **Humidity** (%) levels
+- **Pressure** (hPa) with trend indicators
+- **Wind** speed (m/s) and direction
 - **Weather conditions** with descriptive icons
 - **Sunrise/Sunset** times
+- **Visibility** and other meteorological data
 
-### Charts
+#### Interactive Charts Tab
 
-Each city has two interactive charts:
-- **Temperature Chart** - Historical temperature data with trend line
-- **Humidity Chart** - Historical humidity data
+Historical data visualization for each city:
+- **Temperature Chart** - Historical temperature data with trend lines
+- **Humidity Chart** - Historical humidity data with time-based plotting
+- **Real-time Updates** - Charts update automatically as new data arrives
+- **Rolling Data Window** - Maintains 100 most recent data points for optimal performance
+- **Interactive Navigation** - Zoom and pan through historical data
+- **Dual Series Display** - Temperature and humidity plotted simultaneously
 
-Charts automatically update as new data arrives.
+#### Advanced Statistics Tab
 
-### Auto-Refresh
+Comprehensive analytics and insights:
+- **Location Statistics** - Detailed stats for each city (min/max/mean values, trends)
+- **Weather Patterns** - Distribution analysis of weather conditions with percentages
+- **Multi-Period Comparison** - Compare 24-hour vs 7-day averages and trends
+- **Trend Detection** - Automatic identification of increasing/decreasing/stable patterns
+- **Cross-Location Insights** - Compare conditions across all cities simultaneously
+- **Rate of Change** - Calculate how quickly conditions are changing per hour
+- **Comfort Index** - Human comfort analysis based on temperature and humidity
 
-The application provides real-time data updates, automatically fetching new weather data every 5 minutes in the background. The fetched data is also inserted into the MySQL database for historical tracking and analytics. You can see the last update time in the status bar.
+### Auto-Refresh System
+
+The application provides real-time data updates, automatically fetching new weather data every 5 minutes in the background. All fetched data is stored in the MySQL database for historical tracking and advanced analytics. The last update time is displayed in the status bar.
 
 ---
 
@@ -118,26 +141,99 @@ The application provides real-time data updates, automatically fetching new weat
 
 ### Technology Stack
 
-- **Frontend:** Qt 5.15 (C++)
-- **Backend:** MySQL 8.0
-- **Analytics:** Python 3.10 (NumPy, Pandas)
-- **API:** OpenWeatherMap REST API
-- **Build System:** CMake
-- **Packaging:** Debian (.deb)
+- **Frontend:** Qt 5.15 (C++ with Qt Charts for visualization)
+- **Backend:** MySQL 8.0 (persistent data storage)
+- **Analytics:** Python 3.10 with NumPy, Pandas (advanced statistical analysis)
+- **API:** OpenWeatherMap REST API (real-time weather data)
+- **Build System:** CMake (cross-platform compilation)
+- **Packaging:** Debian (.deb package format)
 
 ### Components
 
 ```
-┌─────────────────────────────────────────┐
-│         Qt5 GUI (MainWindow)            │
-├─────────────────────────────────────────┤
-│   ThreadManager (Multi-threaded API)   │
-├─────────────────────────────────────────┤
-│  DatabaseManager  │  PythonBridge      │
-├─────────────────────────────────────────┤
-│      MySQL DB     │  Python Analytics  │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────┐
+│           Qt5 GUI (MainWindow)                  │
+│   ┌─────────────────────────────────────────┐   │
+│   │ Weather Overview │ Charts │ Statistics │   │
+│   └─────────────────────────────────────────┘   │
+├─────────────────────────────────────────────────┤
+│        ThreadManager (Multi-threaded API)      │
+├─────────────────────────────────────────────────┤
+│ DatabaseManager │ PythonBridge │ StatisticsEngine │
+├─────────────────────────────────────────────────┤
+│     MySQL DB    │  Python Analytics (NumPy/Pandas) │
+└─────────────────────────────────────────────────┘
 ```
+
+**Key Components:**
+- **Qt5 GUI**: Three-tab interface with real-time updates and visual loading indicators
+- **ThreadManager**: Advanced threading with 5 concurrent WeatherWorkers + 1 DatabaseThread
+- **DatabaseManager**: MySQL connection and data persistence with thread-safe operations
+- **PythonBridge**: Seamless C++ to Python integration for advanced analytics
+- **StatisticsEngine**: Comprehensive calculations (trends, patterns, rate of change, comfort index)
+- **Spinner System**: Visual feedback during data operations and API calls
+
+---
+
+## Advanced Analytics
+
+Weather Station Monitor includes comprehensive Python-powered analytics for in-depth weather analysis.
+
+### Statistical Calculations
+
+- **Basic Statistics**: Min, max, mean, and standard deviation for all parameters
+- **Trend Analysis**: Linear regression to detect increasing/decreasing/stable trends
+- **Rate of Change**: Hourly rate calculations for temperature and pressure changes
+- **Comfort Index**: Human comfort analysis based on temperature-humidity combinations
+
+### Weather Pattern Analysis
+
+- **Condition Distribution**: Percentage breakdown of weather conditions (clear, cloudy, rain, etc.)
+- **Pattern Recognition**: Most common weather patterns for each location
+- **Historical Trends**: Long-term weather pattern analysis
+
+### Multi-Period Comparisons
+
+- **24-Hour vs 7-Day Analysis**: Compare recent vs longer-term averages
+- **Trend Summaries**: Human-readable summaries of temperature and pressure changes
+- **Weather Stability**: Assess how consistent conditions have been over time
+
+### Cross-Location Insights
+
+- **Comparative Extremes**: Identify warmest/coldest cities, most/least humid locations
+- **Pressure Ranges**: Analyze atmospheric pressure variations across cities
+- **Temperature Spread**: Calculate temperature differences between locations
+
+### Data Processing Features
+
+- **Pandas Integration**: Time-series analysis and data manipulation
+- **NumPy Calculations**: Efficient numerical computations for large datasets
+- **Real-time Processing**: Analytics update automatically with new data
+- **Error Handling**: Robust processing with graceful error recovery
+
+### Advanced Technical Features
+
+#### Multi-Threaded Architecture
+- **5 Concurrent Weather Workers**: Independent threads for each city to prevent blocking
+- **Dedicated Database Thread**: Separate thread for all database operations
+- **Thread-Safe Data Sharing**: Mutex-protected data vectors between threads
+- **Real-time UI Updates**: Signal/slot mechanism for live interface updates
+
+#### Dynamic Weather Icon System
+- **Day/Night Awareness**: Icons change based on sunrise/sunset times for each location
+- **Weather Condition Mapping**: 15+ weather conditions with appropriate visual indicators
+- **Time Zone Support**: Proper local time calculations for all 5 cities
+- **Resource Management**: Efficient icon loading and caching
+
+#### Visual Feedback System
+- **Loading Spinner**: Animated indicator during API calls and data processing
+- **Pause/Resume Capability**: Smart spinner management during UI operations
+- **Non-blocking UI**: Background operations don't freeze the interface
+
+#### Configuration System
+- **Environment Variables**: Secure credential management via environment variables
+- **JSON Configuration**: Flexible config file with fallback defaults
+- **Runtime Configuration**: Settings loaded at startup with validation
 
 ---
 

@@ -88,18 +88,23 @@ Or find it in your applications menu: **Science → Weather Station Monitor**
 ## What You Should See
 
 After launching:
-1. **5 city panels** showing weather data for Zocca, Rome, Paris, London, and New York
-2. **Real-time updates** - Data refreshes every 5 minutes automatically
-3. **Interactive charts** - Temperature and humidity graphs for each city
-4. **Weather icons** - Visual indicators for current conditions
+1. **Three main tabs**: Weather Overview, Interactive Charts, and Advanced Statistics
+2. **Weather Overview tab**: 5 city panels showing current weather data for Zocca, Rome, Paris, London, and New York
+3. **Interactive Charts tab**: Temperature and humidity graphs for each city with historical data
+4. **Advanced Statistics tab**: Comprehensive analytics including trends, patterns, and cross-location comparisons
+5. **Real-time updates** - Data refreshes every 5 minutes automatically
+6. **Weather icons** - Visual indicators for current conditions
 
 ## First Run Checklist
 
 - [ ] Application window opens without errors
-- [ ] You see weather data for all 5 cities
-- [ ] Weather icons are displayed correctly
-- [ ] Charts show at least one data point
+- [ ] Loading spinner appears during initial data fetch
+- [ ] You see weather data for all 5 cities in the Overview tab
+- [ ] Weather icons display correctly (day/night aware)
+- [ ] Charts show historical data in the Interactive Charts tab
+- [ ] Advanced Statistics tab loads with trend analysis
 - [ ] Status bar shows "Last updated: [time]"
+- [ ] No error messages in terminal output
 
 ## Troubleshooting
 

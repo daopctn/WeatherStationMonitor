@@ -22,9 +22,9 @@ This guide covers both installing from the pre-built `.deb` package and building
 ### Required Dependencies
 
 The .deb package will automatically install most dependencies, but you need:
-- MySQL Server 8.0 or higher
-- Qt 5.15 or higher
-- Python 3.10 or higher
+- MySQL Server 8.0 or higher (for data persistence)
+- Qt 5.15 or higher with Qt Charts (for visualization)
+- Python 3.10 or higher with NumPy and Pandas (for advanced analytics)
 
 ---
 
@@ -191,12 +191,18 @@ Update the following fields:
 }
 ```
 
-**Security Note:** This configuration uses environment variables for sensitive credentials. Set them securely:
+**Security Note:** This configuration supports environment variables for sensitive credentials. You can set them securely:
 - `DB_PASSWORD`: Your MySQL database password
 - `WEATHER_API_KEY`: Your OpenWeatherMap API key
 - Optional: `DB_HOST`, `DB_NAME`, `DB_USER` (defaults provided)
 
-Never hardcode real credentials in configuration files. If you created a dedicated database user, set `DB_USER=weather_user`.
+Environment variables take precedence over JSON config values for security. Never hardcode real credentials in configuration files. If you created a dedicated database user, set `DB_USER=weather_user`.
+
+To use environment variables, create a `.env` file or export them in your shell:
+```bash
+export DB_PASSWORD="your_password"
+export WEATHER_API_KEY="your_api_key"
+```
 
 ### Step 3: Verify Configuration
 
@@ -316,9 +322,10 @@ sudo mysql -u root -p -e "DROP DATABASE weather_station_db;"
 
 After successful installation:
 1. The app will automatically fetch weather data every 5 minutes
-2. View real-time data in the main window
-3. Check historical charts for each city
-4. Monitor temperature, humidity, pressure, and wind data
-5. Python analytics will calculate averages automatically
+2. View real-time data in the Weather Overview tab
+3. Check interactive historical charts in the Charts tab
+4. Explore comprehensive statistics and analytics in the Statistics tab
+5. Monitor temperature, humidity, pressure, wind data, and weather patterns
+6. Python analytics automatically calculate trends, patterns, and cross-location insights
 
 Enjoy monitoring the weather!
