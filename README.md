@@ -30,9 +30,9 @@ Weather Station Monitor is a professional desktop application that provides real
 
 ## Screenshots
 
-![first tab](docs/image.png)
-![second tab](docs/image-1.png)
-
+![first tab](docs/Overview%20tab.png)
+![second tab](docs/Charts%20tab.png)
+![third tab](docs/statistics%20tab.png)
 ---
 
 ## Installation

@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="data">
+    <file>weather-news.png</file>
+    <file>clock.png</file>
+    <file>location.png</file>
+    <file>temperature.png</file>
     <file>barometer.png</file>
     <file>humidity.png</file>
     <file>wind.png</file>

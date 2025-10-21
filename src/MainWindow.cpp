@@ -11,6 +11,8 @@
 #include <QMargins>
 #include <QToolTip>
 #include <QCursor>
+#include <QVBoxLayout>
+#include <QLabel>
 #include <QtCharts/QLegend>
 #include <PythonBridge.h>
 
@@ -157,7 +159,7 @@ namespace
 }
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge()), m_dbManager(nullptr), m_tempSeries{nullptr, nullptr, nullptr, nullptr, nullptr}, m_humSeries{nullptr, nullptr, nullptr, nullptr, nullptr}, m_tempMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}, m_humMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}, m_zeroLine{nullptr, nullptr, nullptr, nullptr, nullptr}, m_axisX{nullptr, nullptr, nullptr, nullptr, nullptr}, m_timezoneOffsets{0, 0, 0, 0, 0}, m_hasVirtualPoint{false, false, false, false, false}
+    : QMainWindow(parent), ui(new Ui::MainWindow), pythonBridge(new PythonBridge()), m_dbManager(nullptr), m_tempSeries{nullptr, nullptr, nullptr, nullptr, nullptr}, m_humSeries{nullptr, nullptr, nullptr, nullptr, nullptr}, m_tempMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}, m_humMarkers{nullptr, nullptr, nullptr, nullptr, nullptr}, m_zeroLine{nullptr, nullptr, nullptr, nullptr, nullptr}, m_axisX{nullptr, nullptr, nullptr, nullptr, nullptr}, m_timezoneOffsets{0, 0, 0, 0, 0}, m_hasVirtualPoint{false, false, false, false, false}, m_patternContainers{nullptr, nullptr, nullptr, nullptr, nullptr}
 {
     ui->setupUi(this);
     setWindowTitle("Weather Station Monitor");
@@ -225,6 +227,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Initialize charts with historical data
     initializeCharts();
+
+    // Update statistics labels on startup
+    updateStatisticsLabels();
 }
 
 MainWindow::~MainWindow()
@@ -843,4 +848,519 @@ void MainWindow::updateChartRealtime(int locationIndex, const WeatherData &data)
              << "- Temp:" << temperature << "°C, Humidity:" << data.humidity << "%"
              << "- Total markers:" << m_tempMarkers[locationIndex]->count()
              << ", Line points:" << m_tempSeries[locationIndex]->count();
+}
+
+void MainWindow::updateStatisticsLabels()
+{
+    qDebug() << "Updating statistics labels...";
+
+    if (!pythonBridge)
+    {
+        qWarning() << "PythonBridge not initialized!";
+        return;
+    }
+
+    // Get JSON data from Python
+    QString jsonString = pythonBridge->getStatisticsJson(
+        m_hostname,
+        m_databaseName,
+        m_username,
+        m_password);
+
+    // Parse JSON
+    QJsonDocument doc = QJsonDocument::fromJson(jsonString.toUtf8());
+    if (doc.isNull() || !doc.isObject())
+    {
+        qWarning() << "Failed to parse JSON statistics";
+        return;
+    }
+
+    QJsonObject root = doc.object();
+    QJsonArray locations = root["locations"].toArray();
+
+    // Process each location
+    for (int i = 0; i < locations.size(); ++i)
+    {
+        QJsonObject loc = locations[i].toObject();
+        QString locationName = loc["location"].toString();
+
+        // Check for errors
+        if (loc.contains("error"))
+        {
+            qWarning() << "Error for location" << locationName << ":" << loc["error"].toString();
+            continue;
+        }
+
+        // Get statistics objects
+        QJsonObject temp = loc["temperature"].toObject();
+        QJsonObject humidity = loc["humidity"].toObject();
+        QJsonObject pressure = loc["pressure"].toObject();
+        QJsonObject wind = loc["wind"].toObject();
+        QJsonObject weatherConditions = loc["weather_conditions"].toObject();
+        QJsonObject timeRange = loc["time_range"].toObject();
+
+        // Determine label suffix based on location name
+        QString suffix;
+        if (locationName == "ZOCCA")
+            suffix = "Zocca";
+        else if (locationName == "ROME")
+            suffix = "Rome";
+        else if (locationName == "PARIS")
+            suffix = "Paris";
+        else if (locationName == "LONDON")
+            suffix = "London";
+        else if (locationName == "NEW_YORK")
+            suffix = "NewYork";
+        else
+            continue;
+
+        // Update Location label
+        QLabel *locationLabel = this->findChild<QLabel *>(QString("statsLocation%1").arg(suffix));
+        if (locationLabel)
+        {
+            locationLabel->setText(locationName);
+        }
+
+        // Update Temperature labels
+        QLabel *tempRangeLabel = this->findChild<QLabel *>(QString("statsTempRange%1").arg(suffix));
+        if (tempRangeLabel && temp.contains("min") && temp.contains("max"))
+        {
+            tempRangeLabel->setText(QString("Value: %1°C → %2°C")
+                                        .arg(temp["min"].toDouble(), 0, 'f', 1)
+                                        .arg(temp["max"].toDouble(), 0, 'f', 1));
+        }
+
+        QLabel *tempMeanLabel = this->findChild<QLabel *>(QString("statsTempMean%1").arg(suffix));
+        if (tempMeanLabel && temp.contains("mean"))
+        {
+            tempMeanLabel->setText(QString("Mean: %1°C")
+                                       .arg(temp["mean"].toDouble(), 0, 'f', 1));
+        }
+
+        QLabel *tempStdDevLabel = this->findChild<QLabel *>(QString("statsTempStdDev%1").arg(suffix));
+        if (tempStdDevLabel && temp.contains("std_dev"))
+        {
+            tempStdDevLabel->setText(QString("σ=%1°C")
+                                         .arg(temp["std_dev"].toDouble(), 0, 'f', 1));
+        }
+
+        // Update Humidity labels
+        QLabel *humidityRangeLabel = this->findChild<QLabel *>(QString("statsHumRange%1").arg(suffix));
+        if (humidityRangeLabel && humidity.contains("min") && humidity.contains("max"))
+        {
+            humidityRangeLabel->setText(QString("Value: %1% → %2%")
+                                            .arg(humidity["min"].toDouble(), 0, 'f', 0)
+                                            .arg(humidity["max"].toDouble(), 0, 'f', 0));
+        }
+
+        QLabel *humidityMeanLabel = this->findChild<QLabel *>(QString("statsHumMean%1").arg(suffix));
+        if (humidityMeanLabel && humidity.contains("mean"))
+        {
+            humidityMeanLabel->setText(QString("Mean: %1%")
+                                           .arg(humidity["mean"].toDouble(), 0, 'f', 0));
+        }
+
+        // Update Pressure labels
+        QLabel *pressureRangeLabel = this->findChild<QLabel *>(QString("statsPressRange%1").arg(suffix));
+        if (pressureRangeLabel && pressure.contains("min") && pressure.contains("max"))
+        {
+            pressureRangeLabel->setText(QString("Value: %1 → %2 hPa")
+                                            .arg(pressure["min"].toDouble(), 0, 'f', 0)
+                                            .arg(pressure["max"].toDouble(), 0, 'f', 0));
+        }
+
+        QLabel *pressureMeanLabel = this->findChild<QLabel *>(QString("statsPressMean%1").arg(suffix));
+        if (pressureMeanLabel && pressure.contains("mean"))
+        {
+            pressureMeanLabel->setText(QString("Mean: %1 hPa")
+                                           .arg(pressure["mean"].toDouble(), 0, 'f', 0));
+        }
+
+        QLabel *pressureTrendLabel = this->findChild<QLabel *>(QString("statsPressTrend%1").arg(suffix));
+        if (pressureTrendLabel && pressure.contains("trend"))
+        {
+            QString trend = pressure["trend"].toString();
+            QString displayText;
+            QString color;
+
+            if (trend == "stable")
+            {
+                displayText = "→ stable";
+                color = "#cccccc"; // gray
+            }
+            else if (trend.startsWith("increasing (") && trend.endsWith(")"))
+            {
+                QString slopeStr = trend.mid(12, trend.length() - 13); // extract inside ()
+                displayText = QString("↑ %1").arg(slopeStr);
+                color = "#4CAF50"; // green
+            }
+            else if (trend.startsWith("decreasing (") && trend.endsWith(")"))
+            {
+                QString slopeStr = trend.mid(12, trend.length() - 13);
+                displayText = QString("↓ %1").arg(slopeStr);
+                color = "#FF5252"; // red
+            }
+            else
+            {
+                displayText = trend;
+                color = "white"; // fallback
+            }
+
+            // Apply colored text using rich text (HTML)
+            pressureTrendLabel->setText(
+                QString("<span style='color:%1;'>Trend: %2</span>")
+                    .arg(color, displayText));
+        }
+
+        // Update Wind labels
+        QLabel *windValueLabel = this->findChild<QLabel *>(QString("statsWindValue%1").arg(suffix));
+        if (windValueLabel && wind.contains("mean_speed"))
+        {
+            windValueLabel->setText(QString("Mean: %1 m/s")
+                                        .arg(wind["mean_speed"].toDouble(), 0, 'f', 1));
+        }
+
+        QLabel *windGustLabel = this->findChild<QLabel *>(QString("statsWindGust%1").arg(suffix));
+        if (windGustLabel && wind.contains("max_speed"))
+        {
+            windGustLabel->setText(QString("Gust: %1 m/s")
+                                       .arg(wind["max_speed"].toDouble(), 0, 'f', 1));
+        }
+
+        // ========== Weather Patterns (Conditions Distribution) ==========
+        // Update weather pattern labels with percentages
+        updateWeatherPatterns(suffix, weatherConditions);
+
+        // ========== Multi-Period Comparison (24h vs 7 days) ==========
+        // Get period comparison for this location
+        QString tableName;
+        if (locationName == "ZOCCA")
+            tableName = "zocca";
+        else if (locationName == "ROME")
+            tableName = "rome";
+        else if (locationName == "PARIS")
+            tableName = "paris";
+        else if (locationName == "LONDON")
+            tableName = "london";
+        else if (locationName == "NEW_YORK")
+            tableName = "new_york";
+
+        if (!tableName.isEmpty())
+        {
+            QString periodJson = pythonBridge->getPeriodComparisonJson(
+                m_hostname,
+                m_databaseName,
+                m_username,
+                m_password,
+                tableName);
+
+            QJsonDocument periodDoc = QJsonDocument::fromJson(periodJson.toUtf8());
+            if (!periodDoc.isNull() && periodDoc.isObject())
+            {
+                QJsonObject periodObj = periodDoc.object();
+
+                if (!periodObj.contains("error"))
+                {
+                    QJsonObject comparison = periodObj["comparison"].toObject();
+                    QString trendSummary = comparison["trend_summary"].toString();
+
+                    // Parse trend_summary to extract temperature and pressure parts
+                    // Format: "Temperature: stable, Pressure: stable" or
+                    //         "Temperature: Warming trend (+X°C vs 7-day avg), Pressure: rising (...)"
+                    QString tempTrend = "N/A";
+                    QString pressTrend = "N/A";
+
+                    // Split by finding "Pressure: " to handle commas in the trend text
+                    int pressureIndex = trendSummary.indexOf("Pressure: ");
+                    if (pressureIndex > 0)
+                    {
+                        tempTrend = trendSummary.left(pressureIndex).trimmed();
+                        // Remove trailing comma if present
+                        if (tempTrend.endsWith(","))
+                        {
+                            tempTrend = tempTrend.left(tempTrend.length() - 1).trimmed();
+                        }
+                        pressTrend = trendSummary.mid(pressureIndex).trimmed();
+                    }
+                    else
+                    {
+                        tempTrend = trendSummary;
+                    }
+
+                    // Update Multi-Period labels
+                    QLabel *multiPeriodTempLabel = this->findChild<QLabel *>(QString("statsMultiPeriodTemp%1").arg(suffix));
+                    if (multiPeriodTempLabel)
+                    {
+                        multiPeriodTempLabel->setText(tempTrend);
+                    }
+
+                    QLabel *multiPeriodPressLabel = this->findChild<QLabel *>(QString("statsMultiPeriodPress%1").arg(suffix));
+                    if (multiPeriodPressLabel)
+                    {
+                        multiPeriodPressLabel->setText(pressTrend);
+                    }
+
+                    // Optionally update the title with the time range
+                    QLabel *multiPeriodTitleLabel = this->findChild<QLabel *>(QString("statsMultiPeriodTitle%1").arg(suffix));
+                    if (multiPeriodTitleLabel)
+                    {
+                        multiPeriodTitleLabel->setText("Multi-period");
+                    }
+                }
+            }
+        }
+    }
+
+    // ========== Cross-Location Insights ==========
+    // Get comparative statistics across all locations
+    QString comparisonJson = pythonBridge->getLocationComparisonJson(
+        m_hostname,
+        m_databaseName,
+        m_username,
+        m_password,
+        24); // 24 hours
+
+    QJsonDocument comparisonDoc = QJsonDocument::fromJson(comparisonJson.toUtf8());
+    if (!comparisonDoc.isNull() && comparisonDoc.isObject())
+    {
+        QJsonObject comparisonObj = comparisonDoc.object();
+
+        if (!comparisonObj.contains("error"))
+        {
+            // Extract temperature data
+            QJsonObject temperature = comparisonObj["temperature"].toObject();
+            QJsonObject warmest = temperature["warmest"].toObject();
+            QJsonObject coldest = temperature["coldest"].toObject();
+            double tempDifference = temperature["difference"].toDouble();
+
+            // Extract humidity data
+            QJsonObject humidity = comparisonObj["humidity"].toObject();
+            QJsonObject mostHumid = humidity["most_humid"].toObject();
+            QJsonObject leastHumid = humidity["least_humid"].toObject();
+
+            // Extract pressure data
+            QJsonObject pressure = comparisonObj["pressure"].toObject();
+            QJsonObject highPressure = pressure["highest"].toObject();
+            QJsonObject lowPressure = pressure["lowest"].toObject();
+
+            // Update Temperature labels
+            QLabel *tempSpreadLabel = this->findChild<QLabel *>("label_2");
+            if (tempSpreadLabel)
+            {
+                // Convert Kelvin to Celsius for the difference
+                tempSpreadLabel->setText(QString("Temp Spread: %1°C  ")
+                                             .arg(tempDifference, 0, 'f', 1));
+            }
+
+            QLabel *warmestLabel = this->findChild<QLabel *>("label_3");
+            if (warmestLabel)
+            {
+                double warmestTemp = warmest["value"].toDouble() - 273.15; // Convert K to C
+                warmestLabel->setText(QString("Warmest: %1 (%2°C)  ")
+                                          .arg(warmest["location"].toString())
+                                          .arg(warmestTemp, 0, 'f', 1));
+            }
+
+            QLabel *coldestLabel = this->findChild<QLabel *>("label_4");
+            if (coldestLabel)
+            {
+                double coldestTemp = coldest["value"].toDouble() - 273.15; // Convert K to C
+                coldestLabel->setText(QString("Coldest: %1 (%2°C)  ")
+                                          .arg(coldest["location"].toString())
+                                          .arg(coldestTemp, 0, 'f', 1));
+            }
+
+            // Update Humidity labels
+            QLabel *humidityRangeLabel = this->findChild<QLabel *>("label_5");
+            if (humidityRangeLabel)
+            {
+                double humRange = mostHumid["value"].toDouble() - leastHumid["value"].toDouble();
+                humidityRangeLabel->setText(QString("Humidity Range: %1% ")
+                                                .arg(humRange, 0, 'f', 0));
+            }
+
+            QLabel *mostHumidLabel = this->findChild<QLabel *>("label_7");
+            if (mostHumidLabel)
+            {
+                mostHumidLabel->setText(QString("Most Humid: %1 (%2%)")
+                                            .arg(mostHumid["location"].toString())
+                                            .arg(mostHumid["value"].toDouble(), 0, 'f', 0));
+            }
+
+            QLabel *driestLabel = this->findChild<QLabel *>("label_6");
+            if (driestLabel)
+            {
+                driestLabel->setText(QString("Driest: %1 (%2%)")
+                                         .arg(leastHumid["location"].toString())
+                                         .arg(leastHumid["value"].toDouble(), 0, 'f', 0));
+            }
+
+            // Update Pressure labels
+            QLabel *pressureRangeLabel = this->findChild<QLabel *>("label_8");
+            if (pressureRangeLabel)
+            {
+                double pressRange = highPressure["value"].toDouble() - lowPressure["value"].toDouble();
+                pressureRangeLabel->setText(QString("Pressure Range: %1 hPa ")
+                                                .arg(pressRange, 0, 'f', 0));
+            }
+
+            QLabel *highPressureLabel = this->findChild<QLabel *>("label_10");
+            if (highPressureLabel)
+            {
+                highPressureLabel->setText(QString("High: %1 (%2 hPa)")
+                                               .arg(highPressure["location"].toString())
+                                               .arg(highPressure["value"].toDouble(), 0, 'f', 0));
+            }
+
+            QLabel *lowPressureLabel = this->findChild<QLabel *>("label_9");
+            if (lowPressureLabel)
+            {
+                lowPressureLabel->setText(QString("Low:  %1 (%2 hPa)")
+                                              .arg(lowPressure["location"].toString())
+                                              .arg(lowPressure["value"].toDouble(), 0, 'f', 0));
+            }
+
+            qDebug() << "Cross-location insights updated successfully.";
+        }
+        else
+        {
+            qWarning() << "Error in comparison data:" << comparisonObj["error"].toString();
+        }
+    }
+
+    qDebug() << "Statistics labels updated successfully.";
+}
+
+void MainWindow::updateWeatherPatterns(const QString &locationSuffix, const QJsonObject &weatherConditions)
+{
+    // Map location suffix to index
+    int locationIndex = -1;
+    if (locationSuffix == "Zocca") locationIndex = 0;
+    else if (locationSuffix == "Rome") locationIndex = 1;
+    else if (locationSuffix == "Paris") locationIndex = 2;
+    else if (locationSuffix == "NewYork") locationIndex = 3;
+    else if (locationSuffix == "London") locationIndex = 4;
+
+    if (locationIndex < 0 || locationIndex >= 5)
+    {
+        qWarning() << "Invalid location suffix:" << locationSuffix;
+        return;
+    }
+
+    // Get or create the pattern container
+    QWidget *patternContainer = m_patternContainers[locationIndex];
+    QVBoxLayout *patternLayout = nullptr;
+
+    if (!patternContainer)
+    {
+        // First time - find the existing statsPatternValueXXX label and replace it
+        QLabel *patternValueLabel = this->findChild<QLabel *>(QString("statsPatternValue%1").arg(locationSuffix));
+        if (!patternValueLabel)
+        {
+            qWarning() << "Could not find pattern value label for" << locationSuffix;
+            return;
+        }
+
+        // Get the parent layout
+        QLayout *parentLayout = patternValueLabel->parentWidget()->layout();
+        if (!parentLayout)
+        {
+            qWarning() << "No parent layout found for pattern label";
+            return;
+        }
+
+        // Remove the old single-label widget
+        parentLayout->removeWidget(patternValueLabel);
+        patternValueLabel->setParent(nullptr);
+        patternValueLabel->deleteLater();
+
+        // Create a new container widget
+        patternContainer = new QWidget();
+        patternLayout = new QVBoxLayout(patternContainer);
+        patternLayout->setContentsMargins(0, 0, 0, 0);
+        patternLayout->setSpacing(2);
+
+        // Add the container to the parent layout
+        parentLayout->addWidget(patternContainer);
+
+        // Store reference
+        m_patternContainers[locationIndex] = patternContainer;
+    }
+    else
+    {
+        // Container exists - just clear its layout
+        patternLayout = qobject_cast<QVBoxLayout*>(patternContainer->layout());
+        if (!patternLayout)
+        {
+            qWarning() << "Pattern container has no layout!";
+            return;
+        }
+
+        // Clear existing widgets
+        QLayoutItem *item;
+        while ((item = patternLayout->takeAt(0)) != nullptr)
+        {
+            delete item->widget();
+            delete item;
+        }
+    }
+
+    // Extract conditions from JSON
+    QJsonObject conditions = weatherConditions["conditions"].toObject();
+
+    if (conditions.isEmpty())
+    {
+        // No data - show placeholder
+        QLabel *noDataLabel = new QLabel("No data available");
+        noDataLabel->setStyleSheet("color: #888888;");
+        patternLayout->addWidget(noDataLabel);
+    }
+    else
+    {
+        // Create a list of conditions sorted by percentage (descending)
+        QList<QPair<QString, double>> conditionList;
+        for (auto it = conditions.begin(); it != conditions.end(); ++it)
+        {
+            QString conditionName = it.key();
+            QJsonObject conditionData = it.value().toObject();
+            double percentage = conditionData["percentage"].toDouble();
+            conditionList.append(qMakePair(conditionName, percentage));
+        }
+
+        // Sort by percentage (descending)
+        std::sort(conditionList.begin(), conditionList.end(),
+                  [](const QPair<QString, double> &a, const QPair<QString, double> &b) {
+                      return a.second > b.second;
+                  });
+
+        // Add labels for each condition
+        for (const auto &pair : conditionList)
+        {
+            QString conditionName = pair.first;
+            double percentage = pair.second;
+
+            // Create label with condition name and percentage
+            QLabel *conditionLabel = new QLabel(QString("%1 (%2%)")
+                                                    .arg(conditionName)
+                                                    .arg(percentage, 0, 'f', 1));
+
+            // Style the label based on percentage (highlight more common conditions)
+            if (percentage >= 50.0)
+            {
+                conditionLabel->setStyleSheet("font-weight: bold; color: #4CAF50;"); // Green for high percentage
+            }
+            else if (percentage >= 25.0)
+            {
+                conditionLabel->setStyleSheet("color: #FFC107;"); // Yellow for medium percentage
+            }
+            else
+            {
+                conditionLabel->setStyleSheet("color: #cccccc;"); // Gray for low percentage
+            }
+
+            patternLayout->addWidget(conditionLabel);
+        }
+    }
+
+    qDebug() << "Weather patterns updated for" << locationSuffix << "with" << conditions.size() << "conditions";
 }

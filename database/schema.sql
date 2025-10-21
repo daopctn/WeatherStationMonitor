@@ -1,5 +1,6 @@
 -- Weather Station Monitor Database Schema
 -- This script creates the database and all required tables
+-- ACTUAL SCHEMA - Reflects current database structure
 
 CREATE DATABASE IF NOT EXISTS weather_station_db
     CHARACTER SET utf8mb4
@@ -10,132 +11,89 @@ USE weather_station_db;
 -- Create weather data table for Zocca, Italy
 CREATE TABLE IF NOT EXISTS zocca (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    temperature DECIMAL(5,2) NOT NULL COMMENT 'Temperature in Celsius',
-    humidity INT NOT NULL COMMENT 'Humidity percentage (0-100)',
-    pressure INT NOT NULL COMMENT 'Atmospheric pressure in hPa',
-    wind_speed DECIMAL(5,2) NOT NULL COMMENT 'Wind speed in m/s',
-    wind_direction INT NOT NULL COMMENT 'Wind direction in degrees (0-360)',
-    clouds INT NOT NULL COMMENT 'Cloudiness percentage (0-100)',
-    weather_main VARCHAR(50) NOT NULL COMMENT 'Main weather condition',
-    weather_description VARCHAR(100) NOT NULL COMMENT 'Weather description',
-    weather_icon VARCHAR(10) NOT NULL COMMENT 'Weather icon code',
-    visibility INT NOT NULL COMMENT 'Visibility in meters (>=0)',
+    temperature FLOAT NOT NULL COMMENT 'Temperature in Celsius',
+    humidity FLOAT NOT NULL COMMENT 'Humidity percentage (0-100)',
+    pressure INT NULL COMMENT 'Atmospheric pressure in hPa',
+    windSpeed DOUBLE NULL COMMENT 'Wind speed in m/s',
+    weather_id INT NULL COMMENT 'OpenWeatherMap weather condition ID',
+    description VARCHAR(255) NULL COMMENT 'Weather description',
+    timestamp BIGINT NOT NULL COMMENT 'Unix timestamp of data collection',
     sunrise BIGINT NOT NULL COMMENT 'Sunrise time (Unix timestamp)',
-    sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)',
-    timezone_offset INT NOT NULL COMMENT 'Timezone offset in seconds',
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT 'Data fetch timestamp',
-    INDEX idx_timestamp (timestamp),
-    CHECK (humidity >= 0 AND humidity <= 100),
-    CHECK (clouds >= 0 AND clouds <= 100),
-    CHECK (wind_direction >= 0 AND wind_direction < 360),
-    CHECK (visibility >= 0),
-    CHECK (wind_speed >= 0),
-    CHECK (pressure > 0)
+    sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for Zocca, Italy';
 
 -- Create weather data table for Rome, Italy
 CREATE TABLE IF NOT EXISTS rome (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    temperature DECIMAL(5,2) NOT NULL,
-    humidity INT NOT NULL,
-    pressure INT NOT NULL,
-    wind_speed DECIMAL(5,2) NOT NULL,
-    wind_direction INT NOT NULL,
-    clouds INT NOT NULL,
-    weather_main VARCHAR(50) NOT NULL,
-    weather_description VARCHAR(100) NOT NULL,
-    weather_icon VARCHAR(10) NOT NULL,
-    visibility INT NOT NULL,
-    sunrise BIGINT NOT NULL,
-    sunset BIGINT NOT NULL,
-    timezone_offset INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp),
-    CHECK (humidity >= 0 AND humidity <= 100),
-    CHECK (clouds >= 0 AND clouds <= 100),
-    CHECK (wind_direction >= 0 AND wind_direction < 360),
-    CHECK (visibility >= 0),
-    CHECK (wind_speed >= 0),
-    CHECK (pressure > 0)
+    temperature FLOAT NOT NULL COMMENT 'Temperature in Celsius',
+    humidity FLOAT NOT NULL COMMENT 'Humidity percentage (0-100)',
+    pressure INT NULL COMMENT 'Atmospheric pressure in hPa',
+    windSpeed DOUBLE NULL COMMENT 'Wind speed in m/s',
+    weather_id INT NULL COMMENT 'OpenWeatherMap weather condition ID',
+    description VARCHAR(255) NULL COMMENT 'Weather description',
+    timestamp BIGINT NOT NULL COMMENT 'Unix timestamp of data collection',
+    sunrise BIGINT NOT NULL COMMENT 'Sunrise time (Unix timestamp)',
+    sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for Rome, Italy';
 
 -- Create weather data table for Paris, France
 CREATE TABLE IF NOT EXISTS paris (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    temperature DECIMAL(5,2) NOT NULL,
-    humidity INT NOT NULL,
-    pressure INT NOT NULL,
-    wind_speed DECIMAL(5,2) NOT NULL,
-    wind_direction INT NOT NULL,
-    clouds INT NOT NULL,
-    weather_main VARCHAR(50) NOT NULL,
-    weather_description VARCHAR(100) NOT NULL,
-    weather_icon VARCHAR(10) NOT NULL,
-    visibility INT NOT NULL,
-    sunrise BIGINT NOT NULL,
-    sunset BIGINT NOT NULL,
-    timezone_offset INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp),
-    CHECK (humidity >= 0 AND humidity <= 100),
-    CHECK (clouds >= 0 AND clouds <= 100),
-    CHECK (wind_direction >= 0 AND wind_direction < 360),
-    CHECK (visibility >= 0),
-    CHECK (wind_speed >= 0),
-    CHECK (pressure > 0)
+    temperature FLOAT NOT NULL COMMENT 'Temperature in Celsius',
+    humidity FLOAT NOT NULL COMMENT 'Humidity percentage (0-100)',
+    pressure INT NULL COMMENT 'Atmospheric pressure in hPa',
+    windSpeed DOUBLE NULL COMMENT 'Wind speed in m/s',
+    weather_id INT NULL COMMENT 'OpenWeatherMap weather condition ID',
+    description VARCHAR(255) NULL COMMENT 'Weather description',
+    timestamp BIGINT NOT NULL COMMENT 'Unix timestamp of data collection',
+    sunrise BIGINT NOT NULL COMMENT 'Sunrise time (Unix timestamp)',
+    sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for Paris, France';
 
 -- Create weather data table for London, UK
 CREATE TABLE IF NOT EXISTS london (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    temperature DECIMAL(5,2) NOT NULL,
-    humidity INT NOT NULL,
-    pressure INT NOT NULL,
-    wind_speed DECIMAL(5,2) NOT NULL,
-    wind_direction INT NOT NULL,
-    clouds INT NOT NULL,
-    weather_main VARCHAR(50) NOT NULL,
-    weather_description VARCHAR(100) NOT NULL,
-    weather_icon VARCHAR(10) NOT NULL,
-    visibility INT NOT NULL,
-    sunrise BIGINT NOT NULL,
-    sunset BIGINT NOT NULL,
-    timezone_offset INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp),
-    CHECK (humidity >= 0 AND humidity <= 100),
-    CHECK (clouds >= 0 AND clouds <= 100),
-    CHECK (wind_direction >= 0 AND wind_direction < 360),
-    CHECK (visibility >= 0),
-    CHECK (wind_speed >= 0),
-    CHECK (pressure > 0)
+    temperature FLOAT NOT NULL COMMENT 'Temperature in Celsius',
+    humidity FLOAT NOT NULL COMMENT 'Humidity percentage (0-100)',
+    pressure INT NULL COMMENT 'Atmospheric pressure in hPa',
+    windSpeed DOUBLE NULL COMMENT 'Wind speed in m/s',
+    weather_id INT NULL COMMENT 'OpenWeatherMap weather condition ID',
+    description VARCHAR(255) NULL COMMENT 'Weather description',
+    timestamp BIGINT NOT NULL COMMENT 'Unix timestamp of data collection',
+    sunrise BIGINT NOT NULL COMMENT 'Sunrise time (Unix timestamp)',
+    sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for London, UK';
 
 -- Create weather data table for New York, USA
 CREATE TABLE IF NOT EXISTS new_york (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    temperature DECIMAL(5,2) NOT NULL,
-    humidity INT NOT NULL,
-    pressure INT NOT NULL,
-    wind_speed DECIMAL(5,2) NOT NULL,
-    wind_direction INT NOT NULL,
-    clouds INT NOT NULL,
-    weather_main VARCHAR(50) NOT NULL,
-    weather_description VARCHAR(100) NOT NULL,
-    weather_icon VARCHAR(10) NOT NULL,
-    visibility INT NOT NULL,
-    sunrise BIGINT NOT NULL,
-    sunset BIGINT NOT NULL,
-    timezone_offset INT NOT NULL,
-    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    INDEX idx_timestamp (timestamp),
-    CHECK (humidity >= 0 AND humidity <= 100),
-    CHECK (clouds >= 0 AND clouds <= 100),
-    CHECK (wind_direction >= 0 AND wind_direction < 360),
-    CHECK (visibility >= 0),
-    CHECK (wind_speed >= 0),
-    CHECK (pressure > 0)
+    temperature FLOAT NOT NULL COMMENT 'Temperature in Celsius',
+    humidity FLOAT NOT NULL COMMENT 'Humidity percentage (0-100)',
+    pressure INT NULL COMMENT 'Atmospheric pressure in hPa',
+    windSpeed DOUBLE NULL COMMENT 'Wind speed in m/s',
+    weather_id INT NULL COMMENT 'OpenWeatherMap weather condition ID',
+    description VARCHAR(255) NULL COMMENT 'Weather description',
+    timestamp BIGINT NOT NULL COMMENT 'Unix timestamp of data collection',
+    sunrise BIGINT NOT NULL COMMENT 'Sunrise time (Unix timestamp)',
+    sunset BIGINT NOT NULL COMMENT 'Sunset time (Unix timestamp)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Weather data for New York, USA';
+
+-- Database Schema Summary
+-- Columns per table:
+--   - id: Auto-increment primary key
+--   - temperature: Temperature in Celsius (FLOAT)
+--   - humidity: Humidity percentage 0-100 (FLOAT)
+--   - pressure: Atmospheric pressure in hPa (INT, nullable)
+--   - windSpeed: Wind speed in m/s (DOUBLE, nullable)
+--   - weather_id: OpenWeatherMap weather condition ID (INT, nullable)
+--   - description: Human-readable weather description (VARCHAR, nullable)
+--   - timestamp: Unix timestamp of when data was collected (BIGINT)
+--   - sunrise: Unix timestamp of sunrise (BIGINT)
+--   - sunset: Unix timestamp of sunset (BIGINT)
+
+-- Sample data query:
+-- SELECT FROM_UNIXTIME(timestamp) as datetime, temperature, humidity, pressure, windSpeed
+-- FROM zocca ORDER BY timestamp DESC LIMIT 10;
 
 -- Create user for the application (optional, for security)
 -- CREATE USER IF NOT EXISTS 'weather_user'@'localhost' IDENTIFIED BY 'your_password_here';

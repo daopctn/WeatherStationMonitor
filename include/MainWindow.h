@@ -9,6 +9,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QTimer>
+#include <QWidget>
+#include <QVBoxLayout>
 #include <QtCharts/QChart>
 #include <QtCharts/QChartView>
 #include <QtCharts/QLineSeries>
@@ -83,6 +85,20 @@ private slots:
      */
     void onWeatherDataUpdated(const WeatherData &data);
 
+    /**
+     * @brief Updates all statistics labels in the third tab with current data
+     * @note Fetches JSON data from Python and updates UI labels for all 5 cities
+     *       Called on application startup to populate statistics tab
+     */
+    void updateStatisticsLabels();
+
+    /**
+     * @brief Updates weather pattern labels for a specific location
+     * @param locationSuffix Location suffix (e.g., "Zocca", "Rome")
+     * @param weatherConditions JSON object containing weather condition statistics
+     */
+    void updateWeatherPatterns(const QString &locationSuffix, const QJsonObject &weatherConditions);
+
 private:
     Ui::MainWindow *ui;
     PythonBridge *pythonBridge;
@@ -107,6 +123,9 @@ private:
     QDateTimeAxis *m_axisX[5];         ///< X-axis (time) for each chart - needed to update range
     int m_timezoneOffsets[5];          ///< Timezone offsets for tooltip display
     bool m_hasVirtualPoint[5];         ///< Tracks if chart has a virtual second point for single-point display
+
+    // Pattern containers for dynamic weather condition labels (indexed by location.uiIndex)
+    QWidget *m_patternContainers[5];   ///< Container widgets for weather pattern labels
 
     /**
      * @brief Initializes all chart views with data from database
