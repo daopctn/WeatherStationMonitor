@@ -2,7 +2,7 @@
 #include <QTime>
 
 WeatherWorker::WeatherWorker(const QString &apiURL, QVector<WeatherData> &weatherDataVector, QMutex &mutex, QObject *parent)
-    : QThread(parent), m_apiURL(apiURL), m_weatherDataVector(weatherDataVector), m_mutex(mutex), m_running(false)
+    : QThread(parent), m_apiURL(apiURL), m_weatherDataVector(weatherDataVector), m_mutex(mutex), m_running(false), m_consecutiveFailures(0)
 {
 }
 
@@ -59,7 +59,11 @@ void WeatherWorker::fetchWeatherData()
         return;
     }
 
+    // Add timeout to network request
     QNetworkRequest request(m_apiURL);
+    request.setTransferTimeout(NETWORK_TIMEOUT_MS);
+    request.setRawHeader("User-Agent", "WeatherStationMonitor/1.0");
+
     // This now happens in the correct thread context
     QNetworkReply *reply = m_networkManager->get(request);
 
@@ -73,10 +77,39 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
     // Check for network errors (timeout, DNS failure, connection refused, etc.)
     if (reply->error() != QNetworkReply::NoError)
     {
-        qWarning() << "Network error:" << reply->errorString();
+        m_consecutiveFailures++;
+        QString errorMsg = QString("Network error (attempt %1): %2")
+                              .arg(m_consecutiveFailures)
+                              .arg(reply->errorString());
+
+        qWarning() << errorMsg;
+
+        // Emit error signal for UI notification
+        emit errorOccurred(errorMsg);
+
+        // Apply exponential backoff if multiple failures
+        if (m_consecutiveFailures > 1 && m_consecutiveFailures <= MAX_RETRY_ATTEMPTS)
+        {
+            qDebug() << "Applying exponential backoff for attempt" << m_consecutiveFailures;
+            exponentialBackoff(m_consecutiveFailures - 1);
+        }
+
+        // If max retries exceeded, log critical error
+        if (m_consecutiveFailures >= MAX_RETRY_ATTEMPTS)
+        {
+            QString criticalMsg = QString("Weather API unavailable after %1 attempts for %2")
+                                     .arg(MAX_RETRY_ATTEMPTS)
+                                     .arg(m_apiURL);
+            qCritical() << criticalMsg;
+            emit errorOccurred(criticalMsg);
+        }
+
         reply->deleteLater();  // Clean up to prevent memory leak
         return;
     }
+
+    // Success! Reset consecutive failure counter
+    m_consecutiveFailures = 0;
 
     // Read all response data and clean up the reply object
     QByteArray responseData = reply->readAll();
@@ -269,4 +302,14 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
                  << " New timestamp:" << unixTime
                  << " Last timestamp:" << lastestData->timestamp;
     }
+}
+
+void WeatherWorker::exponentialBackoff(int attempt)
+{
+    // Calculate delay: 2s, 4s, 8s for attempts 0, 1, 2
+    int delay = BASE_RETRY_DELAY_MS * (1 << attempt);  // 2^attempt * base_delay
+    qDebug() << "Exponential backoff: waiting" << delay << "ms before retry";
+
+    // Use QThread::msleep for delay (blocks this worker thread only)
+    QThread::msleep(delay);
 }
