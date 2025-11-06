@@ -2,10 +2,23 @@ cmake_minimum_required(VERSION 3.16)
 
 project(WeatherStationMonitor VERSION 1.0.0 LANGUAGES CXX)
 
+# Enable testing support
+enable_testing()
+
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Code coverage support (Debug builds only)
+option(BUILD_TESTS "Build unit tests" ON)
+option(ENABLE_COVERAGE "Enable code coverage" OFF)
+
+if(ENABLE_COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Code coverage enabled")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+endif()
 
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Sql Charts)
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
@@ -109,3 +122,8 @@ install(DIRECTORY resources/icons/
     DESTINATION share/weather-station-monitor/resources/icons
     FILES_MATCHING PATTERN "*.png" PATTERN "*.qrc"
 )
+
+# Add tests subdirectory
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()

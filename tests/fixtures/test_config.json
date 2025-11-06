@@ -1,0 +1,41 @@
+{
+  "Database": {
+    "host": "localhost",
+    "name": "weather_station_test_db",
+    "user": "test_user",
+    "password": "test_password"
+  },
+  "WeatherAPI": {
+    "base_url": "http://localhost:8888/mock",
+    "api_key": "test_api_key_12345",
+    "timeout": 5000,
+    "fetch_interval_ms": 10000,
+    "locations": {
+      "zocca": {
+        "latitude": 44.34,
+        "longitude": 10.99,
+        "timezone": "Europe/Rome"
+      },
+      "rome": {
+        "latitude": 41.89,
+        "longitude": 12.51,
+        "timezone": "Europe/Rome"
+      },
+      "paris": {
+        "latitude": 48.85,
+        "longitude": 2.35,
+        "timezone": "Europe/Paris"
+      },
+      "london": {
+        "latitude": 51.51,
+        "longitude": -0.13,
+        "timezone": "Europe/London"
+      },
+      "new_york": {
+        "latitude": 40.71,
+        "longitude": -74.01,
+        "timezone": "America/New_York"
+      }
+    }
+  }
+}
