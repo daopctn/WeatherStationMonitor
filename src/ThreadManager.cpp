@@ -7,18 +7,67 @@
 #include <QDir>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
+
+QString ThreadManager::findConfigFile()
+{
+    // Priority 1: System-wide installation (Debian package location)
+    QString systemConfig = "/etc/weather-station-monitor/config.json";
+    if (QFile::exists(systemConfig)) {
+        qDebug() << "Using system config:" << systemConfig;
+        return systemConfig;
+    }
+
+    // Priority 2: User-specific configuration
+    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+    QString userConfig = configDir + "/config.json";
+    if (QFile::exists(userConfig)) {
+        qDebug() << "Using user config:" << userConfig;
+        return userConfig;
+    }
+
+    // Priority 3: Local development
+    QString localConfig = "./config.json";
+    if (QFile::exists(localConfig)) {
+        qDebug() << "Using local config:" << localConfig;
+        return localConfig;
+    }
+
+    // Priority 4: Example config (for first-time setup reference)
+    QString exampleConfig = "/usr/share/weather-station-monitor/config/example_config.json";
+    if (QFile::exists(exampleConfig)) {
+        qWarning() << "No config found, using example config:" << exampleConfig;
+        qWarning() << "Please copy to /etc/weather-station-monitor/config.json and configure with your credentials";
+        return exampleConfig;
+    }
+
+    // No configuration file found
+    qCritical() << "FATAL: No configuration file found!";
+    qCritical() << "Searched paths:";
+    qCritical() << "  1." << systemConfig;
+    qCritical() << "  2." << userConfig;
+    qCritical() << "  3." << localConfig;
+    qCritical() << "  4." << exampleConfig;
+    return QString(); // Return empty string to indicate failure
+}
+
 ThreadManager::ThreadManager(QObject *parent)
     : QObject(parent)
 {
-    QString configDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-    QDir().mkpath(configDir); // ensure exists
-    QString configPath = configDir + "/config.json";
-    qDebug() << "Using config file at:" << configPath;
-    QFile file(configPath);
+    // Use multi-path fallback strategy to find configuration file
+    QString configPath = findConfigFile();
 
+    if (configPath.isEmpty())
+    {
+        qCritical() << "Cannot proceed without configuration file";
+        qCritical() << "Please create /etc/weather-station-monitor/config.json or ~/.config/weather-station-monitor/config.json";
+        return; // Exit constructor gracefully
+    }
+
+    QFile file(configPath);
     if (!file.open(QIODevice::ReadOnly))
     {
-        qWarning() << "Cannot open config file";
+        qCritical() << "Cannot open config file:" << configPath;
+        qCritical() << "Error:" << file.errorString();
         return;
     }
 

@@ -62,6 +62,16 @@ private:
      * @note This function reduces code duplication by centralizing query logic
      */
     void loadLatestDataForLocation(QSqlQuery &query, const QString &tableName, WeatherData *data);
+
+    /**
+     * @brief Find configuration file using multi-path fallback strategy
+     * @return QString Path to configuration file, or empty string if not found
+     * @note Search order: 1) /etc/weather-station-monitor/config.json (system)
+     *                      2) ~/.config/weather-station-monitor/config.json (user)
+     *                      3) ./config.json (local development)
+     *                      4) /usr/share/weather-station-monitor/config/example_config.json (fallback)
+     */
+    QString findConfigFile();
     DatabaseManager *databaseManager;
     // create 5 worker and 1 database thread
     WeatherWorker *zoccaWorker;

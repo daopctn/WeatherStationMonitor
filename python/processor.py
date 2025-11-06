@@ -621,11 +621,25 @@ def _calculate_comfort_index(temp, humidity):
 
 # Main entry point for testing
 if __name__ == "__main__":
-    # Test with default database configuration
+    import os
+    import sys
+
+    # Load credentials from environment variables for security
+    db_host = os.getenv('WEATHER_DB_HOST', 'localhost')
+    db_name = os.getenv('WEATHER_DB_NAME', 'weather_station_db')
+    db_user = os.getenv('WEATHER_DB_USER', 'daopctn')
+    db_pass = os.getenv('WEATHER_DB_PASSWORD')
+
+    if not db_pass:
+        print("ERROR: WEATHER_DB_PASSWORD environment variable not set", file=sys.stderr)
+        print("Usage: WEATHER_DB_PASSWORD=yourpass python processor.py", file=sys.stderr)
+        print("Optional: WEATHER_DB_HOST, WEATHER_DB_NAME, WEATHER_DB_USER", file=sys.stderr)
+        sys.exit(1)
+
     json_result = generate_all_statistics_json(
-        host="localhost",
-        database="weather_station_db",
-        username="daopctn",
-        password="dao02112003"
+        host=db_host,
+        database=db_name,
+        username=db_user,
+        password=db_pass
     )
     print(json_result)

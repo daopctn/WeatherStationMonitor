@@ -104,13 +104,52 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
     // Extract temperature, pressure, humidity from "main" object
     // Note: Temperature is in Kelvin from API
     QJsonObject mainObj = jsonObj["main"].toObject();
+
+    // Validate temperature field exists and has reasonable value
+    if (!mainObj.contains("temp"))
+    {
+        qWarning() << "Missing 'temp' field in API response";
+        return;
+    }
     double temperature = mainObj.value("temp").toDouble();
-    int pressure = mainObj.value("pressure").toInt();
-    double humidity = mainObj.value("humidity").toDouble();
+    // Sanity check: temperature should be in Kelvin (valid range: 173-373K = -100°C to 100°C)
+    if (temperature < 173.0 || temperature > 373.0)
+    {
+        qWarning() << "Invalid temperature value:" << temperature << "K (expected 173-373K)";
+        return;
+    }
+
+    // Validate pressure (typical range: 870-1085 hPa)
+    int pressure = mainObj.value("pressure").toInt(0);
+    if (pressure < 800 || pressure > 1200)
+    {
+        qWarning() << "Suspicious pressure value:" << pressure << "hPa (expected 800-1200 hPa)";
+        // Don't return - pressure anomalies can be valid in extreme weather
+    }
+
+    // Validate humidity (must be 0-100%)
+    double humidity = mainObj.value("humidity").toDouble(0.0);
+    if (humidity < 0.0 || humidity > 100.0)
+    {
+        qWarning() << "Invalid humidity value:" << humidity << "% (expected 0-100%)";
+        humidity = qBound(0.0, humidity, 100.0); // Clamp to valid range
+    }
 
     // Extract wind speed from "wind" object (in m/s)
+    // Validate wind object exists
+    if (!jsonObj.contains("wind") || !jsonObj["wind"].isObject())
+    {
+        qWarning() << "Missing or invalid 'wind' object in API response";
+        return;
+    }
     QJsonObject windObj = jsonObj["wind"].toObject();
-    double windSpeed = windObj.value("speed").toDouble();
+    double windSpeed = windObj.value("speed").toDouble(0.0);
+    // Sanity check: wind speed should be reasonable (0-100 m/s, hurricane max ~90 m/s)
+    if (windSpeed < 0.0 || windSpeed > 150.0)
+    {
+        qWarning() << "Invalid wind speed value:" << windSpeed << "m/s (expected 0-150 m/s)";
+        windSpeed = qBound(0.0, windSpeed, 150.0); // Clamp to valid range
+    }
 
     // Extract weather ID from "weather" array (used for icon mapping)
     // Weather ID determines weather condition (e.g., 800=clear, 804=clouds)
@@ -139,9 +178,43 @@ void WeatherWorker::onNetworkReply(QNetworkReply *reply)
 
     // Extract timestamps: current time, sunrise, and sunset (all in UNIX epoch seconds)
     // These are used to determine day/night for icon selection
+    // Validate timestamp exists
+    if (!jsonObj.contains("dt"))
+    {
+        qWarning() << "Missing 'dt' (timestamp) field in API response";
+        return;
+    }
     long long unixTime = jsonObj.value("dt").toVariant().toLongLong();
-    long long sunriseTime = jsonObj.value("sys").toObject().value("sunrise").toVariant().toLongLong();
-    long long sunsetTime = jsonObj.value("sys").toObject().value("sunset").toVariant().toLongLong();
+    // Sanity check: timestamp should be reasonable (after year 2000 and before year 2100)
+    long long minTimestamp = 946684800;  // 2000-01-01
+    long long maxTimestamp = 4102444800; // 2100-01-01
+    if (unixTime < minTimestamp || unixTime > maxTimestamp)
+    {
+        qWarning() << "Invalid timestamp value:" << unixTime << "(expected" << minTimestamp << "-" << maxTimestamp << ")";
+        return;
+    }
+
+    // Validate sys object exists for sunrise/sunset
+    if (!jsonObj.contains("sys") || !jsonObj["sys"].isObject())
+    {
+        qWarning() << "Missing or invalid 'sys' object in API response";
+        return;
+    }
+    QJsonObject sysObj = jsonObj["sys"].toObject();
+    long long sunriseTime = sysObj.value("sunrise").toVariant().toLongLong(0);
+    long long sunsetTime = sysObj.value("sunset").toVariant().toLongLong(0);
+
+    // Validate sunrise/sunset times are reasonable
+    if (sunriseTime < minTimestamp || sunriseTime > maxTimestamp)
+    {
+        qWarning() << "Invalid sunrise time:" << sunriseTime;
+        sunriseTime = unixTime; // Fallback to current time
+    }
+    if (sunsetTime < minTimestamp || sunsetTime > maxTimestamp)
+    {
+        qWarning() << "Invalid sunset time:" << sunsetTime;
+        sunsetTime = unixTime; // Fallback to current time
+    }
 
     // Only process if this data is newer than what we already have (prevent duplicates)
     if (unixTime > lastestData->timestamp)

@@ -33,21 +33,16 @@ sudo mysql -u root -p < /usr/share/weather-station-monitor/database/schema.sql
 - `new_york` - Weather data for New York, USA
 
 Each table contains:
-- `id` - Auto-incrementing primary key
-- `temperature` - Temperature in Celsius
-- `humidity` - Humidity percentage
-- `pressure` - Atmospheric pressure in hPa
-- `wind_speed` - Wind speed in m/s
-- `wind_direction` - Wind direction in degrees
-- `clouds` - Cloudiness percentage
-- `weather_main` - Main weather condition
-- `weather_description` - Detailed weather description
-- `weather_icon` - Weather icon code
-- `visibility` - Visibility in meters
-- `sunrise` - Sunrise time (Unix timestamp)
-- `sunset` - Sunset time (Unix timestamp)
-- `timezone_offset` - Timezone offset from UTC in seconds
-- `timestamp` - Data fetch timestamp
+- `id` - Auto-incrementing primary key (INT)
+- `temperature` - Temperature in Celsius (FLOAT, NOT NULL)
+- `humidity` - Humidity percentage 0-100 (FLOAT, NOT NULL)
+- `pressure` - Atmospheric pressure in hPa (INT, nullable)
+- `windSpeed` - Wind speed in m/s (DOUBLE, nullable)
+- `weather_id` - OpenWeatherMap weather condition ID (INT, nullable)
+- `description` - Human-readable weather description (VARCHAR, nullable)
+- `timestamp` - Unix timestamp of when data was collected (BIGINT, NOT NULL)
+- `sunrise` - Unix timestamp of sunrise (BIGINT, NOT NULL)
+- `sunset` - Unix timestamp of sunset (BIGINT, NOT NULL)
 
 ## Configuration
 
