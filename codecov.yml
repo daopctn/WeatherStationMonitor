@@ -1,0 +1,44 @@
+# Codecov Configuration for WeatherStationMonitor
+# https://docs.codecov.io/docs/codecov-yaml
+
+codecov:
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
+
+coverage:
+  precision: 2
+  round: down
+  range: "60...90"  # Yellow at 60%, green at 90%
+
+  status:
+    project:
+      default:
+        target: 70%        # Phase 2 target
+        threshold: 1%      # Allow 1% drop
+        if_ci_failed: error
+
+    patch:
+      default:
+        target: 60%        # New code should have 60%+ coverage
+        threshold: 5%
+
+  ignore:
+    - "tests/**/*"         # Don't count test code
+    - "ui/**/*"            # UI files (Qt Designer)
+    - "resources/**/*"     # Resource files
+    - "build/**/*"         # Build artifacts
+    - "cmake-build-*/**/*" # CLion build dirs
+    - "**/*_automoc.cpp"   # Qt generated files
+    - "**/moc_*.cpp"       # Qt MOC files
+    - "**/ui_*.h"          # Qt UI headers
+
+comment:
+  layout: "header, diff, files, footer"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+github_checks:
+  annotations: true

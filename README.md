@@ -9,6 +9,10 @@
 ![Qt](https://img.shields.io/badge/Qt-5.15-green)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
+[![Build and Test](https://github.com/daopctn/WeatherStationMonitor/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/daopctn/WeatherStationMonitor/actions/workflows/build-and-test.yml)
+[![Code Quality](https://github.com/daopctn/WeatherStationMonitor/actions/workflows/code-quality.yml/badge.svg)](https://github.com/daopctn/WeatherStationMonitor/actions/workflows/code-quality.yml)
+[![codecov](https://codecov.io/gh/daopctn/WeatherStationMonitor/branch/main/graph/badge.svg)](https://codecov.io/gh/daopctn/WeatherStationMonitor)
+
 </div>
 
 ## Overview

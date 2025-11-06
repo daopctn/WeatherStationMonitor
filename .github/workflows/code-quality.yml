@@ -1,0 +1,130 @@
+name: Code Quality
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  python-quality:
+    name: Python Code Quality
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Install Python linting tools
+      run: |
+        pip3 install flake8 black pylint
+
+    - name: Run flake8
+      run: |
+        flake8 python/ --max-line-length=120 --statistics --count
+      continue-on-error: true
+
+    - name: Check code formatting with black
+      run: |
+        black --check --diff python/
+      continue-on-error: true
+
+    - name: Run pylint
+      run: |
+        pylint python/*.py --max-line-length=120 || true
+      continue-on-error: true
+
+  cpp-quality:
+    name: C++ Code Quality
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install C++ quality tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y clang-tidy cppcheck
+
+    - name: Run cppcheck
+      run: |
+        cppcheck --enable=all --inconclusive --std=c++17 \
+          --suppress=missingIncludeSystem \
+          --suppress=unusedFunction \
+          src/ include/ 2>&1 | tee cppcheck-report.txt
+      continue-on-error: true
+
+    - name: Upload cppcheck report
+      uses: actions/upload-artifact@v4
+      with:
+        name: cppcheck-report
+        path: cppcheck-report.txt
+        retention-days: 30
+
+    - name: Check for TODO/FIXME comments
+      run: |
+        echo "## TODO/FIXME Comments Found" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        grep -r "TODO\|FIXME" src/ include/ || echo "None found" >> $GITHUB_STEP_SUMMARY
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy security scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+      continue-on-error: true
+
+    - name: Upload Trivy results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'trivy-results.sarif'
+      continue-on-error: true
+
+    - name: Check for hardcoded secrets
+      run: |
+        echo "## Security Checks" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Checking for potential hardcoded secrets..." >> $GITHUB_STEP_SUMMARY
+
+        # Check for common patterns (basic check)
+        if grep -r "password.*=.*['\"]" --include="*.cpp" --include="*.h" --include="*.py" .; then
+          echo "⚠️ Warning: Potential hardcoded passwords found" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "✅ No obvious hardcoded passwords detected" >> $GITHUB_STEP_SUMMARY
+        fi
+
+  quality-summary:
+    name: Quality Report
+    runs-on: ubuntu-22.04
+    needs: [python-quality, cpp-quality, security-scan]
+    if: always()
+
+    steps:
+    - name: Generate quality report
+      run: |
+        echo "## Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+        echo "| Python Quality | ${{ needs.python-quality.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| C++ Quality | ${{ needs.cpp-quality.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| Security Scan | ${{ needs.security-scan.result }} |" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "View detailed reports in the workflow artifacts." >> $GITHUB_STEP_SUMMARY
