@@ -1,0 +1,84 @@
+# Vision Processing Configuration for Thor-san
+
+detection:
+  # YOLO model configuration
+  model_size: "medium"  # Options: nano, small, medium, large, xlarge
+  confidence_threshold: 0.5
+  iou_threshold: 0.45
+  device: "cpu"  # Options: cpu, cuda, mps
+
+  # Classes to detect (empty = all classes)
+  target_classes: []
+
+  # Tracking parameters
+  tracking:
+    max_disappeared: 30
+    max_distance: 50.0  # pixels
+
+depth:
+  # Stereo matching parameters
+  method: "sgbm"  # Options: sgbm, bm
+  num_disparities: 128  # Must be divisible by 16
+  block_size: 11  # Odd number
+
+  # WLS filter for disparity refinement
+  use_wls_filter: true
+  wls_lambda: 8000.0
+  wls_sigma: 1.5
+
+  # Depth range (mm)
+  min_depth: 100
+  max_depth: 2000
+
+spatial_memory:
+  # Octree parameters
+  resolution: 0.01  # Voxel size in meters (1cm)
+  world_size: 2.0   # Root octree size in meters
+
+  # Point cloud filtering
+  min_points_per_voxel: 1
+  downsample_factor: 5
+
+  # Storage paths
+  map_directory: "data/maps"
+  database_path: "data/objects.db"
+
+scene_analysis:
+  # Surface detection
+  ground_plane_tolerance: 0.05  # meters
+  min_surface_points: 100
+  min_surface_area: 0.01  # m²
+
+  # Object analysis
+  min_object_size: 0.02  # meters
+  max_object_size: 0.3   # meters
+
+  # Reachability
+  robot_base_height: 0.0  # meters
+  max_reach: 0.8  # meters
+
+planning:
+  # Grasp planning
+  gripper_width: 0.085  # meters
+  min_grasp_width: 0.02  # meters
+  approach_distance: 0.15  # meters
+
+  # Motion planning
+  default_speed: 0.1  # m/s
+  approach_speed: 0.05  # m/s
+
+  # Safety margins
+  collision_margin: 0.05  # meters
+  table_clearance: 0.02  # meters
+
+visualization:
+  # Display settings
+  window_size: [640, 360]
+  show_fps: true
+  show_detections: true
+  show_tracking_ids: true
+
+  # Colors (BGR format)
+  detection_color: [0, 255, 0]
+  tracking_color: [0, 0, 255]
+  grasp_color: [255, 0, 255]

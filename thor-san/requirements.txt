@@ -1,0 +1,29 @@
+# Thor-san Vision System Requirements
+# Computer Vision and Deep Learning
+opencv-python>=4.8.0
+opencv-contrib-python>=4.8.0
+numpy>=1.24.0
+scipy>=1.11.0
+
+# YOLO Object Detection
+ultralytics>=8.0.0
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Data Storage and Management
+pyyaml>=6.0
+sqlite3-python>=1.0.0
+
+# Optional: Segment Anything Model (SAM)
+# segment-anything>=1.0.0  # Uncomment if using SAM
+
+# Visualization
+matplotlib>=3.7.0
+
+# Development and Testing
+pytest>=7.4.0
+black>=23.0.0
+flake8>=6.0.0
+
+# Performance
+pillow>=10.0.0

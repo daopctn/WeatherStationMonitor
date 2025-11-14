@@ -1,0 +1,54 @@
+# Camera Configuration for Thor-san
+# Adjust camera indices based on your hardware setup
+
+cameras:
+  # Camera indices (USB camera device IDs)
+  indices: [0, 2, 4]
+
+  # Individual camera configurations
+  camera_0:
+    name: "left_camera"
+    index: 0
+    width: 1280
+    height: 720
+    fps: 30
+    buffer_size: 1
+    role: "stereo_left"
+
+  camera_2:
+    name: "center_camera"
+    index: 2
+    width: 1280
+    height: 720
+    fps: 30
+    buffer_size: 1
+    role: "primary"
+
+  camera_4:
+    name: "right_camera"
+    index: 4
+    width: 1280
+    height: 720
+    fps: 30
+    buffer_size: 1
+    role: "stereo_right"
+
+stereo_pairs:
+  # Define stereo camera pairs for depth estimation
+  pair_1:
+    left: 0
+    right: 2
+    baseline: 0.12  # Distance between cameras in meters
+
+  pair_2:
+    left: 2
+    right: 4
+    baseline: 0.12
+
+calibration:
+  # Checkerboard calibration parameters
+  checkerboard_size: [9, 6]  # Inner corners (width, height)
+  square_size: 25.0  # Size of checkerboard squares in mm
+
+  # Calibration file paths
+  stereo_calib_path: "data/calibration/stereo_calib.yaml"
